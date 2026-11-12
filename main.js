@@ -32,12 +32,13 @@ function selectCharacter(character){
   $('game-status').textContent=CHARACTERS[character].name+' 선택 완료 · Q/W 공격, E 강화, R 궁극기'; renderKit();
 }
 const easySkills={
- director:{q:'슬레이트 3연타. 액션 표식 최대 3개 충전.',w:'충격파를 쏘고, 모은 액션 표식을 연쇄 폭발!',e:'5초 강화 + 일반 피격 1회 방어. 스태프가 공격을 지원해요.',r:'스태프 총출동 12연타! 거대 슬레이트로 마무리.'},
- actor:{q:'검 3연타. 네 번째 묶음 적중 시 W 강화.',w:'물러나며 화살 5발. 강화 시 마지막은 관통 화살!',e:'5초간 공격·이동 강화. 정확히 피하면 다음 Q가 강한 마무리!',r:'검사 → 궁수 → 액션 배우! 컷신 뒤 12연타.'}
+ director:{q:'슬레이트 3연타로 액션 표식을 최대 3개 쌓아요.',w:'“액션!” 메가폰 충격파로 표식을 연쇄 폭발!',e:'5초간 현장 지휘! 조명·음향 후속타와 일반 피격 1회 보호.',r:'“전원 액션!” 스태프 12연타 뒤 거대 슬레이트.'},
+ actor:{q:'검사 역으로 검 3연타. 네 번째 묶음 적중 시 W 강화.',w:'궁수 역으로 화살 5발. 애드리브 준비 시 관통 화살!',e:'5초 메소드 몰입! JUST 회피 뒤 다음 Q 강마무리.',r:'검사 → 궁수 → 액션 배우! 배역을 바꾸며 12연타.'}
 };
+const skillCategories={director:{q:'액션 표식',w:'연쇄 연출',e:'스태프 지휘',r:'전체 지휘'},actor:{q:'검사 연기',w:'궁수 연기',e:'메소드 몰입',r:'장르 전환'}};
 function renderKit(){
  const name=CHARACTERS[selected].name; $('kit-name').textContent=name+' 스킬';$('selected-name').textContent=name;
- const make=(key)=>{const skill=SKILL_KITS[selected][key],card=document.createElement('div'),badge=document.createElement('kbd'),title=document.createElement('b'),copy=document.createElement('p'),detail=document.createElement('small'),category=document.createElement('span');card.className='kit-card skill-'+key;badge.textContent=key.toUpperCase();title.textContent=skill.name;copy.textContent=easySkills[selected][key];category.className='skill-category';category.textContent={q:'연속 공격',w:'공격 기술',e:'5초 강화',r:'궁극기'}[key];detail.textContent=key==='q'?'누르고 있으면 연속 공격':key==='r'?'충전 100% + 재사용 '+skill.cooldown+'초':skill.cooldown+'초 후 다시 사용';card.append(category,badge,title,copy,detail);return card};
+ const make=(key)=>{const skill=SKILL_KITS[selected][key],card=document.createElement('div'),badge=document.createElement('kbd'),title=document.createElement('b'),copy=document.createElement('p'),detail=document.createElement('small'),category=document.createElement('span');card.className='kit-card skill-'+key;badge.textContent=key.toUpperCase();title.textContent=skill.name;copy.textContent=easySkills[selected][key];category.className='skill-category';category.textContent=skillCategories[selected][key];detail.textContent=key==='q'?'누르고 있으면 연속 공격':key==='r'?'충전 100% + 재사용 '+skill.cooldown+'초':skill.cooldown+'초 후 다시 사용';card.append(category,badge,title,copy,detail);return card};
  $('kit-cards').replaceChildren(...['q','w','e','r'].map(make));
  renderLaunchOptions();
 }
@@ -103,7 +104,8 @@ function togglePause(force){if(mode!=='playing'||state?.status!=='playing'||$('e
 function stat(label,value){const div=document.createElement('div');div.className='result-stat';const b=document.createElement('b');b.textContent=value;const span=document.createElement('span');span.textContent=label;div.append(b,span);return div}
 function failureTip(s){
  if(s.endReason!=='domain'){const kind=s.lastDamage?.hazard?.kind;return {'rehearsal-light':'1 → 2 → 3 순서로 조명 안에 들어가 잠깐 머무르세요.','replay':'방금 지나온 기억 지점에서 다른 방향으로 벗어나세요.','encore-slash':'빠른 3타 뒤 마지막 4타까지 피하세요.','encore-finisher':'빠른 3타 뒤 긴 예고의 마지막 4타가 남아 있습니다.'}[kind]||(s.audition?.selected&&!s.audition.solved?'★ 진짜만 공격하고 ○ 대역은 피하세요.':'공격 예고를 보고 위험 범위 밖으로 이동하세요.');}
- const tips={'moving-light':'움직이는 민트색 조명의 중심을 끝까지 따라가세요.','mask-panels':'번호가 같은 발판에 도착할 때까지 이동하세요.','lens-corridors':'전환 예고가 뜨면 다음 민트색 통로로 이동하세요.','blade-waves':'다가오는 칼날의 민트색 빈틈으로 이동하세요.','chasing-slashes':'조준 고정마다 방향을 바꾸고 마지막 3방향 참격까지 피하세요.'};
+ if(s.domainDeath?.domainType==='chasing-slashes'){const tip=['첫 7연사는 위아래로 피하고, “방향 반전!” 신호에 반대로 움직이세요.','두 번째 7연사는 좌우로 계속 움직이며 고정된 선을 벗어나세요.','마지막 세 공격선을 모두 벗어나 칼날이 지나갈 때까지 유지하세요.'][s.domainDeath.phase];if(tip)return tip;}
+ const tips={'moving-light':'움직이는 민트색 조명의 중심을 끝까지 따라가세요.','mask-panels':'번호가 같은 발판에 도착할 때까지 이동하세요.','lens-corridors':'전환 예고가 뜨면 다음 민트색 통로로 이동하세요.','blade-waves':'다가오는 칼날의 민트색 빈틈으로 이동하세요.','chasing-slashes':'가로 칼날은 위아래, 세로 칼날은 좌우로 피하고 마지막 3방향까지 경계하세요.'};
  return tips[s.domainDeath?.domainType]||'무대 장악의 실제 칼날과 위험 범위 밖으로 이동하세요.';
 }
 function showResult(){
@@ -132,7 +134,7 @@ const patternDetails={
  ignis:['발밑에 조명이 켜지면 밝은 타원 밖으로 한 걸음 이동하세요.','긴 빛의 길이 나타납니다. 길의 진행 방향이 아닌 옆으로 피하세요.','세 개의 바닥 조명이 순서대로 터집니다. 켜진 조명 밖을 유지하세요.','안전한 민트색 조명의 중심을 계속 따라가세요.','1 → 2 → 3 순서로 조명 안에 들어가면 1.8초 반격 기회가 열립니다.'],
  mime:['리본이 뻗는 긴 선의 옆으로 피하세요.','점선 FAKE는 가짜입니다. HIT가 쓰인 진한 범위 밖으로 이동하세요.','두 리본이 교차합니다. 두 예고선을 모두 벗어난 빈 공간으로 움직이세요.','큰 번호와 같은 민트색 발판으로 이동해 “도착!”을 확인하세요.','★ 표시가 있는 진짜를 공격하세요. ○ 대역을 때리면 피해를 받고 실패합니다.'],
  gojo:['푸른 구체가 끌어당깁니다. 파란 범위 중심에서 멀어지세요.','프리즘 주변으로 붉은 충격파가 터집니다. 발사 전에 거리를 벌리세요.','공격 예고선이 처음에는 나를 따라옵니다. 조준 고정 신호가 뜨면 진행 방향의 옆으로 빠르게 이동하세요. 고정 후 0.5초 뒤 발사합니다.','전환 예고가 끝나기 전에 다음 민트색 통로로 이동하세요.','직전 이동 경로의 기억 지점이 차례로 공격되니 다른 방향으로 벗어나세요.'],
- sukuna:['참격이 겹치는 궤적을 확인하고 선 사이로 빠져나오세요.','가까운 거리를 강하게 베어냅니다. 칼날 예고 범위를 벗어나세요.','불꽃이 직선을 태우고 폭발합니다. 공격이 끝날 때까지 범위 밖을 유지하세요.','칼날 파도는 민트색 빈틈으로 이동하고, 추격 난무는 고정 신호마다 방향을 바꾸세요. 마지막 3방향 공격까지 피하면 반격 기회가 열립니다.','빠른 3타 뒤 긴 예고의 4타가 남아 있으니 마지막 참격까지 피하세요.']
+ sukuna:['참격이 겹치는 궤적을 확인하고 선 사이로 빠져나오세요.','가까운 거리를 강하게 베어냅니다. 칼날 예고 범위를 벗어나세요.','불꽃이 직선을 태우고 폭발합니다. 공격이 끝날 때까지 범위 밖을 유지하세요.','칼날 파도는 민트색 빈틈으로 이동하세요. 추격 난무의 가로 7연사는 위아래로 피하다 반전 신호에 방향을 바꾸세요. 다음 세로 7연사는 좌우로, 마지막은 세 공격선 밖으로 피하세요.','빠른 3타 뒤 긴 예고의 4타가 남아 있으니 마지막 참격까지 피하세요.']
 };
 let noteStage=0,noteWasPlaying=false;
 function openBoss(index){noteStage=index;const b=BOSSES[index];noteWasPlaying=mode==='playing'&&!paused&&state?.status==='playing';if(noteWasPlaying)togglePause(true);$('boss-note-kicker').textContent=auditionLabel(index)+' · 보스 노트';$('boss-note-title').textContent=b.name+' · '+b.title;$('boss-note-quote').textContent='“'+b.quote+'”';$('boss-patterns').replaceChildren(...b.patterns.map((name,i)=>{const div=document.createElement('div'),num=document.createElement('span'),title=document.createElement('b'),p=document.createElement('p');num.textContent='0'+(i+1);title.textContent=name;p.textContent=patternDetails[b.id]?.[i]||b.tip;div.append(num,title,p);return div}));$('boss-note-tip').textContent=b.tip;$('boss-dialog').showModal();}

@@ -182,7 +182,7 @@ export class GameAudio {
     if (['director-skill','actor-skill','director-ultimate','actor-ultimate','cinematic','domain','finish','void','shrine','purple','fatal','ultimate-finisher'].includes(name)) this._duck(name === 'cinematic' ? .9 : .55);
     if (name === 'cinematic' && meta.kind === 'bossIntro') {
       const boss=meta.bossId||meta.actorId, ignis=boss==='ignis', mime=boss==='mime';
-      const duration=Math.max(1,Math.min(3,Number(meta.duration)||2.4)), low=ignis?65.41:mime?58.27:boss==='sukuna'?43.65:49;
+      const duration=Math.max(1,Math.min(4.6,Number(meta.duration)||3.4)), low=ignis?65.41:mime?58.27:boss==='sukuna'?43.65:49;
       // An original orchestral swell, without a damage transient or borrowed tune.
       [1,2,3,4.06,6].forEach((ratio,i)=>swell(low*ratio,i*.055,duration-i*.07,i===0?.13:.042,i%2?'sawtooth':'triangle',low*ratio*1.025));
       note(low,0,.7,.085,'sine',low*.8);noise(t,.35,.03,620,'lowpass');
@@ -294,7 +294,7 @@ export class GameAudio {
       note(220,.018,.11,.026,'triangle',164.81);
     } else if (name === 'pursuit-release') {
       const cross=meta.cross===true||meta.crossing===true, follow=meta.followup===true;
-      const index=Math.max(1,Math.min(8,Number(meta.slashIndex||meta.strikeIndex||meta.index)||1));
+      const index=Math.max(1,Math.min(8,Number(meta.shotIndex||meta.slashIndex||meta.strikeIndex||meta.index)||1));
       noise(t,cross?.19:.14,cross?.072:.065,2600+index*140,'highpass');
       note(cross?1046.5:follow?880:740,0,cross?.18:.13,.033,'sine',cross?261.63:220);
       if(cross)note(130.81,.012,.17,.032,'triangle',65.41);

@@ -5,7 +5,7 @@ import { drawDomainCutscene } from './domain-cinematic.js';
 import { BOSS_VISUALS, drawAuditionBackdrop, drawTakeoverSet, drawJudgeTechnique, drawCounterOpening, judgePatternGuide, drawJudgePatternFloor, drawJudgePatternGuides } from './boss-visuals.js';
 import { drawUltimatePerformance, drawSequenceTrail, ultimatePhase } from './ultimate-vfx.js';
 import { drawCombatCinematic, combatCinematicAssetStatus } from './combat-cinematic.js';
-import { drawEmpoweredArrow, drawCueMarks, drawKitEffects, drawDialogueBox, skillCardState } from './skill-vfx.js';
+import { drawEmpoweredArrow, drawCueMarks, drawKitEffects, drawDialogueBox, dialogueLayout, drawRoleArrow, drawRolePresence, skillCardState } from './skill-vfx.js';
 import { drawTakeoverFloor, drawTakeoverGuides, takeoverInstruction } from './takeover-vfx.js';
 import { pursuitVolleyLabel } from './pursuit-vfx.js';
 const TAU=Math.PI*2;
@@ -157,7 +157,7 @@ function drawHUD(c,s,reduced=false){
   }
   if(p.attackSequence?.kind==='ultimate'){rect(c,43,288,197,52,'#132933e8',5);text(c,ultimatePhase(p.character,p.attackSequence.hitIndex).label,54,305,12,ultimatePhase(p.character,p.attackSequence.hitIndex).color,800);text(c,`${p.attackSequence.hitIndex} / ${p.attackSequence.hitCount} 타격`,54,329,22,'#f1edd5',900);}
   if(p.buffTimer>0){rect(c,43,151,205,25,'#b9b0ef28',3);text(c,`${p.buffName} · ${p.buffTimer.toFixed(1)}초`,54,168,11,'#e4d9ff',800);}
-  const kit=SKILL_KITS[p.character],short=p.character==='director'?['슬레이트','레디 액션!','현장 통제','전원 액션!']:['검사 연기','궁수 연기','메소드 몰입','커튼콜!'],abilities=[['Q',short[0],p.attackCooldown],['W',short[1],p.cooldowns.skill],['E',short[2],p.cooldowns.buff],['R',short[3],p.cooldowns.ultimate],['SPACE','회피',p.cooldowns.dodge]];
+  const kit=SKILL_KITS[p.character],short=p.character==='director'?['슬레이트 난타','레디 액션!','스태프 지휘','전원 액션!']:['검사 연기','궁수 연기','메소드 몰입','커튼콜!'],abilities=[['Q',short[0],p.attackCooldown],['W',short[1],p.cooldowns.skill],['E',short[2],p.cooldowns.buff],['R',short[3],p.cooldowns.ultimate],['SPACE','회피',p.cooldowns.dodge]];
   abilities.forEach(([key,name,cooldown],i)=>{
     const signature=skillCardState(s,key),x=220+i*170,y=646,w=156,blocked=cooldown>0,charged=key!=='R'||p.hype>=100,ready=!blocked&&charged;
     rect(c,x,y,w,65,ready?'#182f35f5':'#0a1825f5',6);rect(c,x,y,w,3,ready?'#a9e7c9':'#54636e',2);
@@ -211,12 +211,13 @@ export class Renderer {
     }
     c.save();if(u===s.boss&&!s.boss.active)c.globalAlpha=.5;if(auditionFigure)c.globalAlpha=s.audition.active===false?.18:.62;
     drawFighter2D(c,kind,u.x,u.y-(u.launchZ||0),auditionFigure?.84:kind==='extra'?.92:1,{unit:u,facing:u.facing||1,time:t,attack:u.attackAnim||0,attackKind:poseKind,attackProgress:poseProgress,comboIndex:poseCombo,role:poseRole,walk:walking,walkWeight,walkPhase,dodge:u.dodgeTimer||0,buffTimer:u.buffTimer||0,hitStun:u.hitStun||0,hitReaction:u.hitReaction||0,hitKind:u.hitKind,hitPower:u.hitPower,hitDir:u.hitDir||1,launchZ:u.launchZ||0,landingTimer:u.landingTimer||0,landingPower:u.landingPower||0,dead:u.hp<=0,deathProgress,windup:!!(u===s.boss&&s.boss.telegraph),domain:!!(u===s.boss&&s.boss.telegraph?.index===3),reduced});
-    if(u===s.player){poly(c,[[u.x-5,u.y+20],[u.x+5,u.y+20],[u.x,u.y+14]],CHARACTERS[u.character].color,null);text(c,'나',u.x,u.y+33,8,CHARACTERS[u.character].color,700,'center')}
+    if(u===s.player){poly(c,[[u.x-5,u.y+20],[u.x+5,u.y+20],[u.x,u.y+14]],CHARACTERS[u.character].color,null);if(!domainHazard(s))text(c,u.character==='director'?'감독':poseRole==='bow'?'배우 · 궁수':u.buffTimer>0?'검사 · 몰입':'배우 · 검사',u.x,Math.min(637,u.y+33),9,CHARACTERS[u.character].color,700,'center')}
     else if(kind==='extra'){rect(c,u.x-22,u.y-195,44,3,'#142530');rect(c,u.x-22,u.y-195,44*u.hp/u.maxHp,3,'#acbba8');}
     c.restore();
    }
    drawLowHealth(c,s);
-   for(const q of s.projectiles){if(q.empowered){drawEmpoweredArrow(c,q,reduced);continue;}c.save();c.translate(q.x,q.y-57);c.rotate(Math.atan2(q.vy,q.vx));line(c,[[-27,0],[15,0]],'#dfd3b6',2);poly(c,[[24,0],[13,-4],[13,4]],'#e0edeb',INK_RENDER,.6);line(c,[[-25,-4],[-19,0],[-25,4]],q.color||'#d6c5ff',1.3);c.restore()}
+   for(const q of s.projectiles){if(q.empowered)drawEmpoweredArrow(c,q,reduced);else drawRoleArrow(c,q,reduced);}
+   drawRolePresence(c,s,t,reduced);
    drawKitEffects(c,s,t,reduced);
    drawUltimatePerformance(c,s,t,reduced);
    if(s.player.character==='director')drawCueMarks(c,s.boss,s.boss.cueMarks||0,t,reduced);
@@ -227,7 +228,7 @@ export class Renderer {
    for(const h of s.hazards)if(h.kind!=='rehearsal-light')drawSafetyOutline(c,h,s,t,reduced);
    drawJudgePatternGuides(c,s,t,reduced);
    if(!domainHazard(s))drawPrecision(c,s,reduced);drawHUD(c,s,reduced);
-   if(!s.cinematic&&!s.boss.telegraph&&!s.hazards.length){const speech=s.effects.filter(e=>e.type==='dialogue').at(-1);if(speech)drawDialogueBox(c,{...speech,speakerName:speech.actorId==='director'?'감독':speech.actorId==='actor'?'배우':BOSS_VISUALS[speech.actorId]?.name||''});}
+   if(!s.cinematic&&!domainHazard(s)){const speech=s.effects.filter(e=>e.type==='dialogue').at(-1);if(speech){const layout=dialogueLayout(c,s,speech);if(layout)drawDialogueBox(c,speech,{state:s,layout});}}
   }
   c.restore();
   if(!lobby&&s.cinematic?.kind==='domain')drawDomainCutscene(c,s,t,reduced);

@@ -35,7 +35,7 @@ test('practice uses the same first blade and second pursuit as production and re
 
 test('each selected practice opponent plays its real entrance before accepting combat input',()=>{
  for(const character of ['director','actor'])for(let stage=0;stage<4;stage++){
-  const s=createRawPractice({stage,character});assert.equal(s.cinematic.kind,'bossIntro');assert.equal(s.cinematic.actorId,BOSSES[stage].id);assert.equal(s.cinematic.duration,[2,2.2,2.4,2.8][stage]);const p=JSON.stringify(s.player),world=s.time;
+  const s=createRawPractice({stage,character});assert.equal(s.cinematic.kind,'bossIntro');assert.equal(s.cinematic.actorId,BOSSES[stage].id);assert.equal(s.cinematic.duration,[3,3.2,3.4,3.8][stage]);const p=JSON.stringify(s.player),world=s.time;
   stepPractice(s,{attackPressed:true,skill:true,buff:true,dodge:true,right:true},1/30);assert.equal(JSON.stringify(s.player),p);assert.equal(s.time,world);finishIntro(s);stepPractice(s);assert.equal(s.stats.skills,0);assert.equal(s.stats.hits,0);assert.equal(s.status,'playing');
  }
 });

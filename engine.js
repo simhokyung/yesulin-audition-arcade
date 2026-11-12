@@ -111,7 +111,7 @@ export function isInsideHazard(x,y,h,margin=0){
 export function getTakeoverView(h){
   if(!h)return null;
   const safeRegions=h.safeRegions||[{type:'ellipse',x:h.safeX,y:h.safeY,radius:h.safeRadius,radiusY:h.safeRadiusY}];
-  return {type:h.domainType||'safezone',safeRegions,dangerRegions:h.dangerRegions||[],nextSafeRegions:h.nextSafeRegions||[],pursuitState:h.pursuitState||null,pursuitVariant:h.pursuitVariant||null,section:h.section||null,beatIndex:h.domainPhase||0,beatCount:h.phaseCount||1,previewRegions:h.previewRegions||[],aimPoint:h.aimPoint||null,origin:h.origin||null,slashes:h.slashes||[],waves:h.waves||[],bladeCheckpoint:h.bladeCheckpoint||0,arrivalSeconds:h.arrivalSeconds??null,panels:h.panels||[],safeIndex:h.safeIndex,nextSafeIndex:h.nextSafeIndex,phaseName:h.phaseName||h.name,phaseRemaining:!h.active?h.remaining:h.phaseRemaining??h.life,phaseDuration:!h.active?h.duration:h.phaseDuration??h.totalLife,phaseIndex:h.domainPhase||0,phaseCount:h.phaseCount||1,pulseActive:!!h.active&&h.lethalActive!==false,warning:!h.active||!!h.phaseWarning,guide:{x:h.safeX,y:h.safeY},instruction:h.instruction||'안전 조명 안으로 이동하세요.'};
+  return {type:h.domainType||'safezone',safeRegions,dangerRegions:h.dangerRegions||[],nextSafeRegions:h.nextSafeRegions||[],pursuitState:h.pursuitState||null,pursuitVariant:h.pursuitVariant||null,section:h.section||null,shotIndex:h.shotIndex||0,shotCount:h.section==='burst'?7:h.slashes?.length||0,nextShotIn:h.nextShotIn??null,beatIndex:h.domainPhase||0,beatCount:h.phaseCount||1,previewRegions:h.previewRegions||[],aimPoint:h.aimPoint||null,origin:h.origin||null,slashes:h.slashes||[],waves:h.waves||[],bladeCheckpoint:h.bladeCheckpoint||0,arrivalSeconds:h.arrivalSeconds??null,panels:h.panels||[],safeIndex:h.safeIndex,nextSafeIndex:h.nextSafeIndex,phaseName:h.phaseName||h.name,phaseRemaining:!h.active?h.remaining:h.phaseRemaining??h.life,phaseDuration:!h.active?h.duration:h.phaseDuration??h.totalLife,phaseIndex:h.domainPhase||0,phaseCount:h.phaseCount||1,pulseActive:!!h.active&&h.lethalActive!==false,warning:!h.active||!!h.phaseWarning,guide:{x:h.safeX,y:h.safeY},instruction:h.instruction||'안전 조명 안으로 이동하세요.'};
 }
 function domainTitle(h,v){
  if(h.domainType==='mask-panels'){const panel=h.panels?.find(p=>p.x===h.safeX);return `${panel?.label||''}번 ${['원','마름모','삼각형'][panel?.index||0]} 패널로 이동`;}
@@ -144,7 +144,7 @@ export function getDomainGuide(s,h){
 export function createGame({character='director',difficulty='standard',seed=42,stage=0,skipIntro=false,mode='story',duration=90}={}){
   if(!CHARACTERS[character])character='director';if(!DIFFICULTIES[difficulty])difficulty='standard';
   mode=mode==='challenge'?'challenge':mode==='booth'?'booth':'story';if(isRankedRun({mode})){seed=424242;difficulty='standard';stage=0;skipIntro=true;}duration=[60,90,120].includes(duration)?duration:90;
-  const s={version:14,runCharacter:character,dialogue:null,dialogueCooldown:0,dialogueHistory:{},lastDamage:null,followups:[],rehearsal:null,audition:null,playerHistory:[],introducedBosses:[],cinematic:null,pendingUltimate:false,mode,duration:mode==='booth'?duration:0,timeLeft:mode==='challenge'?null:mode==='booth'?duration:0,runTime:0,round:0,transitionTimer:0,endReason:null,domainDeath:null,inputBuffer:{},scoreExact:0,multiplier:1,fever:0,lastJustAttack:0,rng:seed>>>0,seed:seed>>>0,uid:0,status:'playing',difficulty,stage:0,time:0,stageTime:0,score:0,combo:0,maxCombo:0,comboTimer:0,
+  const s={version:15,runCharacter:character,dialogue:null,dialogueCooldown:0,dialogueHistory:{},lastDamage:null,followups:[],rehearsal:null,audition:null,playerHistory:[],introducedBosses:[],cinematic:null,pendingUltimate:false,mode,duration:mode==='booth'?duration:0,timeLeft:mode==='challenge'?null:mode==='booth'?duration:0,runTime:0,round:0,transitionTimer:0,endReason:null,domainDeath:null,inputBuffer:{},scoreExact:0,multiplier:1,fever:0,lastJustAttack:0,rng:seed>>>0,seed:seed>>>0,uid:0,status:'playing',difficulty,stage:0,time:0,stageTime:0,score:0,combo:0,maxCombo:0,comboTimer:0,
     player:{...recoilDefaults(),x:270,y:500,hp:280,maxHp:280,energy:100,maxEnergy:100,hype:0,character,role:'sword',facing:1,invuln:0,attackAnim:0,attackKind:'',dodgeTimer:0,dodgeElapsed:0,dodgeId:0,lastJustDodge:-1,dodgeX:0,dodgeY:0,attackCooldown:0,attackId:0,comboIndex:0,chainTimer:0,precisionWindow:false,precisionQueued:false,precisionAttempted:false,queuedAttack:false,timingGrade:'',timingTimer:0,swapCooldown:0,hitFlash:0,slow:0,buff:false,combo:0,cooldowns:{skill:0,buff:0,dodge:0,role:0,ultimate:0}},
     boss:null,enemies:[],hazards:[],projectiles:[],effects:[],spotlight:{x:480,y:490,radius:105,radiusY:62,active:true,timer:0},
     stats:{extraActivations:{},extraCompletions:{},extraSuccesses:{},counterWindows:0,counterDamage:0,rehearsals:0,auditionSuccesses:0,auditionMistakes:0,patternCasts:{},takeoverCasts:{},takeoverActivations:{},takeoverSurvived:{},damageDealt:0,damageTaken:0,hits:0,dodges:0,perfectDodges:0,justDodges:0,justHits:0,finishers:0,maxMultiplier:1,bossKills:0,skills:0,buffs:0,adlibs:0,methodFinishers:0,cueDetonations:0,crewBursts:0,blocks:0,swaps:0,ultimates:0,kills:0,stagesCleared:0,spotlightSeconds:0},
@@ -164,7 +164,7 @@ export function startStage(s,index,{retry=false,entrance=false}={}){
   s.spotlight={x:490,y:480,radius:105,radiusY:62,active:true,timer:0};
   words(s,retry?'오늘도 무사히 크랭크인!':ranked?`STAGE ${s.stage+1} · 체력 +65`:'한 씬 더! 체력 +100',640,282,'#dfff70',1.3);
   speak(s,'start');
-  if(entrance||!retry&&!s.introducedBosses.includes(config.id)){if(!s.introducedBosses.includes(config.id))s.introducedBosses.push(config.id);startCinematic(s,'bossIntro',config.id,config.name+' · '+config.subtitle,[2,2.2,2.4,2.8][index],s.boss.x,s.boss.y);}
+  if(entrance||!retry&&!s.introducedBosses.includes(config.id)){if(!s.introducedBosses.includes(config.id))s.introducedBosses.push(config.id);startCinematic(s,'bossIntro',config.id,config.name+' · '+config.subtitle,[3,3.2,3.4,3.8][index],s.boss.x,s.boss.y);}
   return s;
 }
 
@@ -391,7 +391,7 @@ function domain(s,b,name,warning,life,mult,customRadius){
   const count=b.takeoverCount++;const type=b.id==='sukuna'&&count%2===1?'chasing-slashes':{ignis:'moving-light',mime:'mask-panels',gojo:'lens-corridors',sukuna:'blade-waves'}[b.id];
   if(type==='chasing-slashes'){name='무대 장악 · 종막 집행 · 추격 난무';b.telegraph.name=name;b.attackKind=name;const cut=s.effects.findLast(e=>e.type==='domaincut'&&e.bossId===b.id);if(cut){cut.text=name;cut.subtitle='조준이 고정되면 방향 전환 · 실제 칼날 접촉 즉사';}}
   s.stats.takeoverCasts[type]=(s.stats.takeoverCasts[type]||0)+1;
-  const total=type==='chasing-slashes'?13.15:{ignis:4.8,mime:6.8,gojo:8.95,sukuna:21.35}[b.id];
+  const total=type==='chasing-slashes'?8.05:{ignis:4.8,mime:6.8,gojo:8.95,sukuna:21.35}[b.id];
   const h=addHazard(s,b,'safezone',name,warning,{x:640,y:480,radius:1000,radiusY:500,safeX,safeY,safeRadius,safeRadiusY:safeRadius*.6,life:total,damage:b.damage*mult,kind:'domain',domainType:type,domainPhase:0,elapsed:0,phaseElapsed:0,phaseWarning:false,lethalActive:true,phaseCount:b.id==='sukuna'?5:b.id==='gojo'?4:b.id==='mime'?2:1,baseSafeX:safeX,baseSafeY:safeY});
   configureDomainPhase(s,h,0,false);
   s.spotlight.x=h.safeX;s.spotlight.y=h.safeY;s.spotlight.radius=h.safeRadius;s.spotlight.radiusY=h.safeRadiusY;s.spotlight.timer=-warning-total;s.spotlight.locked=warning+total;
@@ -492,13 +492,13 @@ function updateBlades(s,h,dt){
  const nav=bladeNavigation(s.player,h);h.safeX=nav.target.x;h.safeY=nav.target.y;h.arrivalSeconds=nav.arrivalSeconds;h.nextSafeRegions=[safeEllipse(nav.target.x,nav.target.y,22,16)];s._bladeSweepReady=true;
 }
 
-function pursuitEvent(s,h,q,kind){event(s,'pursuitSlash',q.x??q.originX,q.y??q.originY,{kind,slashId:q.id,phase:h.domainPhase,beatIndex:h.domainPhase,beatCount:h.phaseCount,section:h.section,variation:h.pursuitVariant,strikeIndex:q.index+1,strikeCount:q.count,followup:q.kind==='followup',cross:q.kind==='cross',originX:q.originX,originY:q.originY,normalX:q.normalX,normalY:q.normalY,direction:q.angle,life:kind==='tracking'?.5:.35,maxLife:kind==='tracking'?.5:.35});}
+function pursuitEvent(s,h,q,kind){event(s,'pursuitSlash',q.x??q.originX,q.y??q.originY,{kind,slashId:q.id,phase:h.domainPhase,beatIndex:h.domainPhase,beatCount:h.phaseCount,section:h.section,variation:h.pursuitVariant,strikeIndex:q.index+1,strikeCount:q.count,shotIndex:q.index+1,shotCount:q.count,globalShotIndex:h.domainPhase*7+q.index+1,scheduledFireTime:q.fireAt!==undefined&&h.burstStartTime!==undefined?h.burstStartTime+q.fireAt:null,actualFireTime:kind==='launch'?s.time:null,followup:q.kind==='followup',cross:q.kind==='cross',originX:q.originX,originY:q.originY,normalX:q.normalX,normalY:q.normalY,direction:q.angle,life:kind==='tracking'?.5:.35,maxLife:kind==='tracking'?.5:.35});}
 function pursuitAim(s,h){
  const p=s.player,o=h.origin;h.aimPoint={x:p.x,y:p.y};const angle=Math.atan2(p.y-o.y,p.x-o.x),old=h.history[0]||p,dx=p.x-old.x,dy=p.y-old.y;
  const follow=Math.hypot(dx,dy)>12?Math.atan2(-dy,-dx):angle+Math.PI/2;
  h.aimAngles=h.section==='final'?[angle-.72,angle,angle+.72]:[angle];
  h.previewRegions=h.aimAngles.map((a,i)=>({type:'lane',x:p.x,y:p.y,width:3200,height:h.section==='final'?60:54,angle:a,slashId:h.slashes[i].id,followup:h.section==='pincer',cross:h.section==='final'}));
- for(let i=0;i<h.slashes.length;i++)positionPursuitSlash(h.slashes[i],h.aimAngles[i],p,h.domainPhase);
+ for(let i=0;i<h.slashes.length;i++)positionPursuitSlash(h.slashes[i],h.aimAngles[i],p,h.section==='final'?9:h.domainPhase);
  const perpendicular={x:-Math.sin(angle),y:Math.cos(angle)},options=[-1,1].map(sign=>({x:clamp(p.x+perpendicular.x*sign*150,90,1190),y:clamp(p.y+perpendicular.y*sign*150,352,612)}));
  h.target=options.sort((a,b)=>groundDistance(a,{x:640,y:482})-groundDistance(b,{x:640,y:482}))[0];
 }
@@ -518,19 +518,64 @@ function pursuitEscape(p,lanes){
  }
  return best||{x:640,y:480};
 }
+
+function configureBurst(s,h,index){
+ h.domainPhase=index;h.phaseCount=3;h.section='burst';h.pursuitVariant=index===0?'horizontal-burst':'vertical-burst';h.pursuitState='tracking';h.phaseWarning=true;h.lethalActive=true;h.phaseElapsed=0;h.phaseDuration=2.85;h.phaseRemaining=2.85;h.sweptHit=false;h.safeRegions=[];h.dangerRegions=[];h.previewRegions=[];h.nextSafeRegions=[];h.shotIndex=0;h.nextShotIn=1;h.burstMirror=s.boss.phase===2;h.burstStartX=s.player.x;h.burstMemory=h.active?{x:s.player.x,y:s.player.y}:null;h.burstStartTime=h.active?s.time:undefined;h.phaseName=index===0?'좌우 7연사 · 중간 방향 반전':'상하 7연사 · 가로 이동';h.trackingPending=false;
+ h.slashes=Array.from({length:7},(_,i)=>({id:++s.uid,index:i,count:7,kind:'burst',lockAt:.4+i*.2,fireAt:1+i*.2,tracking:true,locked:false,started:false,finished:false,passNotified:false,trackingNotified:false,aimMode:i===1||i===2?'memory':'current'}));
+ for(const q of h.slashes)aimBurstSlash(s,h,q);const nav=burstNavigation(s.player,h);h.target=nav.target;h.safeX=nav.target.x;h.safeY=nav.target.y;h.safeRadius=22;h.safeRadiusY=16;h.instruction='7연사 준비! 고정된 선을 보고 계속 움직이세요.';
+}
+function aimBurstSlash(s,h,q){
+ const positive=(q.index%2===0)!==h.burstMirror,angle=h.domainPhase===0?(positive?0:Math.PI):(positive?Math.PI/2:-Math.PI/2),aim=q.aimMode==='memory'&&h.burstMemory?{...h.burstMemory,y:h.domainPhase===0?h.burstMemory.y+(h.burstMirror?-70:70):h.burstMemory.y}:s.player;
+ positionPursuitSlash(q,angle,aim,0);q.duration=.45;q.speed=(q.normalEnd-q.normalStart)/q.duration;q.aimPoint={x:aim.x,y:aim.y};q.warningRemaining=Math.max(0,q.fireAt-h.phaseElapsed);
+ q.preview={type:'lane',x:aim.x,y:aim.y,width:3200,height:q.height,angle,slashId:q.id,shotIndex:q.index+1,shotCount:7,tracking:!q.locked,locked:q.locked,warningRemaining:q.warningRemaining};
+}
+function burstNavigation(p,h){
+ if(!h.active)return{target:{x:p.x,y:480},navigationPhase:'prepare'};
+ if(h.domainPhase===0){const reverse=h.phaseElapsed>=1.05,towardBottom=h.burstMirror?!reverse:reverse;return{target:{x:p.x,y:reverse&&h.phaseElapsed<1.35?p.y:towardBottom?624:340},navigationPhase:reverse?'reverse':'outbound'};}
+ return{target:{x:h.burstStartX<640?1204:76,y:p.y},navigationPhase:'cross'};
+}
+function burstGuide(s,h,v){
+ const p=s?.player||{x:h.safeX,y:h.safeY},nav=burstNavigation(p,h),insideSafe=!outsideDomainSafe(p.x,p.y,h),direction=h.domainPhase===0?((h.burstMirror?nav.navigationPhase!=='reverse':nav.navigationPhase==='reverse')?'아래':'위'):(h.burstStartX<640?'오른쪽':'왼쪽');
+ const instruction=!h.active?'7연사 준비! 무대 중앙 높이로 이동하세요.':h.domainPhase===0?(nav.navigationPhase==='reverse'?(h.phaseElapsed<1.35?'방향 반전 준비! 앞 칼날이 지나가면 반대로 이동하세요!':`지금 방향 반전! ${h.burstMirror?'위':'아래'}로 계속 이동하며 남은 칼날을 피하세요!`):`좌우에서 7연사! ${h.burstMirror?'아래':'위'}로 계속 이동하고 반전 신호를 기다리세요!`):`위아래에서 7연사! ${h.burstStartX<640?'오른쪽':'왼쪽'}으로 계속 이동하세요!`;
+ const navigationCue=!h.active?'prepare':nav.navigationPhase==='reverse'?(h.phaseElapsed<1.35?'turn-wait':'turn'):'move',atBoundary=Math.abs(nav.target.x-p.x)<4&&Math.abs(nav.target.y-p.y)<4,directionLabel=!h.active?'중앙 높이로':navigationCue==='turn-wait'?'반전 준비 · 잠깐 유지':atBoundary?'끝에서 잠깐 유지':`${direction}${direction.endsWith('쪽')?'으로':'로'} 계속`;
+ return{...v,...nav,navigationCue,directionLabel,continuous:true,targetRegion:{type:'ellipse',x:nav.target.x,y:nav.target.y,radius:22,radiusY:16},targetReached:groundDistance(p,nav.target)<12,destinationReached:groundDistance(p,nav.target)<12,tracking:h.pursuitState==='tracking',aimLocked:h.pursuitState!=='tracking',pursuitState:h.pursuitState,phase:h.domainPhase,insideSafe,dangerousNow:!!h.active&&!insideSafe,remaining:!h.active?h.remaining:h.phaseRemaining,title:`${h.domainPhase+1}/3 · ${h.phaseName}`,instruction,timerLabel:!h.active?'공격까지':'7연사 진행',shotIndex:h.shotIndex,shotCount:7,nextShotIn:h.nextShotIn,progress:clamp(1-(!h.active?h.remaining:h.phaseRemaining)/(!h.active?h.duration:h.phaseDuration),0,1)};
+}
+function projectedBurstHit(s,h){
+ if(!h.active)return false;return h.slashes.some(q=>{const elapsed=h.phaseElapsed+(s._bladeStepDt||0)-q.fireAt;if(elapsed<0||q.finished)return false;return sweptPursuitCollision(s._movementStart,s.player,{...q,started:true,previousNormalPosition:q.normalPosition,normalPosition:q.normalStart+(q.normalEnd-q.normalStart)*clamp(elapsed/q.duration,0,1)});});
+}
+function updateBurst(s,h,dt){
+ if(!h.burstMemory){h.burstMemory={x:s.player.x,y:s.player.y};h.burstStartTime=s.time-dt;}
+ h.elapsed+=dt;h.phaseElapsed+=dt;h.phaseRemaining=Math.max(0,h.phaseDuration-h.phaseElapsed);h.sweptHit=false;
+ for(const q of h.slashes){
+  if(!q.locked){aimBurstSlash(s,h,q);if(!q.trackingNotified&&(q.index===0||h.slashes[q.index-1].locked)){q.trackingNotified=true;pursuitEvent(s,h,q,'tracking');}if(h.phaseElapsed+1e-9>=q.lockAt){q.locked=true;q.tracking=false;q.preview.tracking=false;q.preview.locked=true;pursuitEvent(s,h,q,'lock');}}
+  q.warningRemaining=Math.max(0,q.fireAt-h.phaseElapsed);if(q.preview)q.preview.warningRemaining=q.warningRemaining;
+  const elapsed=h.phaseElapsed-q.fireAt;if(elapsed<-1e-9)continue;
+  if(!q.started){q.started=true;h.shotIndex++;pursuitEvent(s,h,q,'launch');}
+  const wasFinished=q.finished;q.previousNormalPosition=q.normalPosition;const r=clamp(elapsed/q.duration,0,1);q.normalPosition=q.normalStart+(q.normalEnd-q.normalStart)*r;q.x=q.normalX*q.normalPosition+q.tangentX*q.tangentPosition;q.y=q.normalY*q.normalPosition+q.tangentY*q.tangentPosition;q.finished=elapsed>=q.duration;
+  q.region={type:'lane',x:q.x,y:q.y,width:q.width,height:q.height,angle:q.angle,slashId:q.id,shotIndex:q.index+1,shotCount:7};
+  if(!wasFinished&&sweptPursuitCollision(s._movementStart||s.player,s.player,q))h.sweptHit=true;
+  if(!q.passNotified&&Math.hypot(q.x-s.player.x,q.y-s.player.y)<160){q.passNotified=true;pursuitEvent(s,h,q,'pass');}
+ }
+ h.dangerRegions=h.slashes.filter(q=>q.started&&!q.finished).map(q=>q.region);const next=h.slashes.find(q=>!q.locked);h.previewRegions=h.slashes.filter(q=>q.locked&&!q.started||q===next).map(q=>q.preview);h.nextShotIn=Math.max(0,h.slashes.find(q=>!q.started)?.fireAt-h.phaseElapsed)||0;h.pursuitState=h.shotIndex?'flight':h.slashes.some(q=>q.locked)?'locked':'tracking';h.phaseWarning=!h.shotIndex;
+ const nav=burstNavigation(s.player,h);h.target=nav.target;h.safeX=nav.target.x;h.safeY=nav.target.y;h.nextSafeRegions=[safeEllipse(nav.target.x,nav.target.y,22,16)];s._bladeSweepReady=true;
+ if(h.phaseRemaining<=1e-9&&!h.sweptHit)configurePursuit(s,h,h.domainPhase+1);
+}
+
 function configurePursuit(s,h,index){
- h.domainPhase=index;h.phaseCount=10;h.section=index<6?'single':index<9?'pincer':'final';h.pursuitVariant=index<6?'single':index<9?'pincer':'cross';h.pursuitState='tracking';h.phaseWarning=true;h.lethalActive=true;h.phaseElapsed=0;h.phaseDuration=index===9?.35:.2;h.phaseRemaining=h.phaseDuration;h.sweptHit=false;h.safeRegions=[];h.dangerRegions=[];h.nextSafeRegions=[];h.history=[];
- h.origin=[{x:-80,y:400},{x:1360,y:570},{x:320,y:180},{x:960,y:780},{x:-80,y:260},{x:1360,y:700},{x:-80,y:700},{x:1360,y:260},{x:640,y:180},{x:640,y:780}][index];h.slashes=Array.from({length:index===9?3:1},(_,i)=>({id:++s.uid,index:i,count:index===9?3:1,kind:index===9?'cross':index>=6?'followup':'main',started:false,finished:false,passNotified:false}));
- pursuitAim(s,h);h.safeX=h.target.x;h.safeY=h.target.y;h.safeRadius=22;h.safeRadiusY=16;h.phaseName=index<6?`단발 연사 ${index+1}/6`:index<9?`시간차 협공 ${index-5}/3`:'3방향 동시 마무리';h.instruction='붉은 조준이 따라옵니다. 계속 움직이세요!';if(h.active)pursuitEvent(s,h,h.slashes[0],'tracking');else h.trackingPending=true;
+ if(index<2){configureBurst(s,h,index);return;}
+ h.domainPhase=index;h.phaseCount=3;h.shotIndex=0;h.nextShotIn=null;h.section='final';h.pursuitVariant='cross';h.pursuitState='tracking';h.phaseWarning=true;h.lethalActive=true;h.phaseElapsed=0;h.phaseDuration=.35;h.phaseRemaining=h.phaseDuration;h.sweptHit=false;h.safeRegions=[];h.dangerRegions=[];h.nextSafeRegions=[];h.history=[];
+ h.origin={x:640,y:780};h.slashes=Array.from({length:3},(_,i)=>({id:++s.uid,index:i,count:3,kind:'cross',started:false,finished:false,passNotified:false}));
+ pursuitAim(s,h);h.safeX=h.target.x;h.safeY=h.target.y;h.safeRadius=22;h.safeRadiusY=16;h.phaseName='3방향 동시 마무리';h.instruction='붉은 조준이 따라옵니다. 계속 움직이세요!';if(h.active)pursuitEvent(s,h,h.slashes[0],'tracking');else h.trackingPending=true;
 }
 function pursuitNavigation(p,h){
  const escaped=h.active&&h.pursuitState!=='tracking'&&!h.previewRegions.some(r=>regionContains(p.x,p.y,r,8));
  return {target:escaped?{x:p.x,y:p.y}:h.target||{x:h.safeX,y:h.safeY},reached:escaped};
 }
 function pursuitGuide(s,h,v){
+ if(h.section==='burst')return burstGuide(s,h,v);
  const p=s?.player||{x:h.safeX,y:h.safeY},navigation=pursuitNavigation(p,h),target=navigation.target,targetReached=navigation.reached,tracking=h.pursuitState==='tracking',locked=h.pursuitState==='locked',insideSafe=!outsideDomainSafe(p.x,p.y,h);
  const instruction=!h.active?'추격 난무! 붉은 조준은 따라옵니다. 고정 신호 뒤 방향을 꺾으세요.':tracking?`${h.phaseName} · 다시 조준! 움직이며 고정 신호를 보세요!`:locked?(targetReached?'조준 고정! 선 밖으로 나왔습니다. 발사를 기다리세요.':'조준 고정! 화살표 쪽으로 방향을 꺾어 선을 벗어나세요!'):targetReached?(h.domainPhase===h.phaseCount-1?'마지막 세 칼날이 지날 때까지 선 밖 유지! 이후 금색 반격 기회를 잡으세요.':'짧게 선 밖 유지! 곧 다시 조준합니다. 다음 방향 전환을 준비하세요.'):h.section==='final'?'3방향 동시 참격! 세 예고선 밖으로 빠져나가세요.':h.section==='pincer'?'시간차 협공! 새 방향의 칼날을 피하고 다음 조준을 확인하세요.':'단발 칼날! 선 밖에서 다음 고정 신호를 준비하세요!';
- return {...v,target,targetRegion:{type:'ellipse',x:target.x,y:target.y,radius:22,radiusY:16},targetReached,destinationReached:targetReached,tracking,aimLocked:!tracking,pursuitState:h.pursuitState,phase:h.domainPhase,remaining:!h.active?h.remaining:h.phaseRemaining,insideSafe,dangerousNow:!!h.active&&!insideSafe,title:`${h.domainPhase+1}/10 · ${h.phaseName}`,instruction,timerLabel:!h.active?'공격까지':tracking?'조준 추적':locked?'발사까지':'칼날 통과',progress:clamp(1-(!h.active?h.remaining:h.phaseRemaining)/Math.max(.01,!h.active?h.duration:h.phaseDuration),0,1)};
+ return {...v,target,targetRegion:{type:'ellipse',x:target.x,y:target.y,radius:22,radiusY:16},targetReached,destinationReached:targetReached,tracking,aimLocked:!tracking,pursuitState:h.pursuitState,phase:h.domainPhase,remaining:!h.active?h.remaining:h.phaseRemaining,insideSafe,dangerousNow:!!h.active&&!insideSafe,title:`${h.domainPhase+1}/3 · ${h.phaseName}`,instruction,timerLabel:!h.active?'공격까지':tracking?'조준 추적':locked?'발사까지':'칼날 통과',progress:clamp(1-(!h.active?h.remaining:h.phaseRemaining)/Math.max(.01,!h.active?h.duration:h.phaseDuration),0,1)};
 }
 /** Exact relative-motion intersection against the current finite moving rectangle. */
 export function sweptPursuitCollision(from,to,q){
@@ -540,27 +585,29 @@ export function sweptPursuitCollision(from,to,q){
  }return enter<exit&&exit>0&&enter<1;
 }
 function projectedPursuitHit(s,h){
+ if(h.section==='burst')return projectedBurstHit(s,h);
  if(!h.active||h.pursuitState!=='flight')return false;
  return h.slashes.some(q=>{const elapsed=h.phaseElapsed+(s._bladeStepDt||0)-q.delay;if(elapsed<0||q.finished)return false;return sweptPursuitCollision(s._movementStart,s.player,{...q,started:true,previousNormalPosition:q.normalPosition,normalPosition:q.normalStart+(q.normalEnd-q.normalStart)*clamp(elapsed/q.duration,0,1)});});
 }
 function updatePursuit(s,h,dt){
+ if(h.section==='burst'){updateBurst(s,h,dt);return;}
  if(h.trackingPending){h.trackingPending=false;pursuitEvent(s,h,h.slashes[0],'tracking');}
  h.elapsed+=dt;h.phaseElapsed+=dt;h.phaseRemaining=Math.max(0,h.phaseDuration-h.phaseElapsed);h.sweptHit=false;
  if(h.pursuitState==='tracking'){
   h.history.push({x:s.player.x,y:s.player.y,time:s.time});while(h.history.length>1&&s.time-h.history[0].time>.35)h.history.shift();pursuitAim(s,h);
-  if(h.phaseRemaining<=1e-9){h.pursuitState='locked';h.phaseElapsed=0;h.phaseDuration=h.domainPhase===9?1.15:.65;h.phaseRemaining=h.phaseDuration;h.target=pursuitEscape(s.player,h.previewRegions);pursuitEvent(s,h,h.slashes[0],'lock');}
+  if(h.phaseRemaining<=1e-9){h.pursuitState='locked';h.phaseElapsed=0;h.phaseDuration=h.section==='final'?1.15:.65;h.phaseRemaining=h.phaseDuration;h.target=pursuitEscape(s.player,h.previewRegions);pursuitEvent(s,h,h.slashes[0],'lock');}
  }else if(h.pursuitState==='locked'){
-  if(h.phaseRemaining<=1e-9){h.pursuitState='flight';h.phaseWarning=false;h.phaseElapsed=0;h.phaseDuration=h.domainPhase===9?.85:h.domainPhase>=6?.55:.25;h.phaseRemaining=h.phaseDuration;}
+  if(h.phaseRemaining<=1e-9){h.pursuitState='flight';h.phaseWarning=false;h.phaseElapsed=0;h.phaseDuration=h.section==='final'?.85:.25;h.phaseRemaining=h.phaseDuration;}
  }else{
   for(const q of h.slashes){const elapsed=h.phaseElapsed-q.delay;if(elapsed<0)continue;const wasFinished=q.finished;q.previousNormalPosition=q.normalPosition;
-   if(!q.started){q.started=true;pursuitEvent(s,h,q,'launch');}
+   if(!q.started){q.started=true;h.shotIndex=(h.shotIndex||0)+1;pursuitEvent(s,h,q,'launch');}
    const r=clamp(elapsed/q.duration,0,1);q.normalPosition=q.normalStart+(q.normalEnd-q.normalStart)*r;q.x=q.normalX*q.normalPosition+q.tangentX*q.tangentPosition;q.y=q.normalY*q.normalPosition+q.tangentY*q.tangentPosition;q.finished=elapsed>=q.duration;
    q.region={type:'lane',x:q.x,y:q.y,width:q.width,height:q.height,angle:q.angle,slashId:q.id,followup:q.kind==='followup',cross:q.kind==='cross'};
    if(!wasFinished&&sweptPursuitCollision(s._movementStart||s.player,s.player,q))h.sweptHit=true;
    if(!q.passNotified&&Math.hypot(q.x-s.player.x,q.y-s.player.y)<160){q.passNotified=true;pursuitEvent(s,h,q,'pass');}
   }
   h.dangerRegions=h.slashes.filter(q=>q.started&&!q.finished).map(q=>q.region);
-  if(h.phaseRemaining<=1e-9&&!h.sweptHit&&h.domainPhase<9)configurePursuit(s,h,h.domainPhase+1);
+  if(h.phaseRemaining<=1e-9&&!h.sweptHit&&h.domainPhase<h.phaseCount-1)configurePursuit(s,h,h.domainPhase+1);
  }
  const nav=pursuitNavigation(s.player,h);h.safeX=nav.target.x;h.safeY=nav.target.y;h.nextSafeRegions=[safeEllipse(nav.target.x,nav.target.y,22,16)];s._bladeSweepReady=true;
 }

@@ -55,7 +55,7 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   const rise=reduceMotion?0:14*(1-ease(p*2));
   const rules={ignis:['움직이는 조명','밝은 조명 안에서 빛을 따라가세요','조명이 계속 이동합니다 · 멈춰 있으면 위험'],mime:['진짜 가면 찾기','진짜 패널을 보고 다음 신호에 이동!','◇ ○ △ 표시 확인 · 금빛 다음 패널로 열린 통로 이동'],gojo:['교차 프레임','가로 → 세로 · 바뀌는 빈틈으로!','예고 동안 이동 · 밝은 통로 안에서 교차 공격 회피'],sukuna:['다가오는 다섯 차례 칼날 벽','방향을 보고 민트색 빈틈에 맞추세요!','좌우 · 상하 · 대각선에서 접근 · 칼날이 지나갈 때까지 빈틈 유지']};
   const takeoverTitle=zone?.name?.replace(/^무대 장악\s*[·:]\s*/, '')||visual.takeover;
-  let rule=chasing?['단발 연사 → 시간차 협공 → 3방향 피날레','빨강은 계속 이동, 흰색이면 방향 전환!','조준이 멈추면 방향 전환 · 마지막 뒤 황금 반격!']:rules[id]||rules.ignis;if(id==='mime'&&zone){const m=mimePresentation(s,zone);rule=['목적지 발판 찾기',`${m.symbol} 밝은 민트 발판으로!`,'민트색 하나 = 지금 목적지 · 금색 점선 = 다음 발판'];}
+  let rule=chasing?['가로 7연사 → 세로 7연사 → 3방향 피날레','가로는 위아래, 세로는 좌우로 계속 이동!','첫 7연사는 중간 반전! · 마지막 뒤 황금 반격']:rules[id]||rules.ignis;if(id==='mime'&&zone){const m=mimePresentation(s,zone);rule=['목적지 발판 찾기',`${m.symbol} 밝은 민트 발판으로!`,'민트색 하나 = 지금 목적지 · 금색 점선 = 다음 발판'];}
   c.fillStyle=color;c.font='700 12px "Noto Sans KR",sans-serif';c.fillText('무 대 장 악',640,529+rise);
   c.fillStyle='#ffffff';c.font='900 53px "Noto Sans KR","Apple SD Gothic Neo",sans-serif';
   c.fillText(takeoverTitle,640,586+rise);
@@ -65,6 +65,18 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   c.fillText(rule[1],565,649);
   c.fillStyle='#d7e7df';c.font='600 13px "Noto Sans KR",sans-serif';c.fillText(rule[2],565,674);
   if(chasing){c.save();const locked=p>.62,ink=locked?'#f4eddc':'#f27b91';c.strokeStyle=ink;c.lineWidth=2;for(const side of [-1,1]){const cx=640+side*514,cy=290;c.beginPath();c.arc(cx,cy,34,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(cx-46,cy);c.lineTo(cx+46,cy);c.moveTo(cx,cy-46);c.lineTo(cx,cy+46);c.stroke();}c.textAlign='center';c.fillStyle=ink;c.font='800 12px "Noto Sans KR",sans-serif';c.fillText(locked?'조준 고정 → 옆으로':'추적 중 → 계속 이동',640,100);c.restore();}
-  drawTakeoverMap(c,s,zone);
+  if(chasing&&zone?.section==='burst')drawBurstLesson(c,zone);else drawTakeoverMap(c,s,zone);
   c.restore();return true;
+}
+
+function drawBurstLesson(c,h){
+ const x=983,y=534,w=265;c.save();c.fillStyle='#071e27f2';c.beginPath();c.roundRect(x,y,w,140,7);c.fill();c.textAlign='center';c.font='800 12px "Noto Sans KR",sans-serif';c.fillStyle='#d2e9dd';c.fillText('7연사 이동법',x+w/2,y+23);
+ const arrow=(xx,yy,dx,dy,color)=>{c.beginPath();c.moveTo(xx,yy);c.lineTo(xx+dx,yy+dy);c.strokeStyle=color;c.lineWidth=2;c.stroke();const a=Math.atan2(dy,dx);c.beginPath();c.moveTo(xx+dx,yy+dy);c.lineTo(xx+dx-Math.cos(a-.5)*7,yy+dy-Math.sin(a-.5)*7);c.lineTo(xx+dx-Math.cos(a+.5)*7,yy+dy-Math.sin(a+.5)*7);c.closePath();c.fillStyle=color;c.fill();};
+ for(let i=0;i<3;i++){const xx=x+44+i*(w-88)/2,yy=y+67;c.fillStyle='#24303c';c.fillRect(xx-31,yy-25,62,50);c.beginPath();c.arc(xx,yy,3.5,0,Math.PI*2);c.fillStyle='#f5fff0';c.fill();
+  if(i===0){c.strokeStyle='#ddb5c6';c.lineWidth=1;c.beginPath();c.moveTo(xx-29,yy+5);c.lineTo(xx+29,yy+5);c.stroke();arrow(xx-9,yy+15,0,-31,'#79ffe0');arrow(xx+12,yy-15,0,31,'#ffe3a4');}
+  else if(i===1){c.strokeStyle='#ddb5c6';c.lineWidth=1;c.beginPath();c.moveTo(xx+5,yy-22);c.lineTo(xx+5,yy+22);c.stroke();arrow(xx-22,yy+12,42,0,'#79ffe0');}
+  else{c.strokeStyle='#ddb5c6';c.lineWidth=1;for(const a of [-.7,0,.7]){c.beginPath();c.moveTo(xx-Math.cos(a)*26,yy-Math.sin(a)*22);c.lineTo(xx+Math.cos(a)*26,yy+Math.sin(a)*22);c.stroke();}arrow(xx,yy,0,-21,'#79ffe0');}
+  c.font='800 10px "Noto Sans KR",sans-serif';c.fillStyle='#dcebdc';c.fillText(['가로 7연사','세로 7연사','3방향'][i],xx,y+109);
+ }
+ c.font='700 10px "Noto Sans KR",sans-serif';c.fillStyle='#c8dfd5';c.fillText('중간 반전 → 가로 이동 → 선 밖',x+w/2,y+129);c.restore();
 }

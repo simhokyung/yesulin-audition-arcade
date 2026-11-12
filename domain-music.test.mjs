@@ -528,7 +528,7 @@ test('late Caden decoding cannot revive a cancelled chasing takeover or an aband
   retry.status='gameover';music.sync(retry,{enabled:true});assert.equal(c.sources[0].stopped,1);
 });
 
-test('live chasing slashes play actual tracking, lock, followup and cross events without phantom collisions', async t => {
+test('live chasing slashes play actual tracking, lock, seven-shot bursts and finale without phantom collisions', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
   for(const walk of [true,false]){
     audio.reset();const s=createPractice({character:'actor',stage:3});s.boss.takeoverCount=1;s.boss.patternIndex=1;s.boss.patternCooldown=0;
@@ -553,7 +553,7 @@ test('live chasing slashes play actual tracking, lock, followup and cross events
     for(const [kind,name] of Object.entries(names))assert.equal(heard.filter(e=>e.name===name).length,[...events.values()].filter(e=>e.kind===kind).length,kind);
     assert(heard.some(e=>e.name==='pursuit-lock'));assert(heard.some(e=>e.name==='pursuit-release'));
     assert.equal(heard.filter(e=>e.name==='fatal').length,s.endReason==='domain'?1:0);
-    if(walk){assert(heard.some(e=>e.name==='pursuit-release'&&e.meta.followup));assert(heard.some(e=>e.name==='pursuit-release'&&e.meta.cross));}
+    if(walk){assert(heard.some(e=>e.name==='pursuit-release'&&e.meta.shotCount===7));assert(heard.some(e=>e.name==='pursuit-release'&&e.meta.cross));}
     else{assert.equal(s.endReason,'domain');assert(s.stats.damageTaken>0);}
     audio.cue=cue;
   }
@@ -572,4 +572,22 @@ test('v14 counter and trial signals occur once, do not manufacture hits and resp
   await audio.setEnabled(true);heard.length=0;audio.update(s,1/60);assert.equal(heard.length,0);
   for(const name of ['counter-open','trial-light','audition-pick','pattern-replay','pattern-encore'])audio.cue(name,{eventId:name,success:true,index:3});
   assert(starts.length>count);assert(audio.sources.size<=96);audio.pause(true);assert.equal(audio.sources.size,0);
+});
+
+test('longer judge entrances sustain their swell and release it immediately on pause',async t=>{
+ const {audio}=audioHarness(t,{holdSources:true});await audio.setEnabled(true);
+ const original=audio._note.bind(audio),durations=[];audio._note=(...args)=>{durations.push(args[2]);return original(...args);};
+ audio.cue('cinematic',{kind:'bossIntro',actorId:'sukuna',duration:3.8,eventId:15001});
+ assert(durations.some(d=>d>=3.7),'opening swell must follow the extended camera shot');
+ assert(audio.duckUntil>=audio.context.currentTime+3.7);assert(audio.sources.size>0);
+ audio.pause(true);assert.equal(audio.sources.size,0);assert.equal(audio.sourceNodes.size,0);
+});
+
+test('seven rapid real release cues remain distinct and directional without false damage sounds',async t=>{
+ const {audio,starts,panners}=audioHarness(t,{holdSources:true});await audio.setEnabled(true);
+ const s={...state('sukuna'),cinematic:null,hazards:[],effects:[],player:{character:'director'},stats:{}};audio.update(s,1/60);
+ const heard=[],cue=audio.cue.bind(audio);audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};
+ for(let n=0;n<7;n++){s.effects=[{id:15010+n,type:'pursuitSlash',kind:'launch',slashId:15010+n,shotIndex:n+1,shotCount:7,normalX:n%2?1:-1,normalY:0,section:'burst'}];audio.context.currentTime+=.2;audio.update(s,.2);audio.update(s,1/60);}
+ assert.equal(heard.filter(e=>e.name==='pursuit-release').length,7);assert(!heard.some(e=>['hit','impact','fatal'].includes(e.name)));assert(starts.length>=14);assert(audio.sources.size<=96);assert(panners.every(p=>Math.abs(p.pan.value)<=.75));
+ await audio.setEnabled(false);assert.equal(audio.sources.size,0);
 });

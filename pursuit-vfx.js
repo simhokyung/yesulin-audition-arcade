@@ -12,7 +12,7 @@ function region(c,r,color,width=2,fill=null){
 }
 export function pursuitState(h,v){return v.pursuitState||h.pursuitState||'tracking';}
 export function pursuitColor(h,v){const phase=pursuitState(h,v);return phase==='tracking'?RED:phase==='locked'?WHITE:FOLLOW;}
-export function pursuitVolleyLabel(h,v={}){const phase=v.phaseIndex??h.domainPhase??0,section=v.section||h.section;return section==='single'?`단발 연사 ${phase+1} / 6`:section==='pincer'?`시간차 협공 ${phase-5} / 3`:section==='final'?'피날레 · 3방향 동시':`${phase+1} / ${v.phaseCount||h.phaseCount||1}`;}
+export function pursuitVolleyLabel(h,v={}){const phase=v.phaseIndex??h.domainPhase??0,section=v.section||h.section,shots=v.slashes||h.slashes||[],count=v.shotCount||shots[0]?.count||7;return section==='burst'?`${phase===0?'가로':'세로'} ${count}연사 · 발사 ${v.shotIndex??h.shotIndex??0} / ${count}`:section==='single'?`단발 연사 ${phase+1} / 6`:section==='pincer'?`시간차 협공 ${phase-5} / 3`:section==='final'?'피날레 · 3방향 동시':`${phase+1} / ${v.phaseCount||h.phaseCount||1}`;}
 function sight(c,r,color,state,t,reduced){
  c.save();c.translate(r.x,r.y);c.rotate(r.angle||0);
  // The future corridor remains unfilled. Fine dashed edges contrast with solid moving steel.
@@ -31,6 +31,22 @@ function reticle(c,p,color,state,t,reduced){
  for(let j=0;j<4;j++){const a=j*Math.PI/2;c.beginPath();c.arc(0,0,r,a+.15,a+.67);c.stroke();}
  line(c,[[-r-7,0],[-r+3,0]],color,1.5);line(c,[[r-3,0],[r+7,0]],color,1.5);
  line(c,[[0,-r-7],[0,-r+3]],color,1.5);line(c,[[0,r-3],[0,r+7]],color,1.5);c.restore();
+}
+function drawPreviews(c,h,v,t,reduced){
+ const burst=(v.section||h.section)==='burst',pending=(v.slashes||[]).filter(q=>!q.started&&!q.finished).sort((a,b)=>(a.fireAt??a.index)-(b.fireAt??b.index));
+ for(const r of v.previewRegions||[]){const q=(v.slashes||[]).find(q=>q.id===r.slashId),rank=q?pending.indexOf(q):0,state=burst?(q?.tracking?'tracking':q?.locked?'locked':pursuitState(h,v)):pursuitState(h,v),color=state==='tracking'?RED:state==='locked'?WHITE:'#bb9ab4';
+  c.save();c.globalAlpha=burst?(rank<=0?1:rank===1?.52:.23):1;
+  if(burst&&rank>1){c.translate(r.x,r.y);c.rotate(r.angle||0);c.setLineDash([4,10]);line(c,[[-r.width/2,0],[r.width/2,0]],color,1);c.setLineDash([]);}
+  else sight(c,r,color,state,t,reduced);c.restore();
+ }
+ if(burst){const q=pending.find(q=>q.tracking);if(q?.aimPoint)reticle(c,q.aimPoint,RED,'tracking',t,reduced);}
+}
+function burstDirection(h,g){if(g.navigationPhase==='prepare')return'중앙 높이로';if(h.domainPhase===0)return(g.navigationPhase==='reverse'?!h.burstMirror:h.burstMirror)?'아래로':'위로';return h.burstStartX<640?'오른쪽으로':'왼쪽으로';}
+function drawBurstDirection(c,s,h,g){
+ const target=g.target;if(!target)return;const p=s.player,dx=target.x-p.x,dy=target.y-p.y,len=Math.hypot(dx,dy),color=g.navigationPhase==='reverse'?'#ffe3a4':MINT;
+ if(len>14)arrow(c,p.x+dx/len*15,p.y+dy/len*15,target.x,target.y);
+ const caption=g.directionLabel||(g.navigationPhase==='prepare'?(g.targetReached?'중앙 준비 완료':'중앙 높이로'):String(g.instruction||'').startsWith('방향 반전 준비')?'반전 준비 · 잠깐 유지':g.navigationPhase==='reverse'?`반전! ${burstDirection(h,g)}`:`${burstDirection(h,g)} 계속`);
+ const side=p.x<640?1:-1,x=clamp(p.x+side*100,95,1185),y=clamp(p.y-25,356,612);box(c,x-64,y-16,128,23,'#102a33e8',4);text(c,caption,x,y+1,13,color);
 }
 function blade(c,r,slash,reduced){
  const length=r.width,half=r.height/2,kind=slash?.kind||'main';
@@ -60,7 +76,8 @@ function entryPoint(q){
 function shotOrder(c,h,v,state){
  for(const q of v.slashes||[]){if(q.finished)continue;const p=entryPoint(q);if(!p)continue;
   const color=q.started?(q.index?'#e5bbff':'#fff1dc'):'#d8cad0',next=state==='flight'&&!q.started;
-  const section=v.section||h.section,phase=v.phaseIndex??h.domainPhase??0,order=section==='single'?`${phase+1}발`:section==='pincer'?`협공 ${phase-5}`:section==='final'?`${(q.index||0)+1} / ${q.count||3}`:`${(q.index||0)+1}발`;
+  const section=v.section||h.section,phase=v.phaseIndex??h.domainPhase??0,order=section==='burst'?`${(q.index||0)+1} / ${q.count||7}`:section==='single'?`${phase+1}발`:section==='pincer'?`협공 ${phase-5}`:section==='final'?`${(q.index||0)+1} / ${q.count||3}`:`${(q.index||0)+1}발`;
+  if(section==='burst'&&!q.started&&!(v.previewRegions||[]).some(r=>r.slashId===q.id))continue;
   const x=clamp(p.x,105,1175),y=clamp(p.y,358,616),label=next?`다음 ${order}`:order;
   box(c,x-30,y-11,60,22,'#271f32d9',4);text(c,label,x,y+4,11,color);
   line(c,[[p.x-q.normalX*9,p.y-q.normalY*9],[p.x+q.normalX*8,p.y+q.normalY*8]],color,1.5);
@@ -69,23 +86,23 @@ function shotOrder(c,h,v,state){
 export function drawPursuitFloor(c,s,h,v,g,t,reduced=false){
  if(!h.active)return;
  const state=pursuitState(h,v),color=pursuitColor(h,v);c.save();clip(c);
- if(state!=='flight')for(const r of v.previewRegions||[])sight(c,r,color,state,t,reduced);
- else for(const r of v.previewRegions||[])sight(c,r,'#bb9ab4','flight',t,true);
- for(const r of v.dangerRegions||[]){const slash=(v.slashes||[]).find(a=>a.region===r||a.region&&Math.abs(a.region.x-r.x)<.01&&Math.abs(a.region.y-r.y)<.01);blade(c,r,slash,reduced);}
+ drawPreviews(c,h,v,t,reduced);
+ for(const r of v.dangerRegions||[]){const slash=(v.slashes||[]).find(a=>a.id===r.slashId||a.region===r||a.region&&Math.abs(a.region.x-r.x)<.01&&Math.abs(a.region.y-r.y)<.01);blade(c,r,slash,reduced);}
  if(state!=='flight')reticle(c,v.aimPoint||h.aimPoint,color,state,t,reduced);
  c.restore();
 }
 export function drawPursuitGuides(c,s,h,v,g,t,reduced=false){
- if(!h.active)return;
+ if(!h.active){if(g.continuous){c.save();clip(c);drawBurstDirection(c,s,h,g);c.restore();}return;}
  const state=pursuitState(h,v),color=pursuitColor(h,v),tracking=state==='tracking';c.save();clip(c);
  // Red/white sights remain readable above offensive effects, but never become opaque floor fills.
- if(state!=='flight')for(const r of v.previewRegions||[])sight(c,r,color,state,t,true);
+ if(state!=='flight'||(v.section||h.section)==='burst')drawPreviews(c,h,v,t,true);
  for(const r of v.dangerRegions||[]){
   // A quiet ground projection defines the exact rectangle; only the curved metal edge shines.
   region(c,r,'#efbed535',1.1,'#b5678420');c.save();c.translate(r.x,r.y);c.rotate(r.angle||0);c.beginPath();c.moveTo(-r.width*.49,0);c.bezierCurveTo(-r.width*.28,-r.height*.36,r.width*.23,-r.height*.49,r.width*.49,-r.height*.365);c.strokeStyle='#fff2df';c.lineWidth=1.9;c.stroke();c.restore();
  }
- if(tracking){reticle(c,v.aimPoint||h.aimPoint,color,state,t,reduced);c.restore();return;}
+ if(tracking&&!g.continuous){reticle(c,v.aimPoint||h.aimPoint,color,state,t,reduced);c.restore();return;}
  shotOrder(c,h,v,state);
+ if(g.continuous){drawBurstDirection(c,s,h,g);c.restore();return;}
  const target=g.target||v.guide,reached=!!(g.targetReached??g.destinationReached);
  if(g.targetRegion){c.setLineDash([5,5]);region(c,g.targetRegion,'#0c2c33',6);region(c,g.targetRegion,MINT,2.5);c.setLineDash([]);}
  if(target&&Number.isFinite(target.x)&&Number.isFinite(target.y)){
@@ -99,6 +116,10 @@ export function drawPursuitGuides(c,s,h,v,g,t,reduced=false){
 export function pursuitInstruction(h,v,g){
  const state=pursuitState(h,v),phase=(v.phaseIndex??h.domainPhase??0)+1,count=v.phaseCount||h.phaseCount||1,reached=!!(g.targetReached??g.destinationReached),variant=v.pursuitVariant||h.pursuitVariant,section=v.section||h.section,
   variation=section==='single'?'단발 연사':section==='pincer'?'시간차 협공':section==='final'?'3방향 피날레':{rear:'뒤따르는 후속 칼날',flank:'측면에서 꺾이는 칼날',opposed:'양쪽에서 엇갈리는 칼날',cross:'시간차 교차 칼날'}[variant]||'연속 칼날',shots=(v.slashes||[]).length||1;
+ if(section==='burst'){
+  const next=(v.slashes||[]).find(q=>!q.started&&!q.finished),nextText=next?`다음 ${next.index+1}발 · ${(g.nextShotIn??v.nextShotIn??next.warningRemaining??0).toFixed(1)}초`:'7발 발사 완료 · 남은 칼날 주의';
+  const instruction=String(g.instruction||'7연사! 민트 방향 안내를 따르세요.'),mark=instruction.indexOf('!'),title=mark>=0?instruction.slice(0,mark+1):instruction,detail=mark>=0?instruction.slice(mark+1).trim():'';return{title,tip:!h.active?detail:`${nextText} · ${detail}`,timerLabel:g.timerLabel,statusColor:g.navigationPhase==='reverse'?'#ffe3a4':MINT};
+ }
  if(!h.active)return{title:'추격 난무 준비 · 계속 이동',tip:'곧 빨간 조준이 따라옵니다 · 흰색 고정 신호를 기다리세요',timerLabel:g.timerLabel||'공격까지',statusColor:RED};
  return{title:state==='tracking'?'조준 중 · 계속 이동':state==='locked'?'조준 고정! 옆으로!':reached?(phase===count?'마지막 칼날 · 선 밖 유지':'선 밖 유지 · 다음 조준 대비'):section==='final'?'3방향 피날레! 빈틈으로!':'후속 칼날! 방향 전환',
   tip:state==='tracking'?`${pursuitVolleyLabel(h,v)} · 빨간 선이 나를 따라옵니다`:state==='locked'?`${variation} · ${shots===1?'지금 선 밖으로!':'세 방향 선 밖 빈틈으로!'}`:reached?(phase<count?'짧게 선 밖 유지 · 곧 새 조준! 다음 방향 전환 준비':`마지막 ${shots===3?'세 방향 칼날이':'칼날이'} 모두 지나가면 반격!`):section==='final'?'세 방향 동시 공격 · 민트 빈틈으로 방향 전환':section==='single'?'지금 한 발을 피하세요 · 곧 다시 조준합니다':'새 방향에서 오는 협공 · 이전 이동 방향을 바꾸세요',

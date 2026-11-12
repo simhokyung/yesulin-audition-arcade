@@ -1,7 +1,7 @@
 /** Local unlimited-challenge leaderboard. No network calls or cloud persistence. */
-export const RANKING_STORAGE_KEY = 'yesulin-ranking-v14';
-export const RANKING_RULES_VERSION = 'challenge-v14';
-const SCHEMA_VERSION = 14;
+export const RANKING_STORAGE_KEY = 'yesulin-ranking-v15';
+export const RANKING_RULES_VERSION = 'challenge-v15';
+const SCHEMA_VERSION = 15;
 const MAX_ENTRIES = 500;
 const DURATIONS = new Set([0]);
 const DIFFICULTIES = new Set(['rehearsal', 'standard', 'hard']);
@@ -32,7 +32,7 @@ export function createEntry({runId, name, crew, score, duration = 0,
   runTime = 0, endReason = 'clear', createdAt = new Date().toISOString(),
   version = SCHEMA_VERSION, mode = 'challenge', rulesVersion = RANKING_RULES_VERSION} = {}) {
   if (version !== SCHEMA_VERSION || mode !== 'challenge' || rulesVersion !== RANKING_RULES_VERSION) {
-    throw new TypeError('현재 무제한 도전 v14 규칙의 기록만 등록할 수 있습니다.');
+    throw new TypeError('현재 무제한 도전 v15 규칙의 기록만 등록할 수 있습니다.');
   }
   const id = plain(runId, 80);
   if (!id) throw new TypeError('runId가 필요합니다.');

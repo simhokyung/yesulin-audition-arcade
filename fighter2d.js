@@ -56,9 +56,9 @@ const SWING_PARTS={
 const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x)};
 export function sampleFighterMotion(o={}){
  const p=clamp(o.attackProgress??0,0,1),walking=clamp(o.walkWeight??(o.walk?1:0),0,1),gait=Math.sin(o.walkPhase??((o.time||0)*11)),melee=o.attack>0&&!['skill','ultimate'].includes(o.attackKind),swing=smooth((p-.19)/.46),recovery=smooth((p-.65)/.35),even=(o.comboIndex||1)%2===0,finish=o.comboIndex===4;
- const winding=-5*smooth(p/.19),lean=melee?(p<.19?winding:p<.65?mix(-5,finish?14:10,swing):mix(finish?14:10,0,recovery)):0;
+ const casting=o.attack>0&&o.attackKind==='skill',winding=-5*smooth(p/.19),lean=casting?(o.role==='bow'?-4*Math.sin(p*Math.PI):4*Math.sin((p+.13)*Math.PI)*(1-p)):melee?(p<.19?winding:p<.65?mix(-5,finish?14:10,swing):mix(finish?14:10,0,recovery)):0;
  const angle=melee?mix(even&&!finish?.65:-1.05,even&&!finish?-1.05:finish?1.2:.72,swing):0;
- return{p,walking,gait,melee,lean,angle,swing,recovery};
+ return{p,walking,gait,melee,casting,lean,angle,swing,recovery};
 }
 function buildSwingPart(a,kind){
  const profile=SWING_PARTS[kind];if(!profile||a.rows!==3)return;
@@ -127,6 +127,12 @@ function atlasFighter(c,kind,x,y,scale,o){
   if(rig)drawAttachedWeapon(c,a,box,m,{...o,character:kind},unitScale,true);
   drawAtlasTexture(c,a,box,rig?a.swingPart.body:a.image,rig?0:box.sx,rig?0:box.sy,unitScale,m,o);
   if(rig)drawAttachedWeapon(c,a,box,m,o,unitScale,false);
+  if(kind==='actor'&&f===8){
+   const point=(xx,yy)=>{const x=(xx*box.sw/362-a.cellW*.5)*unitScale,y=(yy*box.sh/362-(box.foot??a.foot))*unitScale,d=o.reduced?{x:0,y:0}:deformation(y,a.displayHeight,m,o);return[x+d.x,y+d.y];};
+   const vibration=o.reduced?0:Math.sin(ap*Math.PI*12)*Math.exp(-ap*2.7)*3.2;line(c,[point(216,9),point(154+vibration,89),point(232,199)],'#d4f0dd90',.85);
+   line(c,[point(176,88),point(301,87)],'#e6f0d27a',.8);
+  }
+
  };
  c.save();c.translate(x,y);c.scale(scale*(o.facing||1),scale);const recoil=o.reduced?0:clamp((o.hitReaction||0)/.3,0,1)*.08*(o.hitDir||1)*(o.facing||1),landing=o.reduced?0:clamp((o.landingTimer||0)/.22,0,1)*.045;c.rotate(recoil);c.scale(1+landing,1-landing);if(o.dead){const fall=clamp(o.deathProgress||0,0,1);if(!o.reduced)c.rotate((o.hitDir||1)*(o.facing||1)*smooth(fall)*1.1);c.globalAlpha*=1-fall*.5;}
  if(!o.reduced&&!attack&&m.walking<.02)c.scale(1,1+Math.sin(o.time*2.1)*.002);

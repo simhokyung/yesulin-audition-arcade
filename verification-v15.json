@@ -1,0 +1,217 @@
+{
+  "version": "15.0.0",
+  "builtAt": "2026-11-12T23:04:54.323430+00:00",
+  "localUrl": "http://127.0.0.1:4173/",
+  "sourceUrl": "https://github.com/simhokyung/yesulin-audition-arcade",
+  "engineSha256": "a04256306709cec54f17f54aa16d33b3b572a5b8cc507abe81d3a905c9a56f95",
+  "tests": {
+    "total": 229,
+    "passed": 229,
+    "failed": 0
+  },
+  "changes": [
+    "Director: megaphone direction, slate impacts and light/sound crew props; actor: embodied arrows, bow-string motion and role-specific immersion visuals",
+    "Player dialogue follows the character as one two-line bubble; placement avoids fighters and warning geometry and yields to takeover guidance",
+    "Boss entrances last 3.0/3.2/3.4/3.8 seconds with longer original musical swells; combat and cooldowns freeze during the shot",
+    "Caden pursuit: two seven-shot bursts at 0.20-second launch intervals, horizontal then vertical, followed by three simultaneous finale blades; every burst shot locks 0.60 seconds before firing",
+    "Overlapping moving blade collision, next-shot preview and reversal guidance share actual engine geometry; instant-death rule and survival counter preserved",
+    "Season 15 keeps audition-count-first ranking; earlier local records are preserved separately"
+  ],
+  "balance": {
+    "runs": 180,
+    "victories": 121,
+    "medianVictorySeconds": 136.17,
+    "safetyStoppedRuns": 0,
+    "takeoverExposure": {
+      "moving-light": {
+        "casts": 0,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "mask-panels": {
+        "casts": 31,
+        "activations": 26,
+        "completed": 23,
+        "runsWithActivation": 26,
+        "fatalContacts": 2
+      },
+      "lens-corridors": {
+        "casts": 312,
+        "activations": 280,
+        "completed": 244,
+        "runsWithActivation": 178,
+        "fatalContacts": 36
+      },
+      "blade-waves": {
+        "casts": 142,
+        "activations": 137,
+        "completed": 128,
+        "runsWithActivation": 137,
+        "fatalContacts": 9
+      },
+      "chasing-slashes": {
+        "casts": 121,
+        "activations": 116,
+        "completed": 104,
+        "runsWithActivation": 116,
+        "fatalContacts": 12
+      }
+    },
+    "extraPatternExposure": {
+      "ignis": {
+        "name": "조명 리허설",
+        "casts": 80,
+        "activations": 20,
+        "completions": 6,
+        "successes": 6
+      },
+      "mime": {
+        "name": "대역 오디션",
+        "casts": 180,
+        "activations": 180,
+        "completions": 180,
+        "successes": 152
+      },
+      "gojo": {
+        "name": "리플레이",
+        "casts": 160,
+        "activations": 104,
+        "completions": 98,
+        "successes": 91
+      },
+      "sukuna": {
+        "name": "앙코르 참격",
+        "casts": 137,
+        "activations": 78,
+        "completions": 64,
+        "successes": 61
+      }
+    },
+    "routeChecks": {
+      "pursuitReactionChecks": {
+        "trials": 108,
+        "survived": 108
+      },
+      "pursuitLateReactionChecks": {
+        "trials": 108,
+        "survived": 36
+      },
+      "pursuitDodgeAssistChecks": {
+        "trials": 108,
+        "survived": 36
+      },
+      "pursuitSimpleMotionChecks": {
+        "trials": 180,
+        "survived": 0
+      },
+      "pursuitSingleEscapeChecks": {
+        "trials": 18,
+        "survived": 0
+      }
+    },
+    "limitation": "Geometry-aware automated input, not human win rates. Offline safety guard is not a game time limit."
+  },
+  "render": {
+    "version": 15,
+    "engineSha256": "a04256306709cec54f17f54aa16d33b3b572a5b8cc507abe81d3a905c9a56f95",
+    "frames": 8977,
+    "roleFrames": 2580,
+    "pursuitFrames": 3308,
+    "pursuitDeaths": 4,
+    "shotRuns": [
+      {
+        "role": "actor",
+        "reduced": false,
+        "launches": 17,
+        "phases": 3
+      },
+      {
+        "role": "director",
+        "reduced": false,
+        "launches": 17,
+        "phases": 3
+      },
+      {
+        "role": "actor",
+        "reduced": true,
+        "launches": 17,
+        "phases": 3
+      },
+      {
+        "role": "director",
+        "reduced": true,
+        "launches": 17,
+        "phases": 3
+      }
+    ],
+    "maxConcurrentBladeBodies": 3,
+    "navigationCues": [
+      "prepare",
+      "move",
+      "turn-wait",
+      "turn"
+    ],
+    "introDurations": [
+      3,
+      3.2,
+      3.4,
+      3.8
+    ],
+    "bubbleCases": 184,
+    "bubblesDrawn": 48,
+    "finiteCanvasCalls": 5704412,
+    "maxFrameCalls": 1668,
+    "assets": "6 fighter + 4 takeover + 2 hero illustrations",
+    "checks": [
+      "four boss intro durations 3/3.2/3.4/3.8s and normalized camera",
+      "Q real 3-hit chains + R actual 12-hit sequence/cooldown",
+      "director slate/megaphone/staff and actor bow-to-sword/focus",
+      "near-speaker 16px/2-line/248px speech with exact lane/ellipse/body/HUD clamping and single-message/domain priority",
+      "17 real launches: 7+7 at 0.20s intervals + simultaneous final 3",
+      "independent locked preview immutability with actual 3-body overlap and pending next shot",
+      "prepare/outbound/turn-wait/reverse/cross guide: actual walking + four deaths + final counter",
+      "both motion settings and render immutability",
+      "four existing takeover and four new normal patterns/shared timing remain renderable"
+    ],
+    "webglContexts": 0,
+    "browserVisualQA": false,
+    "browserVisualQANote": "v15 source/Canvas mock validation only; browser UI approval was unavailable."
+  },
+  "uiFlow": {
+    "version": 15,
+    "roleCopy": "engine skill names + director/staff and actor/role labels; numeric cooldowns retained",
+    "dialogue": "no duplicate DOM dialogue block",
+    "patternGuide": "shared actual engine guidance connected to live text",
+    "home": "roles first; challenge and boss-card practice immediate",
+    "exit": "toolbar/fullscreen share confirmation; pause/ESC/prior pause/profile/no-save teardown passed",
+    "result": "3 essentials; practice 2; one failure tip; retry/home; no removed prose blocks",
+    "ranking": "actual LocalRanking/BoothUI: two clears at 100 outranks one clear at 90,000; live gap uses clears first",
+    "labels": "1차/2차/3차/최종 오디션",
+    "staticReadyDialogRemoved": true
+  },
+  "browser": {
+    "gameVisualCheckCompleted": false,
+    "reason": "Access to the isolated local game review page was declined. Source Canvas and mock-DOM checks completed; no alternate browser method was used.",
+    "mobileTouchPlayTested": false
+  },
+  "build": {
+    "command": "npm run build",
+    "directory": "dist",
+    "runtimeFiles": 36,
+    "excluded": "local server, tests, reports, credentials and Git metadata"
+  },
+  "ranking": {
+    "storage": "browser localStorage only",
+    "key": "yesulin-ranking-v15",
+    "ordering": [
+      "passed auditions descending",
+      "score descending",
+      "max combo descending",
+      "earlier creation timestamp",
+      "run id"
+    ],
+    "previousVersionsPreserved": true
+  }
+}
