@@ -195,6 +195,10 @@
   },
   "publication": {
     "github": "https://github.com/simhokyung/yesulin-audition-arcade",
-    "visibility": "public"
+    "visibility": "public",
+    "vercel": "https://yesulin-arcade.vercel.app/",
+    "vercelProject": "https://vercel.com/hokyung/yesulin-arcade",
+    "method": "Static dist folder upload; Git automatic deployments are not connected",
+    "status": "Deployed to Production confirmed in HOKYUNG dashboard"
   }
 }
