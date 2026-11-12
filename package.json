@@ -1,0 +1,14 @@
+{
+  "name": "yesulin-directors-cut",
+  "version": "14.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test engine.test.mjs practice.test.mjs ranking.test.mjs domain-music.test.mjs",
+    "balance": "node simulate.mjs",
+    "balance:booth": "node simulate.mjs --booth --seeds=30",
+    "balance:challenge": "node simulate.mjs --challenge --seeds=30",
+    "build": "node build.mjs"
+  }
+}

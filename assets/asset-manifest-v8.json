@@ -1,0 +1,65 @@
+{
+  "version": 8,
+  "images": [
+    {
+      "file": "actor-fighter-v5.png",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "2cf4df22c3d8e71e82cf0a69b7ef6c4fd360fc877d1554df86f129ab3cf971c9"
+    },
+    {
+      "file": "caden-fighter-v8.png",
+      "width": 1774,
+      "height": 887,
+      "sha256": "a1b977f57a80b8e0f34a1e43e2d721046bc43997f6ea10741e6d1fa8181b0937"
+    },
+    {
+      "file": "caden-takeover-v8.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "9e67db89c89c3628df93365b155f758b5aacd5aa72e2fe9c9547ca622198f440"
+    },
+    {
+      "file": "director-fighter-v5.png",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "75d48df2507b44ac4595091db8a481b2b259a6a48104231908fbee0cbfb8d77c"
+    },
+    {
+      "file": "ignis-fighter-v8.png",
+      "width": 1774,
+      "height": 887,
+      "sha256": "6b00cc5b7b2426389babba965cd9a74128290fd8aa55e4ffcd1f9459ce9cfabb"
+    },
+    {
+      "file": "ignis-takeover-v8.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "2503b8833bc7e58fae408a5a3745c4d892aeb2fb9709ef53d2a78854a7023097"
+    },
+    {
+      "file": "mime-fighter-v8.png",
+      "width": 1774,
+      "height": 887,
+      "sha256": "5df308078b2edda75efd14267705e6e6f2f89f590c3380a00faf289d160203bd"
+    },
+    {
+      "file": "mime-takeover-v8.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "bb1781caa9da6da6253d01481b8656c1046de6ee4de04360d09170559aefcbe4"
+    },
+    {
+      "file": "prism-fighter-v8.png",
+      "width": 1774,
+      "height": 887,
+      "sha256": "07de6b02a09af5f90397ab69603df07a81f7d852ca97947d45209dd0b562dff6"
+    },
+    {
+      "file": "prism-takeover-v8.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "e40b2eede70649afd9d45f41c6f96e50b14af992e9ea227fe049f77526fd0745"
+    }
+  ]
+}

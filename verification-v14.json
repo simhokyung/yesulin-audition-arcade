@@ -1,0 +1,196 @@
+{
+  "version": "14.0.0",
+  "builtAt": "2026-11-12T18:30:24.278023+00:00",
+  "localUrl": "http://127.0.0.1:4173/",
+  "engineSha256": "ad6001eb2c7d4fd6d4a331682a5c65bd7f8743d0815fa647014b8ec5ba9f82cb",
+  "tests": {
+    "total": 224,
+    "passed": 224,
+    "failed": 0,
+    "engine": 144,
+    "practice": 11,
+    "ranking": 27,
+    "audio": 42
+  },
+  "changes": [
+    "Caden single6, staggered pincer3, simultaneous three-direction finale; blade-wave alternation preserved",
+    "All takeover survival rewards one 1.8-second counter window with 20% extra boss damage",
+    "Four additional ordinary boss patterns with actual collision/selection outcomes",
+    "Audition labels 1st/2nd/3rd/final; ranking prioritizes cleared auditions before score",
+    "Prominent exit button including fullscreen, existing no-save confirmation retained",
+    "Concise result: auditions passed, score, personal standing, one failure hint, retry/home and service link"
+  ],
+  "balance": {
+    "runs": 180,
+    "victories": 120,
+    "medianVictorySeconds": 137.2,
+    "safetyStoppedRuns": 0,
+    "takeoverExposure": {
+      "moving-light": {
+        "casts": 0,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "mask-panels": {
+        "casts": 31,
+        "activations": 26,
+        "completed": 23,
+        "runsWithActivation": 26,
+        "fatalContacts": 2
+      },
+      "lens-corridors": {
+        "casts": 312,
+        "activations": 280,
+        "completed": 244,
+        "runsWithActivation": 178,
+        "fatalContacts": 36
+      },
+      "blade-waves": {
+        "casts": 142,
+        "activations": 137,
+        "completed": 128,
+        "runsWithActivation": 137,
+        "fatalContacts": 9
+      },
+      "chasing-slashes": {
+        "casts": 121,
+        "activations": 116,
+        "completed": 103,
+        "runsWithActivation": 116,
+        "fatalContacts": 13
+      }
+    },
+    "extraPatternExposure": {
+      "ignis": {
+        "name": "조명 리허설",
+        "casts": 80,
+        "activations": 20,
+        "completions": 6,
+        "successes": 6
+      },
+      "mime": {
+        "name": "대역 오디션",
+        "casts": 180,
+        "activations": 180,
+        "completions": 180,
+        "successes": 152
+      },
+      "gojo": {
+        "name": "리플레이",
+        "casts": 160,
+        "activations": 104,
+        "completions": 98,
+        "successes": 91
+      },
+      "sukuna": {
+        "name": "앙코르 참격",
+        "casts": 137,
+        "activations": 76,
+        "completions": 64,
+        "successes": 61
+      }
+    },
+    "routeChecks": {
+      "pursuitReactionChecks": {
+        "trials": 108,
+        "survived": 108
+      },
+      "pursuitLateReactionChecks": {
+        "trials": 108,
+        "survived": 0
+      },
+      "pursuitDodgeAssistChecks": {
+        "trials": 108,
+        "survived": 18
+      },
+      "pursuitSimpleMotionChecks": {
+        "trials": 180,
+        "survived": 0
+      },
+      "pursuitSingleEscapeChecks": {
+        "trials": 18,
+        "survived": 0
+      }
+    },
+    "limitation": "Geometry-aware automated input, not human win rates. Offline safety guard is not a game time limit."
+  },
+  "render": {
+    "version": 14,
+    "frames": 19585,
+    "normalFrames": 3612,
+    "normalCases": 22,
+    "pursuitFrames": 4472,
+    "pursuitDeaths": 4,
+    "pursuitPhases": [
+      "0:tracking",
+      "0:locked",
+      "0:flight",
+      "1:tracking",
+      "1:locked",
+      "1:flight",
+      "2:tracking",
+      "2:locked",
+      "2:flight",
+      "3:tracking",
+      "3:locked",
+      "3:flight",
+      "4:tracking",
+      "4:locked",
+      "4:flight",
+      "5:tracking",
+      "5:locked",
+      "5:flight",
+      "6:tracking",
+      "6:locked",
+      "6:flight",
+      "7:tracking",
+      "7:locked",
+      "7:flight",
+      "8:tracking",
+      "8:locked",
+      "8:flight",
+      "9:tracking",
+      "9:locked",
+      "9:flight"
+    ],
+    "finiteCanvasCalls": 14083775,
+    "maxFrameCalls": 1928,
+    "assets": "6 fighter + 4 takeover + 2 hero illustrations",
+    "checks": "22 actual new normal success/failure/Q+W cases + shared countdowns + gold counter damage + four audition-name intro cameras + health-first Korean HUD + low health cue + R12/Q3 + actor adlib/method + director cue/staff actual impacts + duel-only practice 4 judges × 2 roles + Mime destination arrow + traveling blade + pursuit alternating cutscenes/30 phases/single6+pincer3+final3/counter windows/locked exact geometry/mint only after lock/actual three simultaneous finale blades/death/reduced motion + render immutability",
+    "webglContexts": 0
+  },
+  "uiFlow": {
+    "patternGuide": "shared actual engine guidance connected to live text",
+    "home": "roles first; challenge and boss-card practice immediate",
+    "exit": "toolbar/fullscreen share confirmation; pause/ESC/prior pause/profile/no-save teardown passed",
+    "result": "3 essentials; practice 2; one failure tip; retry/home; no removed prose blocks",
+    "ranking": "actual LocalRanking/BoothUI: two clears at 100 outranks one clear at 90,000; live gap uses clears first",
+    "labels": "1차/2차/3차/최종 오디션",
+    "staticReadyDialogRemoved": true
+  },
+  "browser": {
+    "gameVisualCheckCompleted": false,
+    "reason": "Browser origin access to isolated local review page was declined; no alternate browser method used. Source rendering and mock-DOM checks completed.",
+    "mobileTouchPlayTested": false
+  },
+  "build": {
+    "command": "npm run build",
+    "directory": "dist",
+    "runtimeFiles": 36,
+    "excluded": "local server, tests, reports, credentials and Git metadata"
+  },
+  "ranking": {
+    "storage": "browser localStorage only",
+    "key": "yesulin-ranking-v14",
+    "ordering": [
+      "passed auditions descending",
+      "score descending",
+      "max combo descending",
+      "earlier creation timestamp",
+      "run id"
+    ],
+    "previousVersionsPreserved": true
+  }
+}

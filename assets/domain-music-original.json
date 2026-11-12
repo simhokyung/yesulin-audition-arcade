@@ -1,0 +1,30 @@
+{
+  "provenance": "Original oscillator/noise compositions; no anime recordings, samples or melodies used.",
+  "generator": "work/generate-domain-music.py",
+  "tracks": [
+    {
+      "file": "domain-prism-original.wav",
+      "description": "Original ominous low drone, slowly rising dissonant beating and cold synthetic bowed-glass texture; no melody.",
+      "seconds": 6.2,
+      "sampleRate": 44100,
+      "channels": 2,
+      "peak": 0.819976806640625,
+      "rms": 0.2865321546871292,
+      "clippedSamples": 0,
+      "minInterior100msRms": 0.07334200425752015,
+      "stereoDifferenceRms": 0.08304682771109181
+    },
+    {
+      "file": "domain-caden-original.wav",
+      "description": "Original accelerating paired low-drum heartbeat, rough low-mid drone and dissonant synthetic string layers; no borrowed tune.",
+      "seconds": 6.2,
+      "sampleRate": 44100,
+      "channels": 2,
+      "peak": 0.819976806640625,
+      "rms": 0.1979557192949048,
+      "clippedSamples": 0,
+      "minInterior100msRms": 0.06077248776761899,
+      "stereoDifferenceRms": 0.036789340648749676
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+.entry-poster .entry-purpose{font-size:12px;line-height:1.8;color:#aebba9;margin-top:14px;letter-spacing:-.2px}
+.mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}.mode-switch>button{display:flex;align-items:center;gap:14px;text-align:left;padding:19px;border:1px solid #44503e;border-radius:12px;background:#20271e;color:#c9d1c3;min-height:85px;transition:background .18s,border-color .18s}.mode-switch>button.selected{background:#d2f960;color:#203015;border-color:#d2f960}.mode-switch>button:hover{border-color:#d2f960}.mode-switch b{font-size:19px;display:block;letter-spacing:-.6px}.mode-switch small{font-size:11px;display:block;opacity:.8;margin-top:6px}.mode-icon{font-size:32px;font-weight:800;line-height:1}
+.practice-picker{margin-bottom:28px;border:1px solid #53614a;background:linear-gradient(140deg,#253223,#17211b);padding:24px;border-radius:14px}.practice-heading{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:18px}.practice-heading h2{font-size:23px;letter-spacing:-.8px;margin:8px 0}.practice-heading .eyebrow{font-size:10px;color:#c0df8e}.practice-heading .outline-button{white-space:nowrap;font-size:11px;padding:12px}
+.practice-boss-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.practice-boss-grid>button{position:relative;overflow:hidden;min-width:0;text-align:left;border:1px solid #4b5940;border-radius:10px;background:#121a17;color:#fff;padding:0 12px 13px;transition:border-color .18s,transform .18s}.practice-boss-grid>button:hover{transform:translateY(-2px);border-color:#d2f960}.practice-boss-grid>button.selected{border:2px solid #d2f960;background:#30422b;padding:0 11px 12px;box-shadow:0 0 0 2px #d2f96015}.practice-art{display:block;height:94px;margin:0 -12px 10px;background-size:cover;background-position:50% 38%;position:relative}.practice-art:after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 45%,#152019)}.practice-art.ignis{background-image:url('assets/ignis-takeover-v8.png')}.practice-art.mime{background-image:url('assets/mime-takeover-v8.png')}.practice-art.prism{background-image:url('assets/prism-takeover-v8.png')}.practice-art.caden{background-image:url('assets/caden-takeover-v8.png')}.practice-number{font-size:9px;color:#b6cf99;display:block;margin-bottom:7px}.practice-boss-grid b{font-size:18px;display:block;letter-spacing:-.7px}.practice-boss-grid small{display:block;font-size:9px;color:#b5c3a8;margin-top:6px;line-height:1.6}.practice-lesson{font-size:12px;color:#d1e1c2;padding-bottom:13px;border-bottom:1px solid #40513a}
+.practice-help{font-size:12px;line-height:1.8;color:#b6c6ac;margin:15px 0 0}
+.role-story{padding:17px 20px;margin:15px 0 20px;border-left:3px solid #d2f960;background:#222b20;border-radius:0 8px 8px 0}.role-story p{font-size:13px;color:#c5d1ba;margin:0 0 8px;line-height:1.7}.role-story strong{font-size:14px;color:#e5f8b9;line-height:1.8}.kit-card>b{line-height:1.5}.kit-card p{line-height:1.75}.kit-tip{color:#bccbb0!important}
+.practice-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#223328;border:1px solid #6d8f61;border-radius:10px 10px 0 0;padding:15px 18px;margin-top:10px}.practice-bar-info{min-width:0}.practice-bar-info>strong{font-size:15px;color:#e7ffc8}.practice-bar-info>p{font-size:12px;line-height:1.7;margin:7px 0;color:#cfddc5}.practice-bar-info>span{font-size:11px;color:#a5c78d}.practice-bar-actions{display:flex;gap:6px;flex-wrap:wrap;max-width:245px;flex-shrink:0;justify-content:flex-end}.practice-bar-actions button{font-size:11px;border:1px solid #638257;color:#eff8e4;padding:10px 12px;border-radius:7px;background:#2f442a;min-height:38px}.practice-bar-actions button:hover{background:#4a663a}
+.result-playstyle{white-space:pre-line;font-size:11px!important;line-height:1.8!important;color:#c9dbc0!important;padding:11px 14px;border:1px solid #425c3d;border-radius:8px;background:#1a2a1f;text-align:left}.result-role-quote{font-size:15px!important;font-weight:800;color:#d2f960!important;margin:8px 0!important}.result-service-note{line-height:1.7}.result-card.booth-result{max-height:calc(100% - 24px);overflow-y:auto}.result-service{margin-top:12px}
+@media(max-width:1150px){.practice-picker{padding:18px}.practice-heading{align-items:flex-start}.practice-heading h2{font-size:19px}.practice-heading .outline-button{font-size:10px;padding:10px}.practice-boss-grid{gap:7px}.practice-boss-grid small{font-size:8px}.practice-bar{padding:12px}.practice-bar-actions{max-width:155px}.mode-switch b{font-size:17px}}
+@media(max-width:650px){.mode-switch{gap:8px;margin-top:18px}.mode-switch>button{padding:14px 11px;gap:8px;min-height:85px}.mode-switch b{font-size:15px}.mode-switch small{font-size:9px;line-height:1.6}.mode-icon{font-size:24px}.practice-heading{display:block}.practice-heading .outline-button{margin:7px 0 0;width:100%;font-size:12px}.practice-picker{padding:16px}.practice-boss-grid{grid-template-columns:1fr 1fr;gap:10px}.practice-art{height:90px}.practice-boss-grid small{font-size:10px}.practice-number{font-size:10px}.role-story{padding:14px}.role-story p{font-size:12px}.role-story strong{font-size:12px}.practice-bar{display:block}.practice-bar-info>p{font-size:12px}.practice-bar-actions{max-width:none;justify-content:flex-start;margin-top:10px}.practice-bar-actions button{flex:1;font-size:10px;padding:9px 6px}.result-playstyle{font-size:10px!important}.entry-poster .entry-purpose{font-size:12px}}
+
+.practice-launch{width:100%;margin-top:17px;min-height:48px;font-size:14px}
+
+/* v11: one clear action after selecting a role/boss; concise lobby copy. */
+.casting-screen .launch-row{background:#222c1e;border:1px solid #47583a;border-radius:10px;padding:16px 18px;margin:18px 0 26px;gap:16px}
+.casting-screen .launch-row .challenge-rule{margin:0;white-space:nowrap;font-size:13px}
+.casting-screen .launch-actions{margin-left:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.casting-screen .kit-card p{margin-bottom:14px}.casting-screen .kit-card small{margin-top:auto}
+.casting-screen .mode-switch{margin:20px 0}.casting-screen .practice-picker{margin-bottom:18px}
+.entry-screen{padding-bottom:28px}.entry-card form{margin-top:20px}
+@media(max-width:650px){.casting-screen .launch-row{display:flex;flex-direction:column;align-items:stretch;padding:16px}.casting-screen .launch-actions{margin:0;display:flex;flex-direction:column;align-items:stretch;gap:10px}.casting-screen .launch-row .primary-button{margin-top:0}.casting-screen .launch-row .challenge-rule{font-size:12px}.casting-screen .sound-choice{font-size:12px}.mode-switch small{font-size:10px}}
+
+.mode-switch small{word-break:keep-all}
+
+/* v13: roles first, two real actions, then immediate boss-card launch. */
+.cast-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:18px 0 12px}
+.cast-actions>button{min-width:0;min-height:68px;display:flex;flex-direction:column;justify-content:center;gap:6px;border-radius:10px;font-size:20px;letter-spacing:-.6px;padding:13px}
+.cast-actions>button small{font-size:11px;font-weight:500;letter-spacing:0;opacity:.8}
+.cast-actions .practice-button{background:#253024;border-color:#62744c;color:#e7f4d5}
+.cast-actions .practice-button[aria-expanded="true"]{border-color:#d2f960;background:#35462b}
+.cast-options{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:0 0 24px;color:#aebc9f;font-size:12px}
+.practice-art{height:auto;aspect-ratio:3/2;background-size:contain;background-position:center;background-repeat:no-repeat;background-color:#101714}
+.practice-art:after{background:linear-gradient(transparent 85%,#152019)}
+.practice-boss-grid>button:focus-visible{outline-offset:3px}
+.game-toolbar{min-height:50px;height:auto;gap:12px;padding:8px 12px;flex-wrap:wrap}
+.game-toolbar .game-progress{min-width:0;flex:1;gap:8px}.game-toolbar .game-progress b{font-size:13px;font-weight:700;letter-spacing:-.2px;line-height:1.5;word-break:keep-all}
+.game-toolbar .toolbar-actions{flex-shrink:0}
+.exit-game-button{border:1px solid #7c6359;border-radius:5px;padding:7px 10px;background:#3a2d28;color:#ffe3d2;font-size:11px;white-space:nowrap;min-height:32px}
+#exit-dialog{max-width:430px;padding:30px}#exit-dialog h2{font-size:26px;margin:0 0 14px}#exit-dialog p{font-size:14px;line-height:1.8;color:#c2cbb8;margin:0 0 24px}
+.exit-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.exit-actions>button{min-height:46px;font-size:14px;border-radius:6px}
+.exit-confirm-button{border:1px solid #a87765;background:#4a322b;color:#ffddc7;font-weight:700}
+@media(max-width:650px){.cast-actions{gap:9px}.cast-actions>button{font-size:18px;min-height:66px}.cast-actions>button small{font-size:10px}.practice-art{height:auto;aspect-ratio:3/2}.game-toolbar{gap:5px;padding:8px}.game-toolbar .game-progress{flex-basis:100%}.game-toolbar .toolbar-actions{width:100%;justify-content:flex-end}.game-toolbar .game-progress b{font-size:12px}.exit-game-button{margin-right:auto;font-size:12px}#exit-dialog{padding:24px}.cast-options{font-size:11px}}
+
+/* v14: obvious exit action and compact, readable result essentials. */
+.exit-game-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:116px;padding:10px 16px;background:#ffce91;border:2px solid #fff0d7;border-radius:8px;color:#322014;font-size:14px;font-weight:900;box-shadow:0 2px 0 #6d432b}
+.exit-game-button>span:first-child{font-size:18px;line-height:1}.exit-game-button:hover:not(:disabled){background:#ffe3b9}.exit-game-button:focus-visible{outline:3px solid #fff;outline-offset:3px}.pause-exit{margin:16px auto 0}
+#result-overlay{padding:18px;overflow-y:auto}#result-overlay .result-card-simple{width:540px;max-width:100%;max-height:100%;overflow-y:auto;padding:20px 24px;border:1px solid #5d7250;border-radius:14px;background:#17251e;box-shadow:0 12px 48px #0006}
+#result-overlay .result-card-simple h2{font-size:29px;line-height:1.25;letter-spacing:-1.2px;margin:8px 0 18px}
+#result-overlay .result-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px;align-items:stretch}
+#result-overlay .practice-result .result-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+#result-overlay .result-stat{padding:12px 5px;background:#25372a;border-radius:8px;gap:6px;justify-content:center}
+#result-overlay .result-stat b{font-size:27px;color:#e0ffad;line-height:1.2;overflow-wrap:anywhere}#result-overlay .result-stat span{font-size:11px;color:#bbccb1}
+#result-overlay .result-tip{font-size:12px;line-height:1.65;margin:0 0 16px;max-width:none;color:#d6dfce}
+#result-overlay .result-save-status{font-size:11px;line-height:1.6;margin:0 0 12px;color:#ffb8a1}
+.result-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result-actions>button{min-height:46px;font-size:15px;border-radius:7px;padding:10px}
+#result-overlay .result-service{display:flex;justify-content:center;align-items:center;gap:12px;margin:16px 0 0;padding:12px 0 0;min-height:0;width:auto;border:0;border-top:1px solid #3b503c;border-radius:0;background:none;box-shadow:none;text-align:left}
+#result-overlay .result-service strong{font-size:19px;color:#c8e7ab;letter-spacing:-.8px}#result-overlay .result-service b{font-size:11px;color:#bdd2b2;font-weight:600}
+.visible-rank-score{display:flex;flex-direction:column;align-items:flex-end;gap:5px}.visible-rank-score>b{font-size:16px;color:#344727;white-space:nowrap}.visible-rank-score>small{font-size:12px;color:#63734b;white-space:nowrap}.visible-live-run>strong{font-size:19px!important}
+.practice-number{font-size:11px;letter-spacing:0}
+@media(max-width:650px){.exit-game-button{min-height:46px;min-width:128px;font-size:15px}.game-toolbar .toolbar-actions{padding-top:3px;padding-bottom:3px}.result-actions>button{min-height:48px}#result-overlay{position:fixed;inset:0;z-index:60;padding:18px;align-items:center;aspect-ratio:auto}#result-overlay .result-card-simple{max-height:calc(100dvh - 36px);padding:22px 16px}#result-overlay .result-card-simple h2{font-size:26px;margin-bottom:18px}#result-overlay .result-stat b{font-size:24px}#result-overlay .result-stat span{font-size:10px}.visible-rank-score>b{font-size:15px}}
+
+/* Keep the fullscreen exit in a reserved footer, outside the 16:9 HUD. */
+.fullscreen-exit{display:none}
+.game-shell:fullscreen{padding-bottom:60px}
+.game-shell:fullscreen canvas{max-height:calc(100vh - 60px);max-width:calc(177.7778vh - 106.667px);width:100%;height:auto}
+.game-shell:fullscreen .fullscreen-exit:not(.hidden):not(:disabled){display:inline-flex;position:absolute;right:16px;bottom:8px;z-index:4;margin:0;min-height:44px}

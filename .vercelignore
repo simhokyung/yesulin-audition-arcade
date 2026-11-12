@@ -1,0 +1,12 @@
+.git/
+node_modules/
+dist/
+.env*
+*.test.mjs
+research-*.md
+verification-*.json
+*-balance-report.json
+balance-report.json
+simulate.mjs
+실행.command
+assets/*prompts*.json

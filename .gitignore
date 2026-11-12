@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.vercel/
+.env
+.env.*
+*.log
+.DS_Store
+research-v[0-9].md
+research-v1[0-3].md
+verification-v[0-9].json
+verification-v1[0-3].json
+assets/*prompts*.json
+실행.command
+balance-report.json
+booth-balance-report.json
