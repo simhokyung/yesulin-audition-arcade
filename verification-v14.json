@@ -192,5 +192,9 @@
       "run id"
     ],
     "previousVersionsPreserved": true
+  },
+  "publication": {
+    "github": "https://github.com/simhokyung/yesulin-audition-arcade",
+    "visibility": "public"
   }
 }
