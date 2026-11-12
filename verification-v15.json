@@ -213,5 +213,75 @@
       "run id"
     ],
     "previousVersionsPreserved": true
+  },
+  "publication": {
+    "url": "https://yesulin-arcade.vercel.app/",
+    "project": "https://vercel.com/hokyung/yesulin-arcade",
+    "repository": "https://github.com/simhokyung/yesulin-audition-arcade",
+    "branch": "main",
+    "method": "GitHub push automatic deployment",
+    "deploymentId": "Ep8W32AhyNYWw7hLH1936veExpSx",
+    "deployedCommit": "9be99a836c5c23b82e39e9f7a46759d1ace8c748",
+    "environment": "Production",
+    "status": "Ready",
+    "verifiedAt": "2026-11-12T23:40:39.097210+00:00",
+    "engineSha256": "a04256306709cec54f17f54aa16d33b3b572a5b8cc507abe81d3a905c9a56f95",
+    "runtimeFilesMatched": [
+      {
+        "file": "index.html",
+        "sha256": "ff235c88ff8aa7b7426c0921c9555a7a329f6952f3d3a696ec6bfffd3f1ba426",
+        "bytes": 20043
+      },
+      {
+        "file": "engine.js",
+        "sha256": "a04256306709cec54f17f54aa16d33b3b572a5b8cc507abe81d3a905c9a56f95",
+        "bytes": 96715
+      },
+      {
+        "file": "renderer.js",
+        "sha256": "32625f98bd6ea9fdb57c8f1aca8894091a1525a43887b747e6976ef9e7c33d55",
+        "bytes": 30863
+      },
+      {
+        "file": "pursuit-vfx.js",
+        "sha256": "7ee5334d6a60272fa3e066557e03c008de98b85d27f860de60b51c358bf8fd0d",
+        "bytes": 13147
+      },
+      {
+        "file": "skill-vfx.js",
+        "sha256": "3ef459fa601bff58ff119d20a574d160be7a7e0c293cf02e43d3415340ca2558",
+        "bytes": 13137
+      },
+      {
+        "file": "fighter2d.js",
+        "sha256": "b18d8eb8fefb040a15be59f6e5417eefef0d076679ad19d9752113b833193f84",
+        "bytes": 23977
+      },
+      {
+        "file": "domain-cinematic.js",
+        "sha256": "226dee8a4fa10ee7405677420e51d52a8d8bf58e085f5343964d4bd42b18a334",
+        "bytes": 7302
+      },
+      {
+        "file": "audio.js",
+        "sha256": "f47e402ccba4fe7545d7fe02f7d66a5d9cf5c5c02593c70288203c5d96b62c4b",
+        "bytes": 33749
+      },
+      {
+        "file": "main.js",
+        "sha256": "5dc3ce749b650b4fd0ed329d1491305d49f364a98cf4719f0e590063efb5c24c",
+        "bytes": 29191
+      },
+      {
+        "file": "booth-ui.js",
+        "sha256": "8c58d44db7bc34930d6cc7b760ddedde308301f33b940f0134736cf3730adda3",
+        "bytes": 7380
+      },
+      {
+        "file": "ranking.js",
+        "sha256": "1d5d7779f83cb719876fae95d5a9b202c69fe13116363141131abfd6511bae1a",
+        "bytes": 9954
+      }
+    ]
   }
 }

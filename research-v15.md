@@ -26,6 +26,6 @@ v14의 120회 완료·137.20초와 비교해 전체 성공률이 낮아졌다고
 
 엔진 SHA-256은 `a04256306709cec54f17f54aa16d33b3b572a5b8cc507abe81d3a905c9a56f95`로 보고서와 일치합니다. 재현 명령은 `npm test`와 `npm run balance:challenge`입니다.
 
-공개 사이트는 문서 작성 시점에 v14이며, v15는 로컬 검사 단계입니다. 현재 공개 사이트는 `dist/` 정적 업로드를 사용하므로 소스 커밋만으로 자동 배포되지는 않습니다.
+기존 Vercel 프로젝트 `hokyung/yesulin-arcade`에 GitHub 저장소를 연결했습니다. `main` push로 자동 생성된 v15 배포의 Production / Ready 상태를 확인했고, 운영 주소 `https://yesulin-arcade.vercel.app/`의 엔진·화면·이펙트 등 실행 파일 11개가 로컬 소스와 SHA-256까지 일치했습니다. 저장소 루트에서 `npm run build`를 실행하고 `dist/`를 배포하며 별도 패키지 설치는 생략합니다. 배포 ID·커밋·파일별 검증 결과는 `verification-v15.json`의 `publication`에 기록합니다.
 
 실제 게임 브라우저 화면과 모바일 터치 전투는 검수하지 않았습니다. DOM·Canvas 모형의 유한 좌표와 상태 정합성 검사는 실제 외형·가독성·기기별 프레임 속도 검증을 대신하지 않습니다.

@@ -2,7 +2,7 @@
 
 [게임 플레이](https://yesulin-arcade.vercel.app/) · [공개 소스 저장소](https://github.com/simhokyung/yesulin-audition-arcade)
 
-운영 사이트는 GitHub 저장소의 `main` 브랜치와 연결되어 있습니다. 배포 상태는 [Vercel 프로젝트](https://vercel.com/hokyung/yesulin-arcade)에서 확인할 수 있습니다.
+현재 공개 사이트는 v15입니다. GitHub 저장소의 `main` 브랜치와 연결되어 있으며, 배포 상태는 [Vercel 프로젝트](https://vercel.com/hokyung/yesulin-arcade)에서 확인할 수 있습니다.
 
 배우와 감독으로 네 번의 오디션에 도전하는 2D 보스 액션 게임입니다. **시간제한 없이 1차 → 2차 → 3차 → 최종 오디션**을 통과하세요.
 
