@@ -24,6 +24,7 @@ export class GameAudio {
     this.practiceEpoch = null;
     this.waveCueKeys = new Set();
     this.pursuitCueKeys = new Set();
+    this.normalCueKeys = new Set();
   }
 
   setDomainTracks(tracks) {
@@ -36,7 +37,7 @@ export class GameAudio {
 
   reset() {
     this._clearSources(); this.lastCue.clear(); this.lastEffectId = 0;
-    this.practiceEpoch=null;this.waveCueKeys.clear();this.pursuitCueKeys.clear();
+    this.practiceEpoch=null;this.waveCueKeys.clear();this.pursuitCueKeys.clear();this.normalCueKeys.clear();
     this._volume(this.enabled && !this.paused ? .43 : 0);
     this.domainMusic.reset(); this.lastState = null; this.snapshot = null;
     this.cinematicActive = false; this.duckUntil = 0; this._musicVolume();
@@ -509,6 +510,15 @@ export class GameAudio {
           const name={tracking:'pursuit-track',lock:'pursuit-lock',launch:'pursuit-release',pass:'pursuit-pass'}[e.kind];
           this.cue(name,{...e,eventId:e.id,axis:Math.abs(ny)>Math.abs(nx)?'y':'x',
             pan:Math.max(-.65,Math.min(.65,nx*(e.kind==='pass'?.4:-.58)))||0,audioDelay:i*.012});
+        }
+        // Ordinary tracking attacks share the same readable lock/release vocabulary.
+        // Initial multi-shot tracking is one cue; each actual lock and launch stays distinct.
+        for(const [i,e] of incoming.filter(e=>e.type==='bossShot'&&['tracking','lock','launch'].includes(e.kind)).slice(0,12).entries()){
+          const group=e.kind==='tracking'?`attack:${e.attackId??(e.bossId+':'+e.time)}`:`shot:${e.shotId??e.id}`;
+          const key=`${state.stage}:${e.kind}:${group}`;if(this.normalCueKeys.has(key))continue;
+          this.normalCueKeys.add(key);if(this.normalCueKeys.size>256)this.normalCueKeys.delete(this.normalCueKeys.values().next().value);
+          const name=e.kind==='tracking'?(e.bossId==='mime'?'feint':'pursuit-track'):e.kind==='lock'?'pursuit-lock':e.bossId==='ignis'?'light-sweep':e.bossId==='mime'?'mask':'pursuit-release';
+          this.cue(name,{...e,eventId:e.id,pan:Math.max(-.6,Math.min(.6,((Number(e.originX)||640)-640)/1000)),audioDelay:Math.min(.06,i*.008)});
         }
         for(const e of incoming.filter(e=>['counterOpen','patternCue','rehearsalResult','auditionHit'].includes(e.type)).slice(0,6)){
           const name=e.type==='counterOpen'?'counter-open':e.type==='rehearsalResult'?'trial-light':

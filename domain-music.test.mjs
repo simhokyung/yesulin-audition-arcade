@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {DomainMusic, DOMAIN_MUSIC_TRACKS} from './domain-music.js';
 import {GameAudio} from './audio.js';
-import {createGame, step, getDomainGuide} from './engine.js';
+import {createGame, step, getDomainGuide, patternTurnFor} from './engine.js';
 import {createPractice, stepPractice} from './practice.js';
 
 const settle = () => new Promise(resolve => setImmediate(resolve));
@@ -437,7 +437,7 @@ test('wave cues use finite original envelopes with bounded voices and release al
 test('live Caden waves synchronize with emitted events and fatal sound requires a real collision', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
   for(const walk of [true,false]){
-    audio.reset();const s=createPractice({character:'actor',stage:3});s.boss.patternIndex=1;s.boss.patternCooldown=0;
+    audio.reset();const s=createPractice({character:'actor',stage:3});s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;
     audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);
     audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};let sawDomain=false;
     for(let i=0;i<3000&&s.status==='playing';i++){
@@ -531,7 +531,7 @@ test('late Caden decoding cannot revive a cancelled chasing takeover or an aband
 test('live chasing slashes play actual tracking, lock, seven-shot bursts and finale without phantom collisions', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
   for(const walk of [true,false]){
-    audio.reset();const s=createPractice({character:'actor',stage:3});s.boss.takeoverCount=1;s.boss.patternIndex=1;s.boss.patternCooldown=0;
+    audio.reset();const s=createPractice({character:'actor',stage:3});s.boss.takeoverCount=1;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;
     audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);let sawDomain=false;
     audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};
     for(let i=0;i<2400&&s.status==='playing';i++){
@@ -591,3 +591,30 @@ test('seven rapid real release cues remain distinct and directional without fals
  assert.equal(heard.filter(e=>e.name==='pursuit-release').length,7);assert(!heard.some(e=>['hit','impact','fatal'].includes(e.name)));assert(starts.length>=14);assert(audio.sources.size<=96);assert(panners.every(p=>Math.abs(p.pan.value)<=.75));
  await audio.setEnabled(false);assert.equal(audio.sources.size,0);
 });
+
+
+for (const [stage,bossId,count] of [[0,'ignis',2],[1,'mime',3],[2,'gojo',3],[3,'sukuna',7]]) {
+  test(`v17 ${bossId} ordinary tracking/lock/launch audio follows actual attack events once`, async t => {
+    const {audio}=audioHarness(t);await audio.setEnabled(true);
+    const s=createPractice({character:'actor',stage});while(s.cinematic)stepPractice(s,{},1/60);
+    s.boss.patternIndex=patternTurnFor(s.boss.id,5);s.boss.patternCooldown=0;s.player.hp=s.player.maxHp=9999;
+    audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);
+    audio.cue=(name,meta={})=>{heard.push({name,meta});cue(name,meta);};let started=false;
+    for(let frame=0;frame<600;frame++){
+      stepPractice(s,{up:s.player.y>350},1/60);if(s.boss.attacks>0)s.boss.patternCooldown=999;
+      started ||= s.hazards.some(h=>h.conceptPattern);
+      for(const e of s.effects)if(e.type==='bossShot')events.set(e.id,e);
+      audio.context.currentTime+=1/60;audio.update(s,1/60);const length=heard.length;audio.update(s,1/60);assert.equal(heard.length,length);
+      if(started&&!s.hazards.some(h=>h.conceptPattern)&&!s.projectiles.some(q=>q.owner==='enemy'))break;
+    }
+    assert(started);const ordinary=heard.filter(e=>e.meta.type==='bossShot');
+    assert.equal(ordinary.filter(e=>e.meta.kind==='tracking').length,1,'one initial tracking cue per cast');
+    const launches=[...events.values()].filter(e=>e.kind==='launch');assert.equal(launches.length,count);
+    assert.deepEqual(ordinary.filter(e=>e.meta.kind==='launch').map(e=>e.meta.eventId),launches.map(e=>e.id));
+    const locks=[...events.values()].filter(e=>e.kind==='lock');assert.deepEqual(ordinary.filter(e=>e.meta.kind==='lock').map(e=>e.meta.eventId),locks.map(e=>e.id));
+    assert(!ordinary.some(e=>e.meta.kind==='hit'),'launch/lock sounds never impersonate a hit');
+    if(stage>=2)assert(ordinary.filter(e=>e.meta.kind==='launch').every(e=>e.meta.projectileId&&e.meta.projectileKind===(stage===2?'frame-shard':'rhythm-blade')));
+    const length=heard.length;await audio.setEnabled(false);await audio.setEnabled(true);audio.update(s,1/60);assert.equal(heard.length,length,'enabling never replays consumed ordinary cues');
+    assert(audio.sources.size<=96);audio.destroy();assert.equal(audio.sources.size,0);
+  });
+}

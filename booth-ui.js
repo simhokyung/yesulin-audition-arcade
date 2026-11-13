@@ -1,4 +1,4 @@
-import {LocalRanking,getIndividualBoard,toCSV,normalizeIdentity,getPersonalStanding,RANKING_STORAGE_KEY} from './ranking.js';
+import {LocalRanking,getIndividualBoard,toCSV,normalizeIdentity,getPersonalStanding,RANKING_STORAGE_KEY,RANKING_SEASON} from './ranking.js';
 const $=id=>document.getElementById(id);
 const el=(tag,className,text)=>{const n=document.createElement(tag);n.className=className;if(text!==undefined)n.textContent=text;return n};
 export class BoothUI {
@@ -58,7 +58,7 @@ export class BoothUI {
     summary.append(el('small','',hasName?(identity.crew||'개인 참가')+' · '+standing.total+'명 참여':'네 오디션에 도전하고 최고 기록을 남기세요.'));
     personal.append(summary,el('strong','',hasName&&standing.best?standing.rank+'위 · '+standing.best.score.toLocaleString()+'점':'아직 기록 없음'));
     $('ranking-empty').classList.toggle('hidden',rows.length>0);
-    $('ranking-summary').textContent=this.storageError||'시즌 15 · 통과 오디션 수 우선, 같으면 점수순'+' · '+individual.length+'명 참여 · 이 브라우저에 저장';
+    $('ranking-summary').textContent=this.storageError||'시즌 '+RANKING_SEASON+' · 통과 오디션 수 우선, 같으면 점수순'+' · '+individual.length+'명 참여 · 이 브라우저에 저장';
     this.renderVisibleBoard(individual,identity,hasName);
   }
 }

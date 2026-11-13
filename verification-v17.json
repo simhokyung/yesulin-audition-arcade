@@ -1,0 +1,634 @@
+{
+  "release": "17.0.0",
+  "engineSha256": "2b1014558d4c9302aaffa2facc5a196684c88798ce32c9013ec9e9de34a5a08e",
+  "automatedTests": {
+    "passed": 251,
+    "failed": 0,
+    "engine": 161,
+    "practice": 13,
+    "ranking": 29,
+    "audio": 48
+  },
+  "preserved": {
+    "playerCharactersAndSkills": true,
+    "bossBaseHpAndDamage": true,
+    "originalFiveSkills": true,
+    "noGameTimeLimit": true,
+    "fatalTakeoverContact": true,
+    "counterWindowSeconds": 1.8,
+    "counterDamageBonus": 0.2,
+    "oldRankingStorageUntouched": "yesulin-ranking-v15"
+  },
+  "ranking": {
+    "season": 17,
+    "storage": "yesulin-ranking-v17",
+    "rules": "challenge-v17",
+    "progressBeforeScore": true
+  },
+  "ui": {
+    "version": 17,
+    "roleResults": [
+      {
+        "role": "actor",
+        "finalTitle": "최종 오디션 합격!",
+        "message": "당신의 다음 배역을 만나보세요.",
+        "nonfinalAndFailedNeverClaimFinalWin": true,
+        "practiceUnranked": true
+      },
+      {
+        "role": "director",
+        "finalTitle": "마지막 장면, 완성!",
+        "message": "다음 무대의 배우를 만나보세요.",
+        "nonfinalAndFailedNeverClaimFinalWin": true,
+        "practiceUnranked": true
+      }
+    ],
+    "nicknamePlaceholderOnly": true,
+    "rankingSeason": 17,
+    "officialWordmarks": 2,
+    "roleCopy": "engine skill names + director/staff and actor/role labels; numeric cooldowns retained",
+    "dialogue": "no duplicate DOM dialogue block",
+    "patternGuide": "shared actual engine guidance connected to live text",
+    "home": "roles first; challenge and boss-card practice immediate",
+    "exit": "toolbar/fullscreen share confirmation; pause/ESC/prior pause/profile/no-save teardown passed",
+    "result": "3 essentials; practice 2; one failure tip; retry/home; no removed prose blocks",
+    "ranking": "actual LocalRanking/BoothUI: two clears at 100 outranks one clear at 90,000; live gap uses clears first",
+    "labels": "1차/2차/3차/최종 오디션",
+    "staticReadyDialogRemoved": true
+  },
+  "graphics": {
+    "version": 17,
+    "engineSha256": "2b1014558d4c9302aaffa2facc5a196684c88798ce32c9013ec9e9de34a5a08e",
+    "changedFiles": [
+      "renderer.js",
+      "takeover-vfx.js",
+      "domain-cinematic.js",
+      "normal-pattern-vfx.js",
+      "audio.js",
+      "domain-music.test.mjs"
+    ],
+    "hashes": {
+      "renderer.js": "9e0909bbe9f1cc66037dd03c257db929d75610a208083bc35f14c66e1edbb5dc",
+      "takeover-vfx.js": "9e200341bae41891d105f413a501cac3662e104464c728cd13dd618a26d17cdf",
+      "domain-cinematic.js": "ecc58903ee72d95db8644084ac46283441bbe54532052832e01d7aaf10c3adb8",
+      "normal-pattern-vfx.js": "9b2a5d6c0c3a0fc48c4603d20f7f328d330d2c4a6ba76feb590700eff3fd05aa",
+      "audio.js": "8a93403ec591a49617d82f44d2aa39648cc4b95461d53c59816a86420c774d12",
+      "domain-music.test.mjs": "e5bf29b4fda6b7e2d10450fd9adc6fa090dee181be63c7b487e6cb5b9e77c9ad"
+    },
+    "syntaxChecks": 6,
+    "canvasFrames": 21234,
+    "audioTests": {
+      "passed": 48,
+      "failed": 0
+    },
+    "browserVisualQA": false
+  },
+  "canvas": {
+    "frames": 21234,
+    "normalFrames": 5136,
+    "variantFrames": 15338,
+    "fakeFrames": 1912,
+    "projectileFrames": 1868,
+    "lockChecks": 5784,
+    "hudFits": 48054,
+    "finiteCanvasCalls": 16100289,
+    "maxFrameCalls": 1399
+  },
+  "balance": {
+    "generatedAt": "2026-11-13T01:36:33.370Z",
+    "engineVersion": 17,
+    "engineSha256": "2b1014558d4c9302aaffa2facc5a196684c88798ce32c9013ec9e9de34a5a08e",
+    "simulatorSha256": "c6fffa23423ae512bae882cc3cdcda97727fa7cdd96405ac8e3ac96c12c6f602",
+    "main": {
+      "runs": 180,
+      "victories": 136,
+      "defeats": 44,
+      "medianCompletedSeconds": 125.33,
+      "safetyStopped": 0,
+      "completedBossMedianSeconds": {
+        "ignis": 11.88,
+        "mime": 21.52,
+        "gojo": 37.02,
+        "sukuna": 51.7
+      }
+    },
+    "profiles": [
+      {
+        "profile": "beginner",
+        "character": "director",
+        "runs": 30,
+        "wins": 7,
+        "averageDamageTaken": 255.97,
+        "conditionalClearRates": {
+          "ignis": 1,
+          "mime": 1,
+          "gojo": 0.7,
+          "sukuna": 0.3333
+        }
+      },
+      {
+        "profile": "beginner",
+        "character": "actor",
+        "runs": 30,
+        "wins": 15,
+        "averageDamageTaken": 205.1,
+        "conditionalClearRates": {
+          "ignis": 1,
+          "mime": 1,
+          "gojo": 0.8,
+          "sukuna": 0.625
+        }
+      },
+      {
+        "profile": "regular",
+        "character": "director",
+        "runs": 30,
+        "wins": 26,
+        "averageDamageTaken": 49.33,
+        "conditionalClearRates": {
+          "ignis": 1,
+          "mime": 1,
+          "gojo": 0.9,
+          "sukuna": 0.963
+        }
+      },
+      {
+        "profile": "regular",
+        "character": "actor",
+        "runs": 30,
+        "wins": 28,
+        "averageDamageTaken": 41.17,
+        "conditionalClearRates": {
+          "ignis": 1,
+          "mime": 1,
+          "gojo": 0.9333,
+          "sukuna": 1
+        }
+      },
+      {
+        "profile": "expert",
+        "character": "director",
+        "runs": 30,
+        "wins": 30,
+        "averageDamageTaken": 17.13,
+        "conditionalClearRates": {
+          "ignis": 1,
+          "mime": 1,
+          "gojo": 1,
+          "sukuna": 1
+        }
+      },
+      {
+        "profile": "expert",
+        "character": "actor",
+        "runs": 30,
+        "wins": 30,
+        "averageDamageTaken": 29.2,
+        "conditionalClearRates": {
+          "ignis": 1,
+          "mime": 1,
+          "gojo": 1,
+          "sukuna": 1
+        }
+      }
+    ],
+    "newNormal": {
+      "walk": {
+        "total": 80,
+        "passed": 80,
+        "failed": 0
+      },
+      "still": {
+        "total": 80,
+        "passed": 0,
+        "failed": 80
+      },
+      "oneDirection": {
+        "total": 80,
+        "passed": 12,
+        "failed": 68
+      },
+      "byBoss": {
+        "ignis": {
+          "follow": {
+            "total": 20,
+            "passed": 20,
+            "failed": 0
+          },
+          "still": {
+            "total": 20,
+            "passed": 0,
+            "failed": 20
+          },
+          "up": {
+            "total": 20,
+            "passed": 0,
+            "failed": 20
+          }
+        },
+        "mime": {
+          "follow": {
+            "total": 20,
+            "passed": 20,
+            "failed": 0
+          },
+          "still": {
+            "total": 20,
+            "passed": 0,
+            "failed": 20
+          },
+          "up": {
+            "total": 20,
+            "passed": 12,
+            "failed": 8
+          }
+        },
+        "gojo": {
+          "follow": {
+            "total": 20,
+            "passed": 20,
+            "failed": 0
+          },
+          "still": {
+            "total": 20,
+            "passed": 0,
+            "failed": 20
+          },
+          "up": {
+            "total": 20,
+            "passed": 0,
+            "failed": 20
+          }
+        },
+        "sukuna": {
+          "follow": {
+            "total": 20,
+            "passed": 20,
+            "failed": 0
+          },
+          "still": {
+            "total": 20,
+            "passed": 0,
+            "failed": 20
+          },
+          "up": {
+            "total": 20,
+            "passed": 0,
+            "failed": 20
+          }
+        }
+      },
+      "method": "240 actual index5 casts: four bosses × two characters × two phases × center/four corners × geometry-aware walking/still/up-only policies. The isolated walker waits .35s after each individual fixed warning, then walks outside the already-visible fixed preview geometry. Rapid subsequent warnings have independent reaction clocks. It does not approach the boss, attack, dodge, buff, edit HP or delete projectiles; no future spawn/hidden aim data is read. This strict cue-response fixture is separate from the attacking campaign controller."
+    },
+    "variantWalk": {
+      "total": 216,
+      "passed": 216,
+      "failed": 0
+    },
+    "variantSimpleMotion": {
+      "total": 216,
+      "passed": 0,
+      "failed": 216
+    },
+    "variantById": {
+      "straight-light": {
+        "total": 36,
+        "passed": 36,
+        "failed": 0
+      },
+      "return-light": {
+        "total": 36,
+        "passed": 36,
+        "failed": 0
+      },
+      "single-swap": {
+        "total": 36,
+        "passed": 36,
+        "failed": 0
+      },
+      "double-swap": {
+        "total": 36,
+        "passed": 36,
+        "failed": 0
+      },
+      "normal-frames": {
+        "total": 36,
+        "passed": 36,
+        "failed": 0
+      },
+      "reverse-frames": {
+        "total": 36,
+        "passed": 36,
+        "failed": 0
+      }
+    },
+    "sixthPatternExposure": {
+      "ignis": {
+        "name": "팔로 스폿",
+        "casts": 180,
+        "runsWithCast": 180,
+        "launches": 246,
+        "projectilesLaunched": 0,
+        "hits": 0,
+        "damage": 0
+      },
+      "mime": {
+        "name": "가면 동선",
+        "casts": 180,
+        "runsWithCast": 180,
+        "launches": 540,
+        "projectilesLaunched": 0,
+        "hits": 0,
+        "damage": 0
+      },
+      "gojo": {
+        "name": "선행 프레임",
+        "casts": 180,
+        "runsWithCast": 180,
+        "launches": 540,
+        "projectilesLaunched": 540,
+        "hits": 0,
+        "damage": 0
+      },
+      "sukuna": {
+        "name": "엇박자 연사",
+        "casts": 160,
+        "runsWithCast": 160,
+        "launches": 1120,
+        "projectilesLaunched": 1120,
+        "hits": 0,
+        "damage": 0
+      }
+    },
+    "takeoverExposure": {
+      "moving-light": {
+        "casts": 0,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "mask-panels": {
+        "casts": 60,
+        "activations": 55,
+        "completed": 55,
+        "runsWithActivation": 55,
+        "fatalContacts": 0
+      },
+      "lens-corridors": {
+        "casts": 229,
+        "activations": 188,
+        "completed": 168,
+        "runsWithActivation": 180,
+        "fatalContacts": 20
+      },
+      "blade-waves": {
+        "casts": 160,
+        "activations": 160,
+        "completed": 140,
+        "runsWithActivation": 160,
+        "fatalContacts": 20
+      },
+      "chasing-slashes": {
+        "casts": 62,
+        "activations": 17,
+        "completed": 13,
+        "runsWithActivation": 17,
+        "fatalContacts": 4
+      }
+    },
+    "variantExposure": {
+      "straight-light": {
+        "casts": 0,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "return-light": {
+        "casts": 0,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "single-swap": {
+        "casts": 0,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "double-swap": {
+        "casts": 60,
+        "activations": 55,
+        "completed": 55,
+        "runsWithActivation": 55,
+        "fatalContacts": 0
+      },
+      "normal-frames": {
+        "casts": 229,
+        "activations": 188,
+        "completed": 168,
+        "runsWithActivation": 180,
+        "fatalContacts": 20
+      },
+      "reverse-frames": {
+        "casts": 0,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "blade-waves": {
+        "casts": 160,
+        "activations": 160,
+        "completed": 140,
+        "runsWithActivation": 160,
+        "fatalContacts": 20
+      },
+      "chasing-slashes": {
+        "casts": 62,
+        "activations": 17,
+        "completed": 13,
+        "runsWithActivation": 17,
+        "fatalContacts": 4
+      }
+    },
+    "rankedDuels": [
+      {
+        "boss": "ignis",
+        "runs": 60,
+        "wins": 60,
+        "averageDamageTaken": 0,
+        "safetyStopped": 0
+      },
+      {
+        "boss": "mime",
+        "runs": 60,
+        "wins": 60,
+        "averageDamageTaken": 1.75,
+        "safetyStopped": 0
+      },
+      {
+        "boss": "gojo",
+        "runs": 60,
+        "wins": 57,
+        "averageDamageTaken": 23.3,
+        "safetyStopped": 0
+      },
+      {
+        "boss": "sukuna",
+        "runs": 60,
+        "wins": 49,
+        "averageDamageTaken": 53.85,
+        "safetyStopped": 0
+      }
+    ],
+    "existingRegression": {
+      "bladeWalk": {
+        "total": 180,
+        "passed": 180,
+        "failed": 0
+      },
+      "pursuitWalk": {
+        "total": 108,
+        "passed": 108,
+        "failed": 0
+      },
+      "pursuitLate": {
+        "total": 108,
+        "passed": 36,
+        "failed": 72
+      },
+      "pursuitDodgeAssist": {
+        "total": 108,
+        "passed": 36,
+        "failed": 72
+      },
+      "firing": {
+        "completeBursts": 26,
+        "intervalCount": 156,
+        "minIntervalSeconds": 0.2,
+        "maxIntervalSeconds": 0.2,
+        "allIntervalsWithinOneMicrosecondOfPointTwo": true,
+        "maxActualVsScheduledErrorSeconds": 0,
+        "maxConcurrentBodies": 3
+      }
+    },
+    "limitations": [
+      "Input controllers know visible hazard geometry, numbered light goals and the marked real silhouette; their win rates are not human win rates. The audition policy has a profile-dependent chance of choosing the visibly wrong figure.",
+      "Controllers use visible geometry and stop attacking during takeovers. New relocation warnings, the final diagonal turn, and pursuit tracking/lock transitions incur their profile reaction delay; initial warnings also require elapsed reaction time. These are geometry-aware policies, not calibrated human skill levels.",
+      "Profile differences are policies, not a calibrated human skill ordering; a middle policy can fare worse than a slower policy in some character matchups.",
+      "Victory and boss timing medians include completed fights only.",
+      "The 300-second simulation guard is a test safety measure; there is no time limit in the game.",
+      "Historical booth-balance-report.json measures the superseded timed mode and is not validation of this untimed challenge."
+    ],
+    "pairedSanity": {
+      "currentEngineMatches": true,
+      "baseline": {
+        "runs": 30,
+        "wins": 20,
+        "medianCompletedSeconds": 137.73333333333508,
+        "safetyStopped": 0,
+        "averageDamageTaken": 121.7,
+        "profiles": {
+          "beginner": {
+            "director": 0,
+            "actor": 1
+          },
+          "regular": {
+            "director": 4,
+            "actor": 5
+          },
+          "expert": {
+            "director": 5,
+            "actor": 5
+          }
+        },
+        "reached": {
+          "ignis": 30,
+          "mime": 30,
+          "gojo": 29,
+          "sukuna": 23
+        },
+        "cleared": {
+          "ignis": 30,
+          "mime": 29,
+          "gojo": 23,
+          "sukuna": 20
+        },
+        "takeoverCasts": {
+          "moving-light": 0,
+          "mask-panels": 6,
+          "lens-corridors": 52,
+          "blade-waves": 23,
+          "chasing-slashes": 19
+        }
+      },
+      "current": {
+        "runs": 30,
+        "wins": 20,
+        "medianCompletedSeconds": 129.06666666666152,
+        "safetyStopped": 0,
+        "averageDamageTaken": 113.93333333333334,
+        "profiles": {
+          "beginner": {
+            "director": 0,
+            "actor": 0
+          },
+          "regular": {
+            "director": 5,
+            "actor": 5
+          },
+          "expert": {
+            "director": 5,
+            "actor": 5
+          }
+        },
+        "reached": {
+          "ignis": 30,
+          "mime": 30,
+          "gojo": 30,
+          "sukuna": 26
+        },
+        "cleared": {
+          "ignis": 30,
+          "mime": 30,
+          "gojo": 26,
+          "sukuna": 20
+        },
+        "takeoverCasts": {
+          "moving-light": 0,
+          "mask-panels": 12,
+          "lens-corridors": 39,
+          "blade-waves": 26,
+          "chasing-slashes": 7
+        }
+      },
+      "method": "Same current v17 controller code, both roles, three profiles and five controller seeds per cell (30 paired full campaigns per engine). Only the imported frozen engine is swapped. Fixed standard challenge, no HP/damage edits. This is a small deterministic sanity comparison, not a human difficulty estimate."
+    },
+    "notObservedInCampaign": [
+      "straight-light",
+      "return-light",
+      "single-swap",
+      "reverse-frames"
+    ]
+  },
+  "limitations": [
+    "Automated geometry-aware controllers do not represent human win rates or prove a perceived difficulty increase.",
+    "Fast kills may skip takeovers; isolated route tests cover variants not observed in campaign runs.",
+    "Game browser visual inspection and mobile touch playtest were not completed."
+  ],
+  "deployment": {
+    "url": "https://yesulin-arcade.vercel.app/",
+    "method": "GitHub main automatic Vercel deployment",
+    "status": "Prepared; final production artifact verification saved separately."
+  },
+  "build": {
+    "files": 39,
+    "allByteIdenticalToSource": true,
+    "relativeModuleImportsPresent": true,
+    "localRuntimeFilesChecked": 7
+  }
+}

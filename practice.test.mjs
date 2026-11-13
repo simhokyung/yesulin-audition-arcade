@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createGame,startStage,step,BOSSES,getDomainGuide} from './engine.js';
+import {createGame,startStage,step,BOSSES,getDomainGuide,patternTurnFor} from './engine.js';
 import {createPractice as createRawPractice,stepPractice} from './practice.js';
 function finishIntro(s){while(s.cinematic)step(s);return s;}
 function createPractice(options={}){return finishIntro(createRawPractice(options));}
@@ -19,9 +19,9 @@ test('practice uses the same first blade and second pursuit as production and re
  for(const character of ['director','actor']){
   const practice=createPractice({stage:3,character}),production=createGame({mode:'challenge',character});startStage(production,3,{retry:true,entrance:true});finishIntro(production);
   while(practice.cinematic){stepPractice(practice);step(production);}
-  for(const [index,type] of [[1,'blade-waves'],[6,'chasing-slashes']]){
+  for(const [occurrence,type] of [[0,'blade-waves'],[1,'chasing-slashes']]){
    while(practice.boss.counterRemaining>0){stepPractice(practice);step(production);}
-   for(const s of [practice,production]){s.boss.patternIndex=index;s.boss.patternCooldown=0;}
+   for(const s of [practice,production]){s.boss.patternIndex=patternTurnFor(s.boss.id,3,{occurrence});s.boss.patternCooldown=0;}
    stepPractice(practice);step(production);assert.equal(practice.hazards[0].domainType,type);
    for(let f=0;f<2400&&practice.status==='playing'&&(practice.hazards.length||practice.cinematic);f++){
     const g=getDomainGuide(practice,practice.hazards[0]),p=practice.player,input=g?{left:g.target.x-p.x<-4,right:g.target.x-p.x>4,up:g.target.y-p.y<-4,down:g.target.y-p.y>4}:{};
@@ -42,7 +42,35 @@ test('each selected practice opponent plays its real entrance before accepting c
 test('all four extra normal patterns use identical figures, colliders and outcomes in practice and production',()=>{
  for(const character of ['director','actor'])for(let stage=0;stage<4;stage++){
   const p=createPractice({stage,character}),c=createGame({mode:'challenge',character});startStage(c,stage,{retry:true,entrance:true});finishIntro(c);
-  for(const s of [p,c]){s.boss.patternIndex=[1,2,3,3][stage];s.boss.patternCooldown=0;}stepPractice(p);step(c);assert.equal(p.boss.telegraph.index,4);
+  for(const s of [p,c]){s.boss.patternIndex=patternTurnFor(s.boss.id,4);s.boss.patternCooldown=0;}stepPractice(p);step(c);assert.equal(p.boss.telegraph.index,4);
   for(let n=0;n<300&&p.status==='playing';n++){const input={up:n<80,right:n>=80&&n<160};stepPractice(p,input);step(c,input);assert.deepEqual(p.hazards,c.hazards);assert.deepEqual(p.audition,c.audition);assert.deepEqual(p.rehearsal,c.rehearsal);assert.deepEqual(p.player,c.player);assert.deepEqual(p.stats,c.stats);}
+ }
+});
+
+
+test('new sixth patterns preserve actual projectiles and damage in practice and production',()=>{
+ for(const character of ['director','actor'])for(let stage=0;stage<4;stage++)for(const phase of [1,2]){
+  const p=createPractice({stage,character}),c=createGame({mode:'challenge',character});startStage(c,stage,{retry:true,entrance:true});finishIntro(c);
+  for(const s of [p,c]){s.boss.phase=phase;s.boss.patternIndex=patternTurnFor(s.boss.id,5);s.boss.patternCooldown=0;}stepPractice(p);step(c);assert.equal(p.boss.telegraph.index,5);
+  let launches=0;const seen=new Set();
+  for(let n=0;n<600&&p.status==='playing';n++){
+   const input={up:n%240<100,right:n%240>=100&&n%240<160,down:n%240>=160};stepPractice(p,input);step(c,input);
+   assert.deepEqual(p.hazards,c.hazards);assert.deepEqual(p.projectiles,c.projectiles);assert.deepEqual(p.boss,c.boss);assert.deepEqual(p.player,c.player);assert.deepEqual(p.stats,c.stats);
+   for(const e of p.effects)if(e.type==='bossShot'&&e.kind==='launch'&&!seen.has(e.id)){seen.add(e.id);launches++;}
+  }
+  assert.ok(launches>0,'actual new attack must execute');assert.equal(p.mode,'practice');assert.equal(p.practice.kind,'duel');
+ }
+});
+
+test('both phase-selected domain variants match production geometry and reset on fresh practice',()=>{
+ for(const character of ['director','actor'])for(let stage=0;stage<3;stage++)for(const phase of [1,2])for(const count of [0,1]){
+  const p=createPractice({stage,character}),c=createGame({mode:'challenge',character});startStage(c,stage,{retry:true,entrance:true});finishIntro(c);
+  for(const s of [p,c]){s.boss.phase=phase;s.boss.takeoverCount=count;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;}stepPractice(p);step(c);
+  const h=p.hazards.find(h=>h.kind==='domain'),expected=[['straight-light','return-light'],['single-swap','double-swap'],['normal-frames','reverse-frames']][stage][(count+(phase===2?1:0))%2];assert.equal(h.variantId,expected);
+  for(let n=0;n<1800&&p.status==='playing'&&p.hazards.includes(h);n++){
+   const g=getDomainGuide(p,h),input={left:g.target.x-p.player.x<-4,right:g.target.x-p.player.x>4,up:g.target.y-p.player.y<-4,down:g.target.y-p.player.y>4};stepPractice(p,input);step(c,input);
+   assert.deepEqual(p.hazards,c.hazards);assert.deepEqual(p.player,c.player);assert.deepEqual(p.stats,c.stats);
+  }
+  assert.equal(p.status,'playing');assert.equal(p.stats.takeoverVariantSurvived[expected],1);assert.equal(createPractice({stage,character}).boss.takeoverCount,0);
  }
 });

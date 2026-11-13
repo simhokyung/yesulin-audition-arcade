@@ -56,6 +56,9 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   const rules={ignis:['움직이는 조명','밝은 조명 안에서 빛을 따라가세요','조명이 계속 이동합니다 · 멈춰 있으면 위험'],mime:['진짜 가면 찾기','진짜 패널을 보고 다음 신호에 이동!','◇ ○ △ 표시 확인 · 금빛 다음 패널로 열린 통로 이동'],gojo:['교차 프레임','가로 → 세로 · 바뀌는 빈틈으로!','예고 동안 이동 · 밝은 통로 안에서 교차 공격 회피'],sukuna:['다가오는 다섯 차례 칼날 벽','방향을 보고 민트색 빈틈에 맞추세요!','좌우 · 상하 · 대각선에서 접근 · 칼날이 지나갈 때까지 빈틈 유지']};
   const takeoverTitle=zone?.name?.replace(/^무대 장악\s*[·:]\s*/, '')||visual.takeover;
   let rule=chasing?['가로 7연사 → 세로 7연사 → 3방향 피날레','가로는 위아래, 세로는 좌우로 계속 이동!','첫 7연사는 중간 반전! · 마지막 뒤 황금 반격']:rules[id]||rules.ignis;if(id==='mime'&&zone){const m=mimePresentation(s,zone);rule=['목적지 발판 찾기',`${m.symbol} 밝은 민트 발판으로!`,'민트색 하나 = 지금 목적지 · 금색 점선 = 다음 발판'];}
+  if(zone?.variantId==='return-light')rule=['되돌아오는 조명','조명 안에서 따라가다 방향을 바꾸세요!','현재 조명 = 민트 · 금색 점선 = 곧 이동할 위치'];
+  if(zone?.variantId==='double-swap')rule=[`두 번의 배역 교대 · ${mimePresentation(s,zone).symbol}부터`,rule[1],'두 번 이동합니다 · 통로가 열리면 새 민트 발판으로'];
+  if(zone?.variantId==='reverse-frames')rule=['반전 프레임','위치가 바뀌어도 민트 통로를 찾으세요!','현재 통로 = 민트 · 다음 통로 = 금색 점선'];
   c.fillStyle=color;c.font='700 12px "Noto Sans KR",sans-serif';c.fillText('무 대 장 악',640,529+rise);
   c.fillStyle='#ffffff';c.font='900 53px "Noto Sans KR","Apple SD Gothic Neo",sans-serif';
   c.fillText(takeoverTitle,640,586+rise);

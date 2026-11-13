@@ -14,7 +14,7 @@ export function takeoverGuide(s,h){
 export function mimePresentation(s,h){
  const v=takeoverView(h),g=takeoverGuide(s,h),panels=v.panels||h.panels||[],target=g.target||v.guide,goal=g.targetRegion||panels.find(p=>Math.abs(p.x-target.x)<2&&Math.abs(p.y-target.y)<2)||v.safeRegions?.find(r=>r.type==='ellipse'),index=goal?.index??panels.findIndex(p=>goal&&Math.abs(p.x-goal.x)<2&&Math.abs(p.y-goal.y)<2),changing=!!h.active&&!!h.phaseWarning;
  const reached=typeof g.targetReached==='boolean'?g.targetReached:!!goal&&Math.pow((s.player.x-goal.x)/goal.radius,2)+Math.pow((s.player.y-goal.y)/(goal.radiusY||goal.radius*.6),2)<=1;
- const previous=changing?panels[h.safeIndex]:null,preview=!changing&&(h.domainPhase||0)===0?panels[h.nextSafeIndex]:null;
+ const previous=changing?panels[h.safeIndex]:null,preview=changing?null:Object.hasOwn(g,'nextPanel')?g.nextPanel:h.nextSafeIndex==null?null:panels[h.nextSafeIndex];
  return{goal,index,reached,changing,previous,preview,panels,symbol:`${['①','②','③'][Math.max(0,index)]} ${['○','◇','△'][Math.max(0,index)]}`};
 }
 function polygonPoints(r){
@@ -66,8 +66,9 @@ export function drawTakeoverGuides(c,s,h,t,reduced=false){
  }
  const wantsMove=mime?!mime.reached:!g.insideSafe||type==='moving-light'&&Math.hypot(s.player.x-target.x,s.player.y-target.y)>25;
  if(wantsMove&&Number.isFinite(target?.x)&&Number.isFinite(target?.y)){const dx=target.x-s.player.x,dy=target.y-s.player.y,len=Math.hypot(dx,dy)||1;arrow(c,s.player.x+dx/len*14,s.player.y+dy/len*14,target.x,target.y,MINT,14,true);dot(c,s.player.x,s.player.y,5,'#effff4');}
+ if(type==='moving-light'&&h.variantId==='return-light'&&h.active&&target&&h.travelDirection){const dir=Math.sign(h.travelDirection);arrow(c,target.x-dir*16,target.y,target.x+dir*29,target.y,MINT,8,false);}
  if(type==='rhythm-slashes'&&target){line(c,[[target.x-13,target.y],[target.x+13,target.y]],MINT,2);line(c,[[target.x,target.y-9],[target.x,target.y+9]],MINT,2);}
- if(!mime&&target&&Number.isFinite(target.x)){const near=safe.find(r=>Math.abs(r.x-target.x)<8&&Math.abs(r.y-target.y)<8),bottom=target.y+(near?(near.type==='ellipse'?(near.radiusY||50):(near.height||80)/2):20),yy=clamp(bottom+22,390,624),caption=type==='moving-light'?'움직이는 조명을 따라가기':type==='mask-panels'?(h.active&&h.phaseWarning?'다음 진짜 패널':'진짜 패널'):type==='lens-corridors'?'밝은 통로 · 새 빈틈으로':'선 밖 빈틈으로';
+ if(!mime&&target&&Number.isFinite(target.x)){const near=safe.find(r=>Math.abs(r.x-target.x)<8&&Math.abs(r.y-target.y)<8),bottom=target.y+(near?(near.type==='ellipse'?(near.radiusY||50):(near.height||80)/2):20),yy=clamp(bottom+22,390,624),caption=type==='moving-light'?(h.variantId==='return-light'?'왕복 조명 · 방향이 바뀝니다':'움직이는 조명을 따라가기'):type==='mask-panels'?(h.active&&h.phaseWarning?'다음 진짜 패널':'진짜 패널'):type==='lens-corridors'?'밝은 통로 · 새 빈틈으로':'선 밖 빈틈으로';
   const xx=clamp(target.x,181,1099);box(c,xx-140,yy-18,280,27,'#092b30f2',4);label(c,caption,xx,yy+1,15,MINT);}
  c.restore();
 }
@@ -77,7 +78,7 @@ export function takeoverInstruction(s,h){
  if(type==='chasing-slashes'){blade=pursuitInstruction(h,v,g);title=blade.title;tip=blade.tip;}
  else if(type==='blade-waves'){blade=bladeWaveInstruction(h,v,g);title=blade.title;tip=blade.tip;}
  else
- if(type==='moving-light'){title=g.insideSafe?'안전! 움직이는 조명을 따라가세요':'위험! 이동하는 조명 안으로!';tip='한곳에 멈추면 조명이 먼저 떠납니다';}
+ if(type==='moving-light'){title=g.insideSafe?'안전! 움직이는 조명을 따라가세요':'위험! 이동하는 조명 안으로!';tip=h.variantId==='return-light'?'중간에 반대로 움직입니다 · 민트 조명 안에서 계속 따라가세요':'한곳에 멈추면 조명이 먼저 떠납니다';}
  else if(type==='mask-panels'){const m=mimePresentation(s,h);title=m.reached?`${m.symbol} 도착! 이 발판에 머무르세요`:`${m.symbol} 여기로 이동하세요!`;tip=m.reached?'도착 완료 · 다음 이동 신호까지 이 발판에 머무르세요':m.changing?'지금 목표는 밝은 민트 발판 하나 · 이전 발판을 떠나세요':m.preview?'밝은 민트 = 지금 목적지 · 금색 점선 = 다음 발판':'밝은 민트 발판 안에서 공격이 끝날 때까지 대기';}
  else if(type==='lens-corridors'){const horizontal=(v.safeRegions||[])[0]?.width>1000,orientation=horizontal?'가로':'세로';title=g.warning?`지금 이동! 민트색 ${orientation} 통로로`:g.insideSafe?`${orientation} 통로 안전 · 지금은 대기`:`민트색 ${orientation} 통로 안으로!`;tip=g.warning?'빔이 꺼진 이동 시간 · 금색 점선은 그다음 통로':'현재 = 민트색 · 다음 = 금색 점선 · 이동 신호를 기다리세요';}
  else{title=g.warning?`${phase}/${count} 새 예고선! 옆으로 이동하세요`:g.dangerousNow?'위험! 공격선 밖으로!':`${phase}/${count} 회피 성공 · 다음 선을 기다리세요`;tip=g.warning?'선이 나타나면 선을 가로질러 옆으로 · 방향키 / Space':'매 박자 새 위치를 겨눕니다 · 다음 예고선이 뜨면 다시 이동';}

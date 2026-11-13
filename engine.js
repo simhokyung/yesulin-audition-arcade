@@ -39,11 +39,22 @@ export const DIFFICULTIES = {
   hard:{id:'hard',name:'감독판',hp:1.17,damage:1.22,warning:.91,attackSpeed:.88},
 };
 export const BOSSES = [
-  {id:'ignis',name:'피노',title:'조명감독',subtitle:'첫 무대의 긴장을 넘어서',location:'점화 스테이지',color:'#ffb465',hp:3800,damage:18,quote:'조명 켰다. 긴장해도 좋아. 네 장면을 시작해.',tip:'빛나는 바닥에서 벗어나세요. 골든 아워에는 계속 이동하는 민트색 조명을 따라가야 합니다.',review:'첫 장면, 좋았어. 다음 조명으로 가.',patterns:['풋라이트 점화','앰버 스윕','스파크 앙코르','무대 장악 · 골든 아워','조명 리허설']},
-  {id:'mime',name:'대길',title:'가면연출가',subtitle:'나만의 배역을 찾아서',location:'가면 소극장',color:'#dfb0fa',hp:5400,damage:26,quote:'가면은 수없이 많지. 너는 어떤 장면을 보여줄 거야?',tip:'점선 FAKE는 가짜, 진한 HIT만 실제 타격입니다. 무대 장악에서는 진짜 번호·모양을 찾고 연결 통로가 열리면 다음 패널로 옮기세요.',review:'네 장면을 찾았군. 다음 무대로.',patterns:['리본 피어스','거짓 커튼','더블 캐스팅','무대 장악 · 페르소나 극장','대역 오디션']},
-  {id:'gojo',name:'이프',title:'경계심사관',subtitle:'달라진 흐름에 응답하기',location:'프레임 스튜디오',color:'#a7c9ff',hp:8200,damage:38,quote:'아까 통했던 동선이, 이번에도 통할까?',tip:'프레임 관통은 마지막 0.5초에 고정됩니다. 무대 장악은 가로·세로 안전 통로가 바뀌므로 빔이 꺼진 예고 때 이동하세요.',review:'흐름이 달라도 네 장면은 살아 있어.',patterns:['초점 견인','경계 반발','프레임 관통','무대 장악 · 무한 시사회','리플레이']},
-  {id:'sukuna',name:'무빙',title:'종막집행관',subtitle:'마지막까지 집중을 지키기',location:'종막 심사장',color:'#ff8491',hp:9400,damage:45,quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',tip:'박자 절단의 연속 예고선을 피하세요. 종막 집행은 방향이 바뀌는 칼날 벽입니다. 이동하는 틈에 맞춰 통과하고, 마지막 두 대각선에서는 방향을 꺾으세요.',review:'끝까지 지켰군. 이 무대는 네 것이다.',patterns:['박자 절단','단두 큐','종막 투창','무대 장악 · 종막 집행','앙코르 참격']},
+  {id:'ignis',name:'피노',title:'조명감독',subtitle:'첫 무대의 긴장을 넘어서',location:'점화 스테이지',color:'#ffb465',hp:3800,damage:18,quote:'조명 켰다. 긴장해도 좋아. 네 장면을 시작해.',tip:'빛나는 바닥에서 벗어나세요. 골든 아워에는 계속 이동하는 민트색 조명을 따라가야 합니다.',review:'첫 장면, 좋았어. 다음 조명으로 가.',patterns:['풋라이트 점화','앰버 스윕','스파크 앙코르','무대 장악 · 골든 아워','조명 리허설','팔로 스폿']},
+  {id:'mime',name:'대길',title:'가면연출가',subtitle:'나만의 배역을 찾아서',location:'가면 소극장',color:'#dfb0fa',hp:5400,damage:26,quote:'가면은 수없이 많지. 너는 어떤 장면을 보여줄 거야?',tip:'점선 FAKE는 가짜, 진한 HIT만 실제 타격입니다. 무대 장악에서는 진짜 번호·모양을 찾고 연결 통로가 열리면 다음 패널로 옮기세요.',review:'네 장면을 찾았군. 다음 무대로.',patterns:['리본 피어스','거짓 커튼','더블 캐스팅','무대 장악 · 페르소나 극장','대역 오디션','가면 동선']},
+  {id:'gojo',name:'이프',title:'경계심사관',subtitle:'달라진 흐름에 응답하기',location:'프레임 스튜디오',color:'#a7c9ff',hp:8200,damage:38,quote:'아까 통했던 동선이, 이번에도 통할까?',tip:'프레임 관통은 마지막 0.5초에 고정됩니다. 무대 장악은 가로·세로 안전 통로가 바뀌므로 빔이 꺼진 예고 때 이동하세요.',review:'흐름이 달라도 네 장면은 살아 있어.',patterns:['초점 견인','경계 반발','프레임 관통','무대 장악 · 무한 시사회','리플레이','선행 프레임']},
+  {id:'sukuna',name:'무빙',title:'종막집행관',subtitle:'마지막까지 집중을 지키기',location:'종막 심사장',color:'#ff8491',hp:9400,damage:45,quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',tip:'박자 절단의 연속 예고선을 피하세요. 종막 집행은 방향이 바뀌는 칼날 벽입니다. 이동하는 틈에 맞춰 통과하고, 마지막 두 대각선에서는 방향을 꺾으세요.',review:'끝까지 지켰군. 이 무대는 네 것이다.',patterns:['박자 절단','단두 큐','종막 투창','무대 장악 · 종막 집행','앙코르 참격','엇박자 연사']},
 ];
+
+// Five casts per rotation preserve the established takeover cadence. The first
+// ordinary slot alternates the new concept attack and the original opener.
+export const BOSS_PATTERN_ROTATIONS={ignis:[0,4,1,2,3],mime:[0,1,4,2,3],gojo:[0,3,1,4,2],sukuna:[0,3,1,4,2]};
+export function rankedPatternAt(bossId,turn){
+ const rotation=BOSS_PATTERN_ROTATIONS[bossId];if(!rotation)throw new RangeError('Unknown boss');turn=Math.max(0,Math.floor(turn));const slot=turn%rotation.length,cycle=Math.floor(turn/rotation.length);return slot===0?(cycle%2===0?5:0):rotation[slot];
+}
+export function patternTurnFor(bossId,pattern,{occurrence=0}={}){
+ if(!Number.isInteger(pattern)||pattern<0||pattern>5||!Number.isInteger(occurrence)||occurrence<0)throw new RangeError('Invalid pattern or occurrence');let seen=0;
+ for(let turn=0;turn<(occurrence+1)*10;turn++)if(rankedPatternAt(bossId,turn)===pattern){if(seen===occurrence)return turn;seen++;}throw new RangeError('Pattern is not scheduled');
+}
 
 const BOUNDS={left:76,right:1204,top:340,bottom:624};
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
@@ -103,7 +114,7 @@ function outsideDomainSafe(x,y,h,margin=0){
   return (h.dangerRegions||[]).some(r=>regionContains(x,y,r,margin));
 }
 export function isInsideHazard(x,y,h,margin=0){
-  if(h.decoy)return false;
+  if(h.decoy||h.warningOnly)return false;
   if(h.domainType)return !!h.active&&!!h.lethalActive&&outsideDomainSafe(x,y,h,margin);
   if(h.type==='safezone')return !circleContains(x,y,{x:h.safeX,y:h.safeY,radius:h.safeRadius,radiusY:h.safeRadiusY},-margin);
   return h.type==='lane'?laneContains(x,y,h,margin):circleContains(x,y,h,margin);
@@ -111,7 +122,7 @@ export function isInsideHazard(x,y,h,margin=0){
 export function getTakeoverView(h){
   if(!h)return null;
   const safeRegions=h.safeRegions||[{type:'ellipse',x:h.safeX,y:h.safeY,radius:h.safeRadius,radiusY:h.safeRadiusY}];
-  return {type:h.domainType||'safezone',safeRegions,dangerRegions:h.dangerRegions||[],nextSafeRegions:h.nextSafeRegions||[],pursuitState:h.pursuitState||null,pursuitVariant:h.pursuitVariant||null,section:h.section||null,shotIndex:h.shotIndex||0,shotCount:h.section==='burst'?7:h.slashes?.length||0,nextShotIn:h.nextShotIn??null,beatIndex:h.domainPhase||0,beatCount:h.phaseCount||1,previewRegions:h.previewRegions||[],aimPoint:h.aimPoint||null,origin:h.origin||null,slashes:h.slashes||[],waves:h.waves||[],bladeCheckpoint:h.bladeCheckpoint||0,arrivalSeconds:h.arrivalSeconds??null,panels:h.panels||[],safeIndex:h.safeIndex,nextSafeIndex:h.nextSafeIndex,phaseName:h.phaseName||h.name,phaseRemaining:!h.active?h.remaining:h.phaseRemaining??h.life,phaseDuration:!h.active?h.duration:h.phaseDuration??h.totalLife,phaseIndex:h.domainPhase||0,phaseCount:h.phaseCount||1,pulseActive:!!h.active&&h.lethalActive!==false,warning:!h.active||!!h.phaseWarning,guide:{x:h.safeX,y:h.safeY},instruction:h.instruction||'안전 조명 안으로 이동하세요.'};
+  return {variantId:h.variantId||null,variantName:h.variantName||null,type:h.domainType||'safezone',safeRegions,dangerRegions:h.dangerRegions||[],nextSafeRegions:h.nextSafeRegions||[],pursuitState:h.pursuitState||null,pursuitVariant:h.pursuitVariant||null,section:h.section||null,shotIndex:h.shotIndex||0,shotCount:h.section==='burst'?7:h.slashes?.length||0,nextShotIn:h.nextShotIn??null,beatIndex:h.domainPhase||0,beatCount:h.phaseCount||1,previewRegions:h.previewRegions||[],aimPoint:h.aimPoint||null,origin:h.origin||null,slashes:h.slashes||[],waves:h.waves||[],bladeCheckpoint:h.bladeCheckpoint||0,arrivalSeconds:h.arrivalSeconds??null,panels:h.panels||[],safeIndex:h.safeIndex,nextSafeIndex:h.nextSafeIndex,phaseName:h.phaseName||h.name,phaseRemaining:!h.active?h.remaining:h.phaseRemaining??h.life,phaseDuration:!h.active?h.duration:h.phaseDuration??h.totalLife,phaseIndex:h.domainPhase||0,phaseCount:h.phaseCount||1,pulseActive:!!h.active&&h.lethalActive!==false,warning:!h.active||!!h.phaseWarning,guide:{x:h.safeX,y:h.safeY},instruction:h.instruction||'안전 조명 안으로 이동하세요.'};
 }
 function domainTitle(h,v){
  if(h.domainType==='mask-panels'){const panel=h.panels?.find(p=>p.x===h.safeX);return `${panel?.label||''}번 ${['원','마름모','삼각형'][panel?.index||0]} 패널로 이동`;}
@@ -137,17 +148,17 @@ export function getDomainGuide(s,h){
   const targetRegion=targetPanel||null,targetReached=!!p&&(targetRegion?circleContains(p.x,p.y,targetRegion):insideSafe);
   if(h.domainType==='blade-waves')return bladeGuide(s,h,v);
   if(h.domainType==='chasing-slashes')return pursuitGuide(s,h,v);
-  return {...v,target:v.guide,targetRegion,targetReached,destinationReached:targetReached,transition:!!h.active&&!!h.phaseWarning,currentPanel,targetPanel,nextPanel:h.panels?.[h.nextSafeIndex]||null,phase:v.phaseIndex,remaining:v.phaseRemaining,title:domainTitle(h,v),timerLabel:!h.active?'공격까지':h.phaseWarning?'이동 시간':'유지 시간',progress:clamp(1-v.phaseRemaining/Math.max(.01,v.phaseDuration),0,1),insideSafe,dangerousNow:!!p&&v.pulseActive&&outsideDomainSafe(p.x,p.y,h),instruction:domainInstruction(s,h,v)};
+  return {...v,target:v.guide,targetRegion,targetReached,destinationReached:targetReached,transition:!!h.active&&!!h.phaseWarning,currentPanel,targetPanel,nextPanel:h.nextSafeIndex===null?null:h.panels?.[h.nextSafeIndex]||null,phase:v.phaseIndex,remaining:v.phaseRemaining,title:domainTitle(h,v),timerLabel:!h.active?'공격까지':h.phaseWarning?'이동 시간':'유지 시간',progress:clamp(1-v.phaseRemaining/Math.max(.01,v.phaseDuration),0,1),insideSafe,dangerousNow:!!p&&v.pulseActive&&outsideDomainSafe(p.x,p.y,h),instruction:domainInstruction(s,h,v)};
 }
 
 
 export function createGame({character='director',difficulty='standard',seed=42,stage=0,skipIntro=false,mode='story',duration=90}={}){
   if(!CHARACTERS[character])character='director';if(!DIFFICULTIES[difficulty])difficulty='standard';
   mode=mode==='challenge'?'challenge':mode==='booth'?'booth':'story';if(isRankedRun({mode})){seed=424242;difficulty='standard';stage=0;skipIntro=true;}duration=[60,90,120].includes(duration)?duration:90;
-  const s={version:15,runCharacter:character,dialogue:null,dialogueCooldown:0,dialogueHistory:{},lastDamage:null,followups:[],rehearsal:null,audition:null,playerHistory:[],introducedBosses:[],cinematic:null,pendingUltimate:false,mode,duration:mode==='booth'?duration:0,timeLeft:mode==='challenge'?null:mode==='booth'?duration:0,runTime:0,round:0,transitionTimer:0,endReason:null,domainDeath:null,inputBuffer:{},scoreExact:0,multiplier:1,fever:0,lastJustAttack:0,rng:seed>>>0,seed:seed>>>0,uid:0,status:'playing',difficulty,stage:0,time:0,stageTime:0,score:0,combo:0,maxCombo:0,comboTimer:0,
+  const s={version:17,runCharacter:character,dialogue:null,dialogueCooldown:0,dialogueHistory:{},lastDamage:null,followups:[],rehearsal:null,audition:null,playerHistory:[],introducedBosses:[],cinematic:null,pendingUltimate:false,mode,duration:mode==='booth'?duration:0,timeLeft:mode==='challenge'?null:mode==='booth'?duration:0,runTime:0,round:0,transitionTimer:0,endReason:null,domainDeath:null,inputBuffer:{},scoreExact:0,multiplier:1,fever:0,lastJustAttack:0,rng:seed>>>0,seed:seed>>>0,uid:0,status:'playing',difficulty,stage:0,time:0,stageTime:0,score:0,combo:0,maxCombo:0,comboTimer:0,
     player:{...recoilDefaults(),x:270,y:500,hp:280,maxHp:280,energy:100,maxEnergy:100,hype:0,character,role:'sword',facing:1,invuln:0,attackAnim:0,attackKind:'',dodgeTimer:0,dodgeElapsed:0,dodgeId:0,lastJustDodge:-1,dodgeX:0,dodgeY:0,attackCooldown:0,attackId:0,comboIndex:0,chainTimer:0,precisionWindow:false,precisionQueued:false,precisionAttempted:false,queuedAttack:false,timingGrade:'',timingTimer:0,swapCooldown:0,hitFlash:0,slow:0,buff:false,combo:0,cooldowns:{skill:0,buff:0,dodge:0,role:0,ultimate:0}},
     boss:null,enemies:[],hazards:[],projectiles:[],effects:[],spotlight:{x:480,y:490,radius:105,radiusY:62,active:true,timer:0},
-    stats:{extraActivations:{},extraCompletions:{},extraSuccesses:{},counterWindows:0,counterDamage:0,rehearsals:0,auditionSuccesses:0,auditionMistakes:0,patternCasts:{},takeoverCasts:{},takeoverActivations:{},takeoverSurvived:{},damageDealt:0,damageTaken:0,hits:0,dodges:0,perfectDodges:0,justDodges:0,justHits:0,finishers:0,maxMultiplier:1,bossKills:0,skills:0,buffs:0,adlibs:0,methodFinishers:0,cueDetonations:0,crewBursts:0,blocks:0,swaps:0,ultimates:0,kills:0,stagesCleared:0,spotlightSeconds:0},
+    stats:{takeoverVariantCasts:{},takeoverVariantActivations:{},takeoverVariantSurvived:{},conceptCasts:{},conceptShots:{},extraActivations:{},extraCompletions:{},extraSuccesses:{},counterWindows:0,counterDamage:0,rehearsals:0,auditionSuccesses:0,auditionMistakes:0,patternCasts:{},takeoverCasts:{},takeoverActivations:{},takeoverSurvived:{},damageDealt:0,damageTaken:0,hits:0,dodges:0,perfectDodges:0,justDodges:0,justHits:0,finishers:0,maxMultiplier:1,bossKills:0,skills:0,buffs:0,adlibs:0,methodFinishers:0,cueDetonations:0,crewBursts:0,blocks:0,swaps:0,ultimates:0,kills:0,stagesCleared:0,spotlightSeconds:0},
     announcedPhase:false,shake:0,hitStop:0,skipIntro};
   startStage(s,clamp(stage|0,0,BOSSES.length-1),{retry:true,entrance:mode==='challenge'});return s;
 }
@@ -309,6 +320,8 @@ export function getPatternGuide(s){
  const b=s.boss,p=s.player;if(b.counterRemaining>0)return {kind:'counter',title:'반격 기회!',instruction:'보스가 멈췄습니다. 지금 공격하면 피해 +20%!',remaining:b.counterRemaining,duration:b.counterDuration,target:{x:b.x+(p.x<b.x?-65:65),y:b.y},targetReached:groundDistance(p,b)<130,timerLabel:'반격 시간'};
  const a=s.audition;if(a&&!a.selected){const real=a.figures.find(f=>f.real);return{kind:'audition',title:'대역 오디션 · ★ 진짜를 찾아라',instruction:a.active?'★ 진짜 실루엣만 공격하세요. ○ 대역은 피하세요!':'★ 표식을 확인하고 진짜 실루엣 쪽으로 이동하세요.',remaining:a.active?a.remaining:a.warning,duration:a.active?a.duration:a.warningDuration,target:{x:real.x+(p.x<real.x?-65:65),y:real.y},targetReached:groundDistance(p,real)<110,timerLabel:a.active?'선택 시간':'시작까지',figureId:real.id};}
  const lights=s.hazards.filter(h=>h.kind==='rehearsal-light'&&!h.visited).sort((a,b)=>a.index-b.index),h=lights[0];if(h)return{kind:'rehearsal',title:`조명 리허설 ${h.index}/3`,instruction:`${h.index}번 조명 안으로 이동해 잠깐 머무르세요!`,remaining:h.active?h.life:h.remaining,duration:h.active?h.totalLife:h.duration,target:{x:h.x,y:h.y},targetReached:circleContains(p.x,p.y,h),timerLabel:h.active?'조명 유지':'켜질 때까지',index:h.index,total:3};
+ const concepts=s.hazards.filter(h=>h.conceptPattern&&!h.decoy),concept=concepts.find(h=>!h.active)||concepts.at(-1);
+ if(concept){const late=concepts.some(h=>h.late&&!h.active),name=concept.name,kind=concept.kind,tracking=concept.tracking&&!concept.active,remaining=concept.active?concept.life:concept.remaining,target=laneEscape(p,concepts.filter(h=>!h.active||!h.warningOnly).map(h=>h.type==='circle'?{type:'ellipse',x:h.x,y:h.y,radius:h.radius,radiusY:h.radiusY}:h));return{kind,title:name,instruction:kind==='follow-spot'?(tracking?'조명이 따라옵니다. 고정 신호 뒤 옆으로 피하고 두 번째 조명도 확인하세요!':'조명 방향 고정! 선 옆으로 이동하고 다음 조명을 확인하세요!'):kind==='mask-route'?'FAKE는 안전합니다. 번호가 붙은 HIT 동그라미 3곳을 차례로 피하세요!':tracking?'예측 조준 중! 고정 신호가 나오면 이동 방향을 바꾸세요!':late?'빠른 5발 뒤 늦은 2발이 남았습니다. 마지막 탄까지 계속 피하세요!':'고정된 선 옆으로 이동하세요. 실제 투사체가 모두 지나갈 때까지 주의하세요!',target,targetReached:groundDistance(p,target)<18,tracking,locked:!!concept.locked,index:concept.index,total:concept.total,remaining,duration:concept.active?concept.totalLife:concept.duration,timerLabel:concept.active?'투사체 통과':tracking?'조준 추적':'발사까지'};}
  const extras=s.hazards.filter(h=>h.extraPattern&&h.kind!=='rehearsal-light');if(!extras.length)return null;const last=extras.reduce((a,b)=>(a.active?a.life:a.remaining+a.life)>(b.active?b.life:b.remaining+b.life)?a:b);return{kind:last.kind.startsWith('encore')?'encore':'replay',title:last.kind.startsWith('encore')?'앙코르 참격 · 마지막 4타 주의':'리플레이 · 기억 경로에서 벗어나기',instruction:last.kind.startsWith('encore')?'빠른 3타 뒤 마지막 4타가 남아 있습니다. 긴 금색 예고까지 피하세요!':'방금 지나온 자리들이 차례로 공격됩니다. 다른 방향으로 이동하세요!',remaining:last.active?last.life:last.remaining+last.life,duration:last.duration+last.totalLife,target:null,timerLabel:'마지막 타격까지'};
 }
 
@@ -347,8 +360,40 @@ function updateTrials(s,dt){
  if(s.rehearsal&&!s.hazards.some(h=>h.trialId===s.rehearsal.id))s.rehearsal=null;
 }
 
+function bossShotEvent(s,h,kind){event(s,'bossShot',h.originX??h.x,h.originY??h.y,{kind,shotId:h.id,attackId:h.attackId,projectileId:h.projectileId??null,patternIndex:5,bossId:h.patternBossId,index:h.index,total:h.total,projectileKind:h.projectileKind,originX:h.originX??h.x,originY:h.originY??h.y,targetX:h.aimPoint?.x??h.x,targetY:h.aimPoint?.y??h.y,angle:h.angle,time:s.time,life:.45,maxLife:.45});}
+function beginConceptPattern(s,b,name,warning){
+ const p=s.player,origin={x:b.x,y:b.y};s.stats.conceptCasts[b.id]=(s.stats.conceptCasts[b.id]||0)+1;
+ event(s,'patternCue',b.x,b.y,{bossId:b.id,kind:'concept',text:name,life:.8,maxLife:.8});
+ if(b.id==='ignis'){
+  for(let n=0;n<2;n++)addHazard(s,b,'lane',name,warning+n*.46,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,originX:b.x,originY:b.y,aimPoint:{x:p.x,y:p.y},width:1450,height:60,angle:Math.atan2(p.y-b.y,p.x-b.x),life:.38,kind:'follow-spot',damage:b.damage*.9,tracking:true,locked:false,lockWindow:.6,index:n+1,total:2,blocksBoss:true,conceptPattern:true,patternBossId:b.id});
+ }else if(b.id==='mime'){
+  const dir=p.x<640?1:-1,points=[{x:p.x,y:p.y},{x:clamp(p.x+dir*155,110,1170),y:clamp(p.y+(p.y>480?-55:55),370,594)},{x:clamp(p.x-dir*110,110,1170),y:clamp(p.y+(p.y>480?40:-40),370,594)}];
+  points.forEach((point,n)=>addHazard(s,b,'circle',name,warning+n*.46,{...point,radius:78,radiusY:48,life:.30,kind:'mask-route',damage:b.damage*.8,locked:true,tracking:false,cue:'HIT '+(n+1),index:n+1,total:3,path:points,blocksBoss:true,conceptPattern:true,patternBossId:b.id}));
+  for(let n=0;n<2;n++)addHazard(s,b,'circle',name,warning+n*.46,{x:clamp(p.x+dir*(n?245:85),110,1170),y:clamp(p.y+(n?65:-65),370,594),radius:78,radiusY:48,life:.3,kind:'mask-route-fake',decoy:true,damage:0,locked:true,cue:'FAKE',index:n+1,total:2,conceptPattern:true,patternBossId:b.id});
+ }else{
+  const frames=b.id==='gojo',offsets=frames?[0,.18,.36]:[0,.14,.28,.42,.56,1.15,1.37];
+  offsets.forEach((offset,n)=>addHazard(s,b,'lane',name,warning+offset,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,width:1450,height:frames?64:58,angle:Math.atan2(p.y-b.y,p.x-b.x),originX:origin.x,originY:origin.y,aimPoint:{x:p.x,y:p.y},life:2.5,kind:'projectile-cue',projectileKind:frames?'frame-shard':'rhythm-blade',damage:b.damage*(frames?.75:.6),speed:frames?560:640,projectileRadius:frames?27:24,projectileRadiusY:frames?19:17,tracking:true,locked:false,lockWindow:frames?.65:.6,prediction:frames?.35:0,index:n+1,total:offsets.length,late:!frames&&n>=5,warningOnly:true,blocksBoss:true,conceptPattern:true,patternBossId:b.id}));
+ }
+ for(const h of s.hazards)if(h.attackId===b.telegraph.attackId&&h.conceptPattern)bossShotEvent(s,h,'tracking');
+}
+function trackConceptAim(s,h,dt){
+ if(h.locked)return;
+ const p=s.player,history=s.playerHistory,old=history.find(x=>s.time-x.time<=.32)||history[0],span=old?Math.max(.08,s.time-old.time):1;
+ const lead=h.prediction||0,aim={x:clamp(p.x+(old?clamp((p.x-old.x)/span*lead,-120,120):0),76,1204),y:clamp(p.y+(old?clamp((p.y-old.y)/span*lead,-80,80):0),340,624)};
+ h.aimPoint=aim;h.path=[{x:h.originX,y:h.originY},{...aim}];h.x=(h.originX+aim.x)/2;h.y=(h.originY+aim.y)/2;h.angle=Math.atan2(aim.y-h.originY,aim.x-h.originX);h.lockRemaining=Math.max(0,h.remaining-h.lockWindow);
+ if(h.remaining-dt<=h.lockWindow){h.locked=true;h.tracking=false;h.lockRemaining=0;bossShotEvent(s,h,'lock');}
+}
+function fireConceptProjectile(s,h){
+ h.launched=true;projectile(s,'enemy',h.projectileKind,h.originX,h.originY,Math.cos(h.angle)*h.speed,Math.sin(h.angle)*h.speed,{radius:h.projectileRadius,radiusY:h.projectileRadiusY,damage:h.damage,life:2.5,color:h.color,attackId:h.attackId,shotId:h.id,bossId:h.patternBossId,index:h.index,total:h.total,originX:h.originX,originY:h.originY,targetX:h.aimPoint.x,targetY:h.aimPoint.y,angle:h.angle,locked:true,tracking:false,path:h.path,late:h.late});
+ h.projectileId=s.projectiles.at(-1).id;s.stats.conceptShots[h.patternBossId]=(s.stats.conceptShots[h.patternBossId]||0)+1;bossShotEvent(s,h,'launch');
+}
+/** Relative continuous feet-versus-projectile ellipse; radii are the visible collider. */
+export function sweptProjectileCollision(from,to,q){
+ const ax=(from.x-(q.previousX??q.x))/q.radius,ay=(from.y-(q.previousY??q.y))/q.radiusY,bx=(to.x-q.x)/q.radius,by=(to.y-q.y)/q.radiusY,dx=bx-ax,dy=by-ay,d2=dx*dx+dy*dy,t=d2?clamp(-(ax*dx+ay*dy)/d2,0,1):0;return (ax+dx*t)**2+(ay+dy*t)**2<=1;
+}
+
 function beginPattern(s){
-  const b=s.boss,p=s.player,d=DIFFICULTIES[s.difficulty],intro=b.id==='ignis'||b.id==='mime',turn=b.patternIndex++%5,i=isRankedRun(s)?(b.id==='ignis'?[0,4,1,2,3]:b.id==='mime'?[0,1,4,2,3]:[0,3,1,4,2])[turn]:turn;b.attacks++;
+  const b=s.boss,p=s.player,d=DIFFICULTIES[s.difficulty],intro=b.id==='ignis'||b.id==='mime',turn=b.patternIndex++,i=isRankedRun(s)?rankedPatternAt(b.id,turn):turn%b.patterns.length;b.attacks++;
   s.stats.patternCasts[b.id+':'+i]=(s.stats.patternCasts[b.id+':'+i]||0)+1;
   // Opening acts teach their three normal patterns first; later ranked acts retain their established order.
   let warning=([1.15,1.1,1.7,1.8][i])*d.warning*(b.phase===2?.94:1);
@@ -358,6 +403,7 @@ function beginPattern(s){
   if(b.id==='sukuna')warning=([1.0,1.0,1.3,1.85][i])*d.warning*(b.phase===2&&i!==3?.94:1);
   if(i===3)warning=Math.max(1.65,warning);
   if(i===4)warning=({ignis:1.1,mime:1.1,gojo:1.0,sukuna:.85}[b.id])*d.warning;
+  if(i===5)warning=({ignis:1.5,mime:1.45,gojo:1.45,sukuna:1.35}[b.id])*d.warning;
   const name=b.patterns[i],angle=Math.atan2(p.y-b.y,p.x-b.x),aim={x:p.x,y:p.y};
   b.telegraph={name,type:'cast',x:p.x,y:p.y,radius:90,width:600,height:60,remaining:warning,duration:warning,dir:p.x>b.x?1:-1,color:b.color,index:i,attackId:++s.uid,angle,aim};b.attackKind=name;
   if(i===3||i===2&&b.id==='gojo')event(s,'domaincut',b.x,b.y,{bossId:b.id,text:name,subtitle:i===3?'안전 조명 밖 = 즉사 · 무적 무효':'위험 예고 · 지금 방향을 정하세요',color:b.color,power:i===3?3:2,life:.75,maxLife:.75});
@@ -383,6 +429,7 @@ function beginPattern(s){
     if(i===3)domain(s,b,name,warning,3.0,1.2);
   }
   if(i===4)beginExtraPattern(s,b,name,warning);
+  if(i===5)beginConceptPattern(s,b,name,warning);
   if(i===3)startCinematic(s,'domain',b.id,b.telegraph.name,b.id==='ignis'?.65:b.id==='mime'?.7:.8,b.x,b.y);
 }
 function domain(s,b,name,warning,life,mult,customRadius){
@@ -390,9 +437,11 @@ function domain(s,b,name,warning,life,mult,customRadius){
   const safeRadius=customRadius??((b.id==='sukuna'?100:108)-(b.phase===2?10:0));
   const count=b.takeoverCount++;const type=b.id==='sukuna'&&count%2===1?'chasing-slashes':{ignis:'moving-light',mime:'mask-panels',gojo:'lens-corridors',sukuna:'blade-waves'}[b.id];
   if(type==='chasing-slashes'){name='무대 장악 · 종막 집행 · 추격 난무';b.telegraph.name=name;b.attackKind=name;const cut=s.effects.findLast(e=>e.type==='domaincut'&&e.bossId===b.id);if(cut){cut.text=name;cut.subtitle='조준이 고정되면 방향 전환 · 실제 칼날 접촉 즉사';}}
+  const alternate=(count+(b.phase===2?1:0))%2===1,variantId=b.id==='ignis'?(alternate?'return-light':'straight-light'):b.id==='mime'?(alternate?'double-swap':'single-swap'):b.id==='gojo'?(alternate?'reverse-frames':'normal-frames'):type,variantName={"return-light":'되돌아오는 조명',"straight-light":'순회 조명',"double-swap":'두 번의 배역 교대',"single-swap":'배역 교대',"reverse-frames":'반전 프레임',"normal-frames":'교차 프레임',"blade-waves":'칼날 파도',"chasing-slashes":'추격 난무'}[variantId];
+  s.stats.takeoverVariantCasts[variantId]=(s.stats.takeoverVariantCasts[variantId]||0)+1;
   s.stats.takeoverCasts[type]=(s.stats.takeoverCasts[type]||0)+1;
-  const total=type==='chasing-slashes'?8.05:{ignis:4.8,mime:6.8,gojo:8.95,sukuna:21.35}[b.id];
-  const h=addHazard(s,b,'safezone',name,warning,{x:640,y:480,radius:1000,radiusY:500,safeX,safeY,safeRadius,safeRadiusY:safeRadius*.6,life:total,damage:b.damage*mult,kind:'domain',domainType:type,domainPhase:0,elapsed:0,phaseElapsed:0,phaseWarning:false,lethalActive:true,phaseCount:b.id==='sukuna'?5:b.id==='gojo'?4:b.id==='mime'?2:1,baseSafeX:safeX,baseSafeY:safeY});
+  const total=type==='chasing-slashes'?8.05:{ignis:4.8,mime:variantId==='double-swap'?10.8:6.8,gojo:8.95,sukuna:21.35}[b.id];
+  const h=addHazard(s,b,'safezone',name,warning,{x:640,y:480,radius:1000,radiusY:500,safeX,safeY,safeRadius,safeRadiusY:safeRadius*.6,life:total,damage:b.damage*mult,kind:'domain',domainType:type,variantId,variantName,domainPhase:0,elapsed:0,phaseElapsed:0,phaseWarning:false,lethalActive:true,phaseCount:b.id==='sukuna'?5:b.id==='gojo'?4:b.id==='mime'?(variantId==='double-swap'?3:2):1,baseSafeX:safeX,baseSafeY:safeY});
   configureDomainPhase(s,h,0,false);
   s.spotlight.x=h.safeX;s.spotlight.y=h.safeY;s.spotlight.radius=h.safeRadius;s.spotlight.radiusY=h.safeRadiusY;s.spotlight.timer=-warning-total;s.spotlight.locked=warning+total;
   words(s,h.instruction,h.safeX,h.safeY-110,'#e8ff91',warning);
@@ -617,15 +666,15 @@ function configureDomainPhase(s,h,index,warning){
   if(h.domainType==='chasing-slashes'){configurePursuit(s,h,index);return;}
   h.domainPhase=index;h.phaseWarning=warning;h.phaseElapsed=0;h.nextSafeRegions=[];h.dangerRegions=[];h.safeRegions=[];h.lethalActive=!warning;
   if(h.domainType==='moving-light'){
-    h.safeRadius=145;h.safeRadiusY=87;h.safeRegions=[safeEllipse(h.safeX,h.safeY,145,87)];h.phaseDuration=4.8;h.phaseName='움직이는 조명';h.instruction='민트색 조명이 이동합니다. 빛 안에서 계속 따라가세요.';
+    h.safeRadius=145;h.safeRadiusY=87;h.safeRegions=[safeEllipse(h.safeX,h.safeY,145,87)];h.phaseDuration=4.8;h.phaseName=h.variantName||'움직이는 조명';h.instruction=h.variantId==='return-light'?'조명이 중간에 되돌아옵니다. 이동 방향을 바꾸며 빛 안을 따라가세요.':'민트색 조명이 이동합니다. 빛 안에서 계속 따라가세요.';
   }else if(h.domainType==='mask-panels'){
     h.panels=[300,640,980].map((x,n)=>({...safeEllipse(x,480,135,81),index:n,label:String(n+1),shape:['circle','diamond','triangle'][n]}));
-    if(h.safeIndex===undefined){h.safeIndex=h.panels.reduce((a,c)=>groundDistance(c,s.player)<groundDistance(a,s.player)?c:a).index;h.nextSafeIndex=h.safeIndex===1?(s.boss.phase===2?0:2):1;}
-    const current=h.panels[h.safeIndex],next=h.panels[h.nextSafeIndex];h.safeRadius=135;h.safeRadiusY=81;
-    if(warning){h.safeRegions=[current,next,safeRect((current.x+next.x)/2,480,Math.abs(current.x-next.x)+110,120)];h.nextSafeRegions=[next];h.safeX=next.x;h.safeY=480;h.phaseDuration=2;h.lethalActive=true;h.phaseName='배역 교대 예고';h.instruction=`이제 ${['①','②','③'][next.index]} ${['원형','마름모','삼각형'][next.index]} 발판으로! 연결된 길을 따라가세요!`;}
-    else {const panel=index===0?current:next;h.safeRegions=[panel];h.safeX=panel.x;h.safeY=panel.y;h.phaseDuration=index===0?2:2.8;h.phaseName=`진짜 가면 ${panel.label}번`;h.instruction=`${['①','②','③'][panel.index]} ${['원형','마름모','삼각형'][panel.index]} 발판 안으로 이동하세요!`;}
+    if(!h.panelRoute){const first=h.panels.reduce((a,c)=>groundDistance(c,s.player)<groundDistance(a,s.player)?c:a).index,next=first===1?(s.boss.phase===2?0:2):1;h.panelRoute=h.variantId==='double-swap'?[first,next,first===1?1:2-first]:[first,next];}
+    const current=h.panels[h.panelRoute[index]],next=h.panels[h.panelRoute[index+1]]||null;h.safeIndex=current.index;h.nextSafeIndex=next?.index??null;h.safeRadius=135;h.safeRadiusY=81;
+    if(warning&&next){h.safeRegions=[current,next,safeRect((current.x+next.x)/2,480,Math.abs(current.x-next.x)+110,120)];h.nextSafeRegions=[next];h.safeX=next.x;h.safeY=480;h.phaseDuration=2;h.lethalActive=true;h.phaseName='배역 교대 예고';h.instruction=`이제 ${['①','②','③'][next.index]} ${['원형','마름모','삼각형'][next.index]} 발판으로! 연결된 길을 따라가세요!`;}
+    else {h.safeRegions=[current];h.safeX=current.x;h.safeY=current.y;h.phaseDuration=index===h.phaseCount-1?2.8:2;h.phaseName=`진짜 가면 ${current.label}번`;h.instruction=`${['①','②','③'][current.index]} ${['원형','마름모','삼각형'][current.index]} 발판 안으로 이동하세요!`;if(next)h.nextSafeRegions=[next];}
   }else if(h.domainType==='lens-corridors'){
-    const lanes=[safeRect(640,480,1400,70),safeRect(600,480,160,700),safeRect(640,405,1400,64),safeRect(940,480,144,700)],r=lanes[index];h.safeRegions=[r];h.safeX=r.width>1000?clamp(s.player.x,160,1120):r.x;h.safeY=r.width>1000?r.y:clamp(s.player.y,380,590);h.safeRadius=60;h.safeRadiusY=40;
+    const lanes=h.variantId==='reverse-frames'?[safeRect(640,530,1400,70),safeRect(940,480,160,700),safeRect(640,430,1400,64),safeRect(340,480,144,700)]:[safeRect(640,480,1400,70),safeRect(600,480,160,700),safeRect(640,405,1400,64),safeRect(940,480,144,700)],r=lanes[index];h.safeRegions=[r];h.safeX=r.width>1000?clamp(s.player.x,160,1120):r.x;h.safeY=r.width>1000?r.y:clamp(s.player.y,380,590);h.safeRadius=60;h.safeRadiusY=40;
     if(r.width>1000){const top=r.y-r.height/2,bottom=r.y+r.height/2;h.dangerRegions=[safeRect(640,top/2,1400,top),safeRect(640,(bottom+720)/2,1400,720-bottom)];}
     else{const left=r.x-r.width/2,right=r.x+r.width/2;h.dangerRegions=[safeRect(left/2,480,left,700),safeRect((right+1280)/2,480,1280-right,700)];}
     const dx=Math.max(0,Math.abs(s.player.x-r.x)-r.width/2),dy=Math.max(0,Math.abs(s.player.y-r.y)-r.height/2),walkSeconds=Math.hypot(dx/285,dy/(285*.72));
@@ -643,9 +692,9 @@ function updateDomain(s,h,dt){
   if(h.domainType==='chasing-slashes'){updatePursuit(s,h,dt);return;}
   h.elapsed+=dt;h.phaseElapsed+=dt;h.phaseRemaining=Math.max(0,h.phaseDuration-h.phaseElapsed);
   if(h.domainType==='moving-light'){
-    const direction=h.baseSafeX<640?1:-1;h.safeX=clamp(h.baseSafeX+direction*clamp(h.elapsed/4.8,0,1)*330,170,1110);h.safeY=h.baseSafeY+Math.sin(h.elapsed/4.8*Math.PI*2)*20;h.safeRegions=[safeEllipse(h.safeX,h.safeY,145,87)];
+    const direction=h.baseSafeX<640?1:-1,t=clamp(h.elapsed/4.8,0,1),back=h.variantId==='return-light';h.safeX=clamp(h.baseSafeX+direction*(back?Math.sin(t*Math.PI)*340:t*330),170,1110);h.safeY=h.baseSafeY+Math.sin(t*Math.PI*2)*(back?30:20);h.safeRegions=[safeEllipse(h.safeX,h.safeY,145,87)];h.travelDirection=direction*(back&&t>.5?-1:1);if(back){const ahead=clamp((h.elapsed+.65)/4.8,0,1);h.nextSafeRegions=[safeEllipse(clamp(h.baseSafeX+direction*Math.sin(ahead*Math.PI)*340,170,1110),h.baseSafeY+Math.sin(ahead*Math.PI*2)*30,145,87)];}
   }else if(h.phaseRemaining<=1e-9){
-    if(h.domainType==='mask-panels'){if(h.domainPhase===0&&!h.phaseWarning)configureDomainPhase(s,h,0,true);else if(h.phaseWarning)configureDomainPhase(s,h,1,false);}
+    if(h.domainType==='mask-panels'){if(!h.phaseWarning&&h.domainPhase<h.phaseCount-1)configureDomainPhase(s,h,h.domainPhase,true);else if(h.phaseWarning)configureDomainPhase(s,h,h.domainPhase+1,false);}
     else if(h.phaseWarning)configureDomainPhase(s,h,h.domainPhase,false);
     else if(h.domainPhase<h.phaseCount-1)configureDomainPhase(s,h,h.domainPhase+1,true);
   }
@@ -693,10 +742,10 @@ function updateBoss(s,dt){
   const b=s.boss,p=s.player;recoil(s,b,dt);b.hitFlash=Math.max(0,b.hitFlash-dt);b.attackAnim=Math.max(0,b.attackAnim-dt);b.stun=Math.max(0,b.stun-dt);b.shield=Math.max(0,b.shield-dt);if(!b.active||b.hp<=0)return;b.facing=p.x>=b.x?1:-1;
   if(b.hp<=b.maxHp*((b.id==='ignis'||b.id==='mime')?.5:.65)&&b.phase===1){b.phase=2;words(s,'분위기 바뀌었다… 2페이즈!',640,270,b.color,1.7);event(s,'ring',b.x,b.y,{radius:200,color:b.color,life:.7,maxLife:.7});}
   if(b.counterRemaining>0){b.counterRemaining=Math.max(0,b.counterRemaining-dt);return;}
-  if(b.telegraph){b.telegraph.remaining-=dt;if(b.telegraph.remaining<=0){resolvePattern(s,b.telegraph);b.telegraph=null;b.patternCooldown=(b.id==='ignis'?(b.phase===2?1.5:1.8):b.id==='mime'?(b.phase===2?1.2:1.45):(b.phase===2?.765:1.08))*DIFFICULTIES[s.difficulty].attackSpeed*(b.id==='sukuna'?.85:1);}return;}
+  if(b.telegraph){b.telegraph.remaining-=dt;if(b.telegraph.remaining<=0){resolvePattern(s,b.telegraph);b.telegraph=null;b.patternCooldown=(b.id==='ignis'?(b.phase===2?1.5:1.8):b.id==='mime'?(b.phase===2?1.2:1.45):(b.phase===2?.765:1.08))*DIFFICULTIES[s.difficulty].attackSpeed*(b.id==='sukuna'?.85:1)*.94;}return;}
   // A fatal domain owns this attack window; don't fill its only safe area with
   // another boss attack before the domain ends.
-  if(s.audition&&!s.audition.selected||s.hazards.some(h=>h.blocksBoss&&h.life>0))return;
+  if(s.audition&&!s.audition.selected||s.hazards.some(h=>h.blocksBoss&&h.life>0)||s.projectiles.some(q=>q.owner==='enemy'&&q.bossId===b.id))return;
   if(s.hazards.some(h=>h.kind==='domain'&&h.active&&h.life>0))return;
   if((b.id==='ignis'||b.id==='mime')&&s.hazards.some(h=>h.life>0))return;
   if(b.stun>0)return;
@@ -723,8 +772,8 @@ function trackPurple(s,h,dt){
   const cast=s.boss.telegraph;if(cast?.attackId===h.attackId){cast.tracking=h.tracking;cast.locked=h.locked;cast.lockWindow=h.lockWindow;cast.angle=h.angle;if(h.tracking)cast.aim={x:s.player.x,y:s.player.y};}
 }
 function updateHazards(s,dt){
-  const p=s.player;for(const h of s.hazards){if(!h.active){if(h.kind==='purple')trackPurple(s,h,dt);h.remaining-=dt;if(h.remaining<=0){h.active=true;if(h.extraPattern&&h.index===1)s.stats.extraActivations[h.patternBossId]=(s.stats.extraActivations[h.patternBossId]||0)+1;if(h.kind==='domain')s.stats.takeoverActivations[h.domainType]=(s.stats.takeoverActivations[h.domainType]||0)+1;if(!h.decoy&&h.kind!=='rehearsal-light')event(s,h.type==='lane'?'beam':'burst',h.x,h.y,{radius:h.radius,width:h.width,height:h.height,angle:h.angle,color:h.color,life:.45,maxLife:.45});}else continue;}else{h.life-=dt;if(h.life<=0){if(h.kind==='domain'){s.stats.takeoverSurvived[h.domainType]=(s.stats.takeoverSurvived[h.domainType]||0)+1;openCounter(s,h.id,'무대 장악 생존');}if(h.kind==='rehearsal-light')finishRehearsalLight(s,h);else if(h.extraPattern&&h.index===h.total)completeExtraPattern(s,h.attackId,h.patternBossId,s.stats.damageTaken===h.startDamage);continue;}}
-    if(h.decoy)continue;
+  const p=s.player;for(const h of s.hazards){if(!h.active){if(h.kind==='purple')trackPurple(s,h,dt);if(h.kind==='follow-spot'||h.kind==='projectile-cue')trackConceptAim(s,h,dt);h.remaining-=dt;if(h.remaining<=0){h.active=true;if(h.extraPattern&&h.index===1)s.stats.extraActivations[h.patternBossId]=(s.stats.extraActivations[h.patternBossId]||0)+1;if(h.kind==='domain'){s.stats.takeoverActivations[h.domainType]=(s.stats.takeoverActivations[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantActivations[h.variantId]=(s.stats.takeoverVariantActivations[h.variantId]||0)+1;}if(h.kind==='projectile-cue')fireConceptProjectile(s,h);else if(h.conceptPattern&&!h.decoy)bossShotEvent(s,h,'launch');if(!h.decoy&&!h.warningOnly&&h.kind!=='rehearsal-light')event(s,h.type==='lane'?'beam':'burst',h.x,h.y,{radius:h.radius,width:h.width,height:h.height,angle:h.angle,color:h.color,life:.45,maxLife:.45});}else continue;}else{h.life-=dt;if(h.life<=0){if(h.kind==='domain'){s.stats.takeoverSurvived[h.domainType]=(s.stats.takeoverSurvived[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantSurvived[h.variantId]=(s.stats.takeoverVariantSurvived[h.variantId]||0)+1;openCounter(s,h.id,'무대 장악 생존');}if(h.kind==='rehearsal-light')finishRehearsalLight(s,h);else if(h.extraPattern&&h.index===h.total)completeExtraPattern(s,h.attackId,h.patternBossId,s.stats.damageTaken===h.startDamage);continue;}}
+    if(h.decoy||h.warningOnly)continue;
     if(h.kind==='rehearsal-light'){if(circleContains(p.x,p.y,h)){h.dwell=(h.dwell||0)+dt;if(h.dwell>=.15&&!h.visited){h.visited=true;event(s,'rehearsalResult',h.x,h.y,{success:true,index:h.index,total:3,life:.5,maxLife:.5});}}continue;}
     if(h.kind==='domain'){if(h.domainType)updateDomain(s,h,dt);if(checkActiveDomains(s))return;continue;}
     if(h.kind==='blue'&&groundDistance(p,h)<240&&p.dodgeTimer<=0){const a=Math.atan2(h.y-p.y,h.x-p.x);p.x+=Math.cos(a)*85*dt;p.y+=Math.sin(a)*65*dt;}
@@ -732,11 +781,16 @@ function updateHazards(s,dt){
   }s.hazards=s.hazards.filter(h=>h.life>0);checkActiveDomains(s);
 }
 function updateProjectiles(s,dt){
-  for(const q of s.projectiles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;if(q.x<20||q.x>1260||q.y<300||q.y>670)q.life=0;if(q.life<=0)continue;
-    if(q.owner==='enemy'){if(Math.abs(q.x-s.player.x)<q.radius+20&&Math.abs(q.y-s.player.y)<q.radiusY+18){hurtPlayer(s,q.damage,q);q.life=0;}}
-    else for(const t of targets(s)){const id=t===s.boss?'boss':t.id;if(q.hits.includes(id))continue;if(Math.abs(q.x-t.x)<q.radius+34&&Math.abs(q.y-t.y)<q.radiusY+24){hitTarget(s,t,q.damage,{kind:q.finisher?'finisher':q.kind==='arrow'?'basic':'skill',perfect:q.perfect,attackId:q.attackId,hitIndex:q.hitIndex||1,hitCount:q.hitCount||1,source:q.source,signature:q.signature});q.hits.push(id);if(!q.piercing)q.life=0;}}
-  }s.projectiles=s.projectiles.filter(q=>q.life>0);
+  for(const q of s.projectiles){q.previousX=q.x;q.previousY=q.y;const alive=q.life>0;q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;
+    if(q.owner==='enemy'){
+      if(alive&&sweptProjectileCollision(s._movementStart||s.player,s.player,q)){const hp=s.player.hp,hit=hurtPlayer(s,q.damage,q);q.life=0;if(hit)event(s,'bossShot',q.x,q.y,{kind:'hit',shotId:q.shotId,projectileId:q.id,attackId:q.attackId,patternIndex:5,bossId:q.bossId,index:q.index,total:q.total,damage:hp-s.player.hp,time:s.time,life:.25,maxLife:.25});}
+      if(q.x<20||q.x>1260||q.y<300||q.y>670)q.life=0;continue;
+    }
+    if(q.x<20||q.x>1260||q.y<300||q.y>670)q.life=0;if(q.life<=0)continue;
+    for(const t of targets(s)){const id=t===s.boss?'boss':t.id;if(q.hits.includes(id))continue;if(Math.abs(q.x-t.x)<q.radius+34&&Math.abs(q.y-t.y)<q.radiusY+24){hitTarget(s,t,q.damage,{kind:q.finisher?'finisher':q.kind==='arrow'?'basic':'skill',perfect:q.perfect,attackId:q.attackId,hitIndex:q.hitIndex||1,hitCount:q.hitCount||1,source:q.source,signature:q.signature});q.hits.push(id);if(!q.piercing)q.life=0;}}
+  }s.projectiles=s.projectiles.filter(q=>q.life>0);s.hazards=s.hazards.filter(h=>!(h.kind==='projectile-cue'&&h.active&&!s.projectiles.some(q=>q.id===h.projectileId)));
 }
+
 function updateSpotlight(s,dt){const sp=s.spotlight;if(sp.locked>0){sp.locked-=dt;return;}sp.radius=105;sp.radiusY=62;sp.timer+=dt;if(sp.timer>8){sp.timer=0;sp.targetX=220+random(s)*830;sp.targetY=410+random(s)*150;}if(sp.targetX!==undefined){sp.x+=(sp.targetX-sp.x)*Math.min(1,dt*.8);sp.y+=(sp.targetY-sp.y)*Math.min(1,dt*.8);}sp.active=true;}
 
 function completeStage(s){
