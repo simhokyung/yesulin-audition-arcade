@@ -2,6 +2,7 @@
 import * as Combat from './engine.js';
 import { drawBladeWavesFloor, drawBladeWavesGuides, bladeWaveInstruction } from './blade-waves-vfx.js';
 import { drawPursuitFloor, drawPursuitGuides, pursuitInstruction } from './pursuit-vfx.js';
+import { drawFinalTakeoverFloor, drawFinalTakeoverGuides, finalTakeoverInstruction, drawFinalTakeoverMap } from './final-vfx.js';
 const TAU=Math.PI*2,MINT='#79ffe0',clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),masks=new WeakMap();
 export function takeoverView(h){
  if(Combat.getTakeoverView)return Combat.getTakeoverView(h);
@@ -37,6 +38,7 @@ function stripedOutside(c,h,safeRegions,active){
 }
 export function drawTakeoverFloor(c,s,h,t,reduced=false){
  const v=takeoverView(h),g=takeoverGuide(s,h),type=h.domainType||g.type||'moving-light',safe=v.safeRegions||[],danger=v.dangerRegions||[],pulse=!!v.pulseActive;
+ if(type==='last-cut'){drawFinalTakeoverFloor(c,s,h,t,reduced);return;}
  if(type==='chasing-slashes'){drawPursuitFloor(c,s,h,v,g,t,reduced);return;}
  if(type==='blade-waves'){drawBladeWavesFloor(c,s,h,v,g,t,reduced);return;}
  c.save();clippedFloor(c);
@@ -53,6 +55,7 @@ export function drawTakeoverFloor(c,s,h,t,reduced=false){
 }
 export function drawTakeoverGuides(c,s,h,t,reduced=false){
  const v=takeoverView(h),g=takeoverGuide(s,h),type=h.domainType||g.type||'moving-light',safe=v.safeRegions||[],target=g.target||v.guide||{x:h.safeX,y:h.safeY};
+ if(type==='last-cut'){drawFinalTakeoverGuides(c,s,h,t,reduced);return;}
  if(type==='chasing-slashes'){drawPursuitGuides(c,s,h,v,g,t,reduced);return;}
  if(type==='blade-waves'){drawBladeWavesGuides(c,s,h,v,g,t,reduced);return;}
  const mime=type==='mask-panels'?mimePresentation(s,h):null;
@@ -75,6 +78,7 @@ export function drawTakeoverGuides(c,s,h,t,reduced=false){
 }
 export function takeoverInstruction(s,h){
  const g=takeoverGuide(s,h),v=takeoverView(h),type=h.domainType||g.type||'moving-light',phase=(v.phaseIndex??h.domainPhase??0)+1,count=v.phaseCount||1;
+ if(type==='last-cut'){const f=finalTakeoverInstruction(s,h,v);return{...v,...g,...f,phase:(f.phaseIndex??v.phaseIndex??0)+1,count:f.phaseCount||v.phaseCount||1,remaining:Math.max(0,f.remaining||0),duration:Math.max(.01,f.duration||1)};}
  let title,tip,blade,timerLabel,remaining=g.remaining??v.phaseRemaining??0,duration=Math.max(.01,v.phaseDuration||h.duration||1),progress=g.progress;
  if(type==='memory-archive'){
   const final=h.archivePhase==='final',rewind=h.archivePhase==='rewind',moving=!h.active||h.phaseWarning;
@@ -94,7 +98,7 @@ export function takeoverInstruction(s,h){
  return{...v,...g,type,title,tip,phase,count,statusColor:blade?.statusColor,targetReached:type==='mask-panels'?mimePresentation(s,h).reached:g.targetReached,timerLabel:timerLabel||blade?.timerLabel||g.timerLabel||'발사까지',progress,remaining:Math.max(0,remaining),duration,warning:!!g.warning};
 }
 export function drawTakeoverMap(c,s,h,x=983,y=534,w=265,height=140){
- if(!h)return;if(h.domainType==='chasing-slashes'){drawPursuitLesson(c,x,y,w,height);return;}const v=takeoverView(h),g=takeoverGuide(s,h),mx=x+16,my=y+39,mw=w-32,mh=60,project=(px,py)=>({x:mx+(px-76)/1128*mw,y:my+(py-340)/284*mh});
+ if(!h)return;if(h.domainType==='last-cut'){drawFinalTakeoverMap(c,s,h,x,y,w,height);return;}if(h.domainType==='chasing-slashes'){drawPursuitLesson(c,x,y,w,height);return;}const v=takeoverView(h),g=takeoverGuide(s,h),mx=x+16,my=y+39,mw=w-32,mh=60,project=(px,py)=>({x:mx+(px-76)/1128*mw,y:my+(py-340)/284*mh});
  c.save();box(c,x,y,w,height,'#071e27f2',7);label(c,'컷신 뒤 피할 곳',x+w/2,y+24,12,'#d2e9dd');box(c,mx,my,mw,mh,'#4e35454d');c.save();c.beginPath();c.rect(mx,my,mw,mh);c.clip();
  for(const r of v.dangerRegions||[])shape(c,r,'#dd8d9266','#e7b7ab',1,project);
  const mime=h.domainType==='mask-panels'?mimePresentation(s,h):null,blade=h.domainType==='blade-waves';

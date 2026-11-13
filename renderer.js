@@ -11,6 +11,7 @@ import { pursuitVolleyLabel } from './pursuit-vfx.js';
 import { isNormalPattern, normalPatternGuide, drawNormalPatternFloor, drawNormalPatternWarnings, drawEnemyProjectile } from './normal-pattern-vfx.js';
 import { isPersonalityPattern, personalityPatternGuide, personalityPoseState, drawPersonalityFloor, drawPersonalityWarnings, drawPersonalityProjectile, drawPersonalityPresence, drawPersonalitySpeech } from './personality-vfx.js';
 import { isMaxHazard, maxPatternGuide, maxPoseState, drawMaxFloor, drawMaxWarnings, drawMaxProjectile } from './max-vfx.js';
+import { finalPatternGuide, finalPoseState, drawFinalFloor, drawFinalWarnings, drawFinalProjectile, drawFinalPresence, drawFinalSpeech } from './final-vfx.js';
 import {formatRunTime} from './ranking.js';
 const TAU=Math.PI*2;
 const SAFE_MINT='#79ffe0';
@@ -36,7 +37,7 @@ function drawSpotlight(c,sp,t,hideLabel=false){
   if(!hideLabel)text(c,'조명 · 공격력 +35%',sp.x,sp.y+(sp.radiusY??62)+18,10,'#d4e9a3a0',600,'center');
 }
 function drawHazard(c,h,t,reduced=false,paintedEffects=false){
-  if(h.warningOnly||h.kind==='projectile-cue'||isPersonalityPattern(h)||isMaxHazard(h))return;
+  if(h.warningOnly||h.kind==='projectile-cue'||isPersonalityPattern(h)||isMaxHazard(h)||h.finalPattern===true&&h.kind!=='domain')return;
   const color=h.color||'#ee9e78',progress=h.active?1:clamp(1-h.remaining/h.duration,0,1),alpha=h.active?.3:.08+progress*.14;
   if(h.decoy){c.save();c.setLineDash([4,10]);ellipse(c,h.x,h.y,h.radius,h.radiusY??h.radius*.55,'#b4cbd00b','#a2b5bc88',2);c.restore();return;}
   if(h.type==='safezone')return; // Shared takeover geometry is drawn by drawTakeoverFloor.
@@ -89,7 +90,7 @@ function comicEffect(c,e,a,p,reduced){
 }
 function drawSafetyOutline(c,h,s,t=0,reduced=false){
   if(h.decoy){c.save();c.setLineDash([4,10]);ellipse(c,h.x,h.y,h.radius,h.radiusY??h.radius*.55,null,'#c1d0cfaa',2);c.setLineDash([]);const yy=clamp(h.y+(h.radiusY||55)+12,356,625);rect(c,h.x-68,yy-14,136,23,'#122632ed',3);text(c,'가짜 · FAKE',h.x,yy+2,12,'#c7d8d5',800,'center');c.restore();return;}
-  if(isNormalPattern(h)||isPersonalityPattern(h)||isMaxHazard(h))return;
+  if(isNormalPattern(h)||isPersonalityPattern(h)||isMaxHazard(h)||h.finalPattern===true&&h.kind!=='domain')return;
   if(h.kind==='mask-slam'){const yy=clamp(h.y+(h.radiusY||65)+14,356,625);rect(c,h.x-73,yy-14,146,23,'#261c2df2',3);text(c,'위험 · HIT',h.x,yy+3,13,'#f4d5de',900,'center');}
   if(h.type==='safezone'){drawTakeoverGuides(c,s,h,t,reduced);return;}
   if(h.active)return;c.save();const locked=h.kind==='purple'&&h.locked;c.strokeStyle=locked?'#e7d9ff':h.color;c.lineWidth=locked?3:2;c.globalAlpha=.9;c.setLineDash(locked?[]:[8,6]);if(h.kind==='purple'&&h.tracking)c.lineDashOffset=reduced?0:-t*24;
@@ -99,7 +100,7 @@ function drawDomainInstruction(c,s,h){
   if(s.cinematic&&s.cinematic.kind!=='playerUltimate')return;
   const v=takeoverInstruction(s,h),safe=typeof v.targetReached==='boolean'?v.targetReached:v.insideSafe,remaining=v.remaining,progress=Number.isFinite(v.progress)?v.progress:clamp(1-remaining/v.duration,0,1),color=v.statusColor||(safe?SAFE_MINT:'#ffd39a');
   rect(c,276,121,728,113,'#071e27fa',7);rect(c,276,121,5,113,color,2);
-  textWithin(c,`${h.name||'무대 장악'}${h.variantName&&!['chasing-slashes','memory-archive'].includes(h.domainType)?` · ${h.variantName}`:''}${h.domainType==='chasing-slashes'?` · ${pursuitVolleyLabel(h,v)}`:v.count>1?` · ${v.phase}/${v.count}`:''}`,298,142,540,12,'#d2e4e1',700);
+  textWithin(c,`${h.name||'무대 장악'}${h.variantName&&!['chasing-slashes','memory-archive','last-cut'].includes(h.domainType)?` · ${h.variantName}`:''}${h.domainType==='chasing-slashes'?` · ${pursuitVolleyLabel(h,v)}`:v.count>1?` · ${v.phase}/${v.count}`:''}`,298,142,540,12,'#d2e4e1',700);
   textWithin(c,v.title,298,174,540,24,color,900);
   textWithin(c,v.tip,298,201,540,14,'#d7eee8',700);
   text(c,v.timerLabel,982,145,13,color,800,'right');
@@ -112,7 +113,7 @@ function drawDomainInstruction(c,s,h){
 }
 function drawPatternInstruction(c,guide){
  if(!guide)return;const color=guide.color,remaining=Math.max(0,Number(guide.remaining)||0),duration=Math.max(.01,Number(guide.duration)||1);
- if(guide.personalityPattern||guide.maxPattern){rect(c,276,121,728,90,'#10232af8',6);rect(c,276,121,4,90,color,2);const who=BOSS_VISUALS[guide.bossId]?.name||'';textWithin(c,who+' · '+guide.name,298,150,440,21,color,900);if(guide.total>1&&Number.isFinite(guide.index))text(c,`${guide.index}/${guide.total}`,824,150,16,'#f3fff5',900,'right');textWithin(c,guide.title,298,181,670,17,'#eef6e8',800);text(c,`${guide.timerLabel} ${remaining.toFixed(1)}초`,984,145,12,color,800,'right');rect(c,298,199,683,4,'#3a4e51',2);rect(c,298,199,683*clamp(remaining/duration,0,1),4,color,2);return;}
+ if(guide.personalityPattern||guide.maxPattern||guide.finalPattern){rect(c,276,121,728,90,'#10232af8',6);rect(c,276,121,4,90,color,2);const who=BOSS_VISUALS[guide.bossId]?.name||'';textWithin(c,who+' · '+guide.name,298,150,440,21,color,900);if(guide.total>1&&Number.isFinite(guide.index))text(c,`${guide.index}/${guide.total}`,824,150,16,'#f3fff5',900,'right');textWithin(c,guide.title,298,181,670,17,'#eef6e8',800);text(c,`${guide.timerLabel} ${remaining.toFixed(1)}초`,984,145,12,color,800,'right');rect(c,298,199,683,4,'#3a4e51',2);rect(c,298,199,683*clamp(remaining/duration,0,1),4,color,2);return;}
 
  rect(c,276,121,728,77,'#10232af5',6);rect(c,276,121,4,77,color,2);
  textWithin(c,guide.title,298,149,420,17,color,900);textWithin(c,guide.tip,298,174,670,12,'#c8ddd5',600);
@@ -146,7 +147,7 @@ function drawHUD(c,s,reduced=false){
   text(c,s.mode==='practice'?`최대 콤보 ${s.maxCombo||0}회`:`진행 ${formatRunTime(s.runTime)} · ${s.stats.bossKills||0}/5 통과`,400,99,11,'#a8bcb5',700);
   text(c,b.active?`${Math.ceil(b.hp).toLocaleString('ko-KR')} / ${b.maxHp.toLocaleString('ko-KR')}`:`엑스트라 ${s.enemies.length}명 남음`,818,99,11,'#c0ceca',600,'center');
   text(c,`${s.mode==='practice'?'1:1 연습 · ':''}${BOSS_VISUALS[b.id]?.audition||'오디션'}`,1236,99,11,'#adbfba',700,'right');
-  const domain=domainHazard(s),special=maxPatternGuide(s)||personalityPatternGuide(s)||normalPatternGuide(s)||judgePatternGuide(s),counter=b.counterRemaining>0?{title:'반격! 지금 공격하세요',tip:'피해 +20% · Q / W / R로 공격!',remaining:b.counterRemaining,duration:b.counterDuration||1.8,color:'#ffda84',timerLabel:'반격 시간'}:null;if(domain)drawDomainInstruction(c,s,domain);else if(!s.cinematic&&(counter||special))drawPatternInstruction(c,counter||special);
+  const domain=domainHazard(s),special=finalPatternGuide(s)||maxPatternGuide(s)||personalityPatternGuide(s)||normalPatternGuide(s)||judgePatternGuide(s),counter=b.counterRemaining>0?{title:'반격! 지금 공격하세요',tip:'피해 +20% · Q / W / R로 공격!',remaining:b.counterRemaining,duration:b.counterDuration||1.8,color:'#ffda84',timerLabel:'반격 시간'}:null;if(domain)drawDomainInstruction(c,s,domain);else if(!s.cinematic&&(counter||special))drawPatternInstruction(c,counter||special);
   if(b.telegraph&&!s.cinematic&&!domain&&!special&&!counter){const te=b.telegraph,purple=b.id==='gojo'&&te.index===2,detail=purple?(te.tracking?'추적 중 · 계속 이동':te.locked?'방향 고정 · 선 옆으로 회피':'공격선 옆으로 회피'):'',width=purple?590:410,x=640-width/2,height=purple?68:44;
     rect(c,x,121,width,height,'#231f27ed',4);text(c,te.name,640,145,16,te.color,800,'center');
     if(purple)text(c,detail,640,172,16,te.locked?'#d5ffe8':'#e2ceff',900,'center');
@@ -208,11 +209,11 @@ export class Renderer {
    if(s.player.attackSequence?.kind==='ultimate'){c.save();c.globalAlpha=.20*Math.min(1,.35+s.player.attackSequence.elapsed*4);rect(c,0,115,1280,530,'#04101e');c.restore();}
    if(!domainHazard(s)&&!s.hazards.some(h=>h.kind==='rehearsal-light'))drawSpotlight(c,s.spotlight,t);
    drawJudgePatternFloor(c,s,t,reduced);
-   for(const h of s.hazards){if(isMaxHazard(h))continue;if(h.type==='safezone')drawTakeoverFloor(c,s,h,t,reduced);else if(h.kind!=='rehearsal-light')drawHazard(c,h,t,reduced,true);}
+   for(const h of s.hazards){if(isMaxHazard(h)||h.finalPattern&&h.kind!=='domain')continue;if(h.type==='safezone')drawTakeoverFloor(c,s,h,t,reduced);else if(h.kind!=='rehearsal-light')drawHazard(c,h,t,reduced,true);}
    drawNormalPatternFloor(c,s,t,reduced);
    drawPersonalityFloor(c,s,t,reduced);
-   drawMaxFloor(c,s,t,reduced);
-   drawPersonalityPresence(c,s,t,reduced,drawFighter2D);
+   drawMaxFloor(c,s,t,reduced);drawFinalFloor(c,s,t,reduced);
+   drawPersonalityPresence(c,s,t,reduced,drawFighter2D);drawFinalPresence(c,s,t,reduced,drawFighter2D);
    for(const e of s.effects)if(e.type==='landing')drawLanding(c,e,reduced);
    const units=[...s.enemies.map(unit=>({unit,kind:'extra'})),...(s.audition&&!s.audition.solved?(s.audition.figures||[]).map(unit=>({unit,kind:'mime',auditionFigure:true})):[]),{unit:s.boss,kind:s.boss.id},{unit:s.player,kind:s.player.character}].sort((a,b)=>a.unit.y-b.unit.y);
    for(const {unit:u,kind,auditionFigure}of units){let deathProgress=0;if(u.hp<=0){if(u!==s.boss)continue;if(!this.deathTimes.has(u))this.deathTimes.set(u,time);deathProgress=clamp((time-this.deathTimes.get(u))/.8,0,1);if(time-this.deathTimes.get(u)>1.5)continue;}const previous=this.previousUnits.get(u),dt=previous?clamp(t-previous.time,0,.05):1/60,distance=previous?Math.hypot(u.x-previous.x,(u.y-previous.y)*1.25):0,moving=distance>.10&&!(u.dodgeTimer>0)&&!(u.launchZ>1)&&!(u.hitReaction>0),walkTarget=moving?Math.min(1,distance/Math.max(1,dt*220)):0;
@@ -227,34 +228,34 @@ export class Renderer {
       const finish=sequence.hitIndex===sequence.hitCount&&sequence.finisher;poseKind=finish?'finisher':u.character==='director'?'slate':'sword';if(sequence.kind==='ultimate'){const phase=ultimatePhase(u.character,sequence.hitIndex);poseKind=phase.pose;poseRole=phase.role;}if(finish)poseCombo=4;
     }
     c.save();if(u===s.boss&&!s.boss.active)c.globalAlpha=.5;if(auditionFigure)c.globalAlpha=s.audition.active===false?.18:.62;
-    drawFighter2D(c,kind,u.x,u.y-(u.launchZ||0),auditionFigure?.84:kind==='extra'?.92:1,{...(u===s.boss?(u.id==='max'?maxPoseState(s):personalityPoseState(s)):{}),unit:u,facing:u.facing||1,time:t,attack:u.attackAnim||0,attackKind:poseKind,attackProgress:poseProgress,comboIndex:poseCombo,role:poseRole,walk:walking,walkWeight,walkPhase,dodge:u.dodgeTimer||0,buffTimer:u.buffTimer||0,hitStun:u.hitStun||0,hitReaction:u.hitReaction||0,hitKind:u.hitKind,hitPower:u.hitPower,hitDir:u.hitDir||1,launchZ:u.launchZ||0,landingTimer:u.landingTimer||0,landingPower:u.landingPower||0,dead:u.hp<=0,deathProgress,windup:!!(u===s.boss&&s.boss.telegraph),windupProgress:u===s.boss&&s.boss.telegraph?clamp(1-s.boss.telegraph.remaining/s.boss.telegraph.duration,0,1):1,domain:!!(u===s.boss&&s.boss.telegraph?.index===3),reduced});
+    drawFighter2D(c,kind,u.x,u.y-(u.launchZ||0),auditionFigure?.84:kind==='extra'?.92:1,{...(u===s.boss?(u.id==='max'?maxPoseState(s):s.boss.finalMotion?finalPoseState(s):personalityPoseState(s)):{}),unit:u,facing:u.facing||1,time:t,attack:u.attackAnim||0,attackKind:poseKind,attackProgress:poseProgress,comboIndex:poseCombo,role:poseRole,walk:walking,walkWeight,walkPhase,dodge:u.dodgeTimer||0,buffTimer:u.buffTimer||0,hitStun:u.hitStun||0,hitReaction:u.hitReaction||0,hitKind:u.hitKind,hitPower:u.hitPower,hitDir:u.hitDir||1,launchZ:u.launchZ||0,landingTimer:u.landingTimer||0,landingPower:u.landingPower||0,dead:u.hp<=0,deathProgress,windup:!!(u===s.boss&&s.boss.telegraph),windupProgress:u===s.boss&&s.boss.telegraph?clamp(1-s.boss.telegraph.remaining/s.boss.telegraph.duration,0,1):1,domain:!!(u===s.boss&&s.boss.telegraph?.index===3),reduced});
     if(u===s.player){poly(c,[[u.x-5,u.y+20],[u.x+5,u.y+20],[u.x,u.y+14]],CHARACTERS[u.character].color,null);if(!domainHazard(s))text(c,u.character==='director'?'감독':poseRole==='bow'?'배우 · 궁수':u.buffTimer>0?'검사 · 몰입':'배우 · 검사',u.x,Math.min(637,u.y+33),9,CHARACTERS[u.character].color,700,'center')}
     else if(kind==='extra'){rect(c,u.x-22,u.y-195,44,3,'#142530');rect(c,u.x-22,u.y-195,44*u.hp/u.maxHp,3,'#acbba8');}
     c.restore();
    }
    drawLowHealth(c,s);
-   for(const q of s.projectiles){if(q.owner==='enemy'){if(!drawMaxProjectile(c,q,reduced)&&!drawPersonalityProjectile(c,q,reduced))drawEnemyProjectile(c,q,reduced);}else if(q.empowered)drawEmpoweredArrow(c,q,reduced);else drawRoleArrow(c,q,reduced);}
+   for(const q of s.projectiles){if(q.owner==='enemy'){if(!drawFinalProjectile(c,q,reduced)&&!drawMaxProjectile(c,q,reduced)&&!drawPersonalityProjectile(c,q,reduced))drawEnemyProjectile(c,q,reduced);}else if(q.empowered)drawEmpoweredArrow(c,q,reduced);else drawRoleArrow(c,q,reduced);}
    drawRolePresence(c,s,t,reduced);
    drawKitEffects(c,s,t,reduced);
    drawUltimatePerformance(c,s,t,reduced);
    if(s.player.character==='director')drawCueMarks(c,s.boss,s.boss.cueMarks||0,t,reduced);
-   for(const h of s.hazards)if(!isMaxHazard(h))drawJudgeTechnique(c,h,s,t,reduced);
+   for(const h of s.hazards)if(!isMaxHazard(h)&&!h.finalPattern)drawJudgeTechnique(c,h,s,t,reduced);
    for(const e of s.effects){if(e.type==='auditionHit'){effect(c,{...e,type:'text',text:e.success?'진짜 발견!':'대역! 체력 감소',color:e.success?'#ffda84':'#ffb3a5',y:e.y-170,size:17},reduced);continue;}if(e.type==='rehearsalResult'&&!e.success){effect(c,{...e,type:'text',text:`${e.index}번 조명 놓침`,color:'#ffb3a5',y:e.y-80,size:15},reduced);continue;}if(e.type==='supportBurst'||e.type==='dialogue'||e.type==='signature'||e.type==='ultimateFinish'||e.type==='impact'&&(e.kind==='ultimate'||['cue-detonation','staff','adlib-arrow'].includes(e.source||e.signature)))continue;if(e.type==='comic'&&(e.subtitle||'').includes('심사 종료'))continue;if(s.player.attackKind==='ultimate'&&s.player.attackAnim>0&&(e.type==='beam'||e.type==='slash'&&e.power===2||e.type==='ring'&&e.radius===420))continue;if(e.type==='landing'||e.type==='domaincut'||e.type==='skillcut'||e.type==='cinematic')continue;if(e.type==='text'&&domainHazard(s)&&!/^[+−\-]?\d+(?:\.\d+)?$/.test(String(e.text||'')))continue;effect(c,e.type==='text'&&e.text==='오늘도 무사히 크랭크인!'?{...e,text:'최종 오디션, 액션!'}:e.type==='comic'&&e.text==='JUST DODGE!'?{...e,text:'NICE DODGE!',niceDodge:true}:e,reduced);}
    const review=s.effects.find(e=>e.type==='comic'&&(e.subtitle||'').includes('심사 종료'));if(review)effect(c,review,reduced);
    if(!domainHazard(s))drawCounterOpening(c,s.boss,s.boss.counterRemaining||0,s.boss.counterDuration||1.8,t,reduced);
    for(const h of s.hazards)if(h.kind!=='rehearsal-light')drawSafetyOutline(c,h,s,t,reduced);
    drawJudgePatternGuides(c,s,t,reduced);
    drawNormalPatternWarnings(c,s,t,reduced);
-   drawPersonalityWarnings(c,s,t,reduced);drawMaxWarnings(c,s,t,reduced);
+   drawPersonalityWarnings(c,s,t,reduced);drawMaxWarnings(c,s,t,reduced);drawFinalWarnings(c,s,t,reduced);
    if(!domainHazard(s))drawPrecision(c,s,reduced);drawHUD(c,s,reduced);
-   const bossSpeaking=drawPersonalitySpeech(c,s);
+   const bossSpeaking=drawFinalSpeech(c,s)||drawPersonalitySpeech(c,s);
    if(!bossSpeaking&&!s.cinematic&&!domainHazard(s)&&!s.projectiles.some(q=>q.owner==='enemy')){const speech=s.effects.filter(e=>e.type==='dialogue').at(-1);if(speech){const layout=dialogueLayout(c,s,speech);if(layout)drawDialogueBox(c,speech,{state:s,layout});}}
   }
   c.restore();
   if(!lobby&&s.cinematic?.kind==='domain')drawDomainCutscene(c,s,t,reduced);
   else if(!lobby&&drawCombatCinematic(c,s,t,reduced)){
     // Even an ultimate portrait cannot cover a live takeover's actual escape geometry.
-    if(s.hazards.length){for(const h of s.hazards)drawSafetyOutline(c,h,s,t,reduced);drawNormalPatternWarnings(c,s,t,reduced);drawPersonalityWarnings(c,s,t,reduced);const h=domainHazard(s);if(h)drawDomainInstruction(c,s,h);}
+    if(s.hazards.length){for(const h of s.hazards)drawSafetyOutline(c,h,s,t,reduced);drawNormalPatternWarnings(c,s,t,reduced);drawPersonalityWarnings(c,s,t,reduced);drawFinalWarnings(c,s,t,reduced);const h=domainHazard(s);if(h)drawDomainInstruction(c,s,h);}
   }
   if(this.canvas.dataset){this.canvas.dataset.gameRenderer='canvas-2d';this.canvas.dataset.worldRenderer='canvas-2d';this.canvas.dataset.vfxRenderer='canvas-2d';this.canvas.dataset.worldCamera=!lobby&&s.cinematic?`${s.cinematic.kind}-illustration`:'battle';this.canvas.dataset.fighterAtlases=JSON.stringify(fighterAtlasStatus());this.canvas.dataset.combatCinematicAssets=JSON.stringify(combatCinematicAssetStatus());}
  }

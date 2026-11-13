@@ -7,7 +7,7 @@ const walk=(s,p)=>({left:p.x<s.player.x-3,right:p.x>s.player.x+3,up:p.y<s.player
 
 test('all takeover action guides preserve real destinations and distinguish movement deadlines from live attacks',()=>{
  const observed=new Set();
- for(let stage=0;stage<BOSSES.length;stage++)for(const variant of (BOSSES[stage].id==='max'?[0]:[0,1]))for(const character of ['actor','director']){
+ for(let stage=0;stage<BOSSES.length;stage++)for(const variant of (BOSSES[stage].id==='max'?[0]:BOSSES[stage].id==='sukuna'?[0,1,2]:[0,1]))for(const character of ['actor','director']){
   const s=createGame({stage,character,skipIntro:true});s.boss.patternIndex=3;s.boss.patternCooldown=0;s.boss.takeoverCount=variant;step(s);
   let count=0;
   while(s.hazards.some(h=>h.kind==='domain')&&s.status==='playing'&&count++<2500){
@@ -26,5 +26,5 @@ test('all takeover action guides preserve real destinations and distinguish move
   }
   assert.equal(s.status,'playing',`${s.boss.id}/${variant}/${character} can follow the unchanged live guide`);assert(count<2500);
  }
- assert.equal(observed.size,9);
+ assert.equal(observed.size,10);
 });

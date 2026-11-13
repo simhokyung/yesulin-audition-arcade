@@ -1,4 +1,5 @@
 import {DomainMusic} from './domain-music.js';
+import {CombatMusic} from './combat-music.js';
 
 /** Original synth score, with optional supplied recordings. Sound starts by user action. */
 export class GameAudio {
@@ -18,8 +19,9 @@ export class GameAudio {
     this.fever = false;
     this.cinematicActive = false;
     this.duckUntil = 0;
-    this.musicLevel = .32;
+    this.musicLevel = .9;
     this.domainMusic = new DomainMusic();
+    this.combatMusic = new CombatMusic({note:(...args)=>this._note(...args),noise:(...args)=>this._noise(...args)});
     this.lastEffectId = 0;
     this.practiceEpoch = null;
     this.waveCueKeys = new Set();
@@ -27,6 +29,7 @@ export class GameAudio {
     this.normalCueKeys = new Set();
     this.personalityCueKeys = new Set();
     this.maxCueKeys = new Set();
+    this.finalCueKeys = new Set();
   }
 
   setDomainTracks(tracks) {
@@ -39,9 +42,9 @@ export class GameAudio {
 
   reset() {
     this._clearSources(); this.lastCue.clear(); this.lastEffectId = 0;
-    this.practiceEpoch=null;this.waveCueKeys.clear();this.pursuitCueKeys.clear();this.normalCueKeys.clear();this.personalityCueKeys.clear();this.maxCueKeys.clear();
+    this.practiceEpoch=null;this.waveCueKeys.clear();this.pursuitCueKeys.clear();this.normalCueKeys.clear();this.personalityCueKeys.clear();this.maxCueKeys.clear();this.finalCueKeys.clear();
     this._volume(this.enabled && !this.paused ? .43 : 0);
-    this.domainMusic.reset(); this.lastState = null; this.snapshot = null;
+    this.domainMusic.reset(); this.combatMusic.reset(); this.lastState = null; this.snapshot = null;
     this.cinematicActive = false; this.duckUntil = 0; this._musicVolume();
   }
 
@@ -49,7 +52,7 @@ export class GameAudio {
     if (this.destroyed) return false;
     if (!value) {
       this.enabled = false;
-      this._clearSources();
+      this.combatMusic.stop();this._clearSources();
       this.domainMusic.sync(this.lastState, {enabled: false, paused: this.paused});
       this._volume(0);
       return false;
@@ -75,12 +78,12 @@ export class GameAudio {
           safety.curve=curve; safety.oversample='2x'; limiter.connect(safety).connect(c.destination);
         } else limiter.connect(c.destination);
         this.music = c.createGain();
-        this.music.gain.value = .32;
+        this.music.gain.value = .9;
         this.music.connect(this.master);
         this.fx = c.createGain();
         this.fx.gain.value = .65;
         this.fx.connect(this.master);
-        this.domainMusic.attach(c, this.master);
+        this.domainMusic.attach(c, this.master);this.combatMusic.attach(c,this.music);
         this.noise = c.createBuffer(1, c.sampleRate, c.sampleRate);
         const data = this.noise.getChannelData(0);
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
@@ -107,11 +110,11 @@ export class GameAudio {
   _musicVolume() {
     if (!this.music || !this.context) return;
     const t = this.context.currentTime;
-    const level = this.domainMusic.playing ? .018 : this.cinematicActive ? .045 : t < this.duckUntil ? .14 : .32;
+    const level = this.domainMusic.playing ? 0 : this.cinematicActive ? .09 : t < this.duckUntil ? .22 : .9;
     if (level === this.musicLevel) return;
     this.musicLevel = level;
     this.music.gain.cancelScheduledValues(t);
-    this.music.gain.setTargetAtTime(level, t, level < .32 ? .025 : .18);
+    this.music.gain.setTargetAtTime(level, t, level < .9 ? .025 : .18);
   }
 
   _duck(duration = .55) {
@@ -124,7 +127,7 @@ export class GameAudio {
     this.sources.add(source);
     this.sourceNodes.set(source,nodes);
     source.onended = () => {
-      this.sources.delete(source);
+      source._gameAudioEnded=true;this.sources.delete(source);
       this.sourceNodes.delete(source);
       source.disconnect();
       for (const node of nodes) node.disconnect();
@@ -142,7 +145,7 @@ export class GameAudio {
     this.sources.clear();this.sourceNodes.clear();
   }
 
-  _note(frequency, time, duration, volume = .14, type = 'triangle', bus = this.fx, endFrequency = frequency, pan = 0, attack = .009) {
+  _note(frequency, time, duration, volume = .14, type = 'triangle', bus = this.fx, endFrequency = frequency, pan = 0, attack = .009, sustain = 0) {
     if (!this.context || this.sources.size >= 96) return;
     const c = this.context, osc = c.createOscillator(), gain = c.createGain();
     osc.type = type;
@@ -150,10 +153,11 @@ export class GameAudio {
     if (endFrequency !== frequency) osc.frequency.exponentialRampToValueAtTime(Math.max(20, endFrequency), time + duration);
     gain.gain.setValueAtTime(.0001, time);
     gain.gain.exponentialRampToValueAtTime(Math.max(.0002, Math.min(.26,volume)), time + Math.max(.004, Math.min(attack, duration * .75)));
+    if(sustain>0)gain.gain.setValueAtTime(Math.max(.0002,Math.min(.26,volume)),time+Math.max(attack,Math.min(.85,sustain)*duration));
     gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
     const nodes=[gain];osc.connect(gain);
     if(pan && typeof c.createStereoPanner==='function'){const panner=c.createStereoPanner();panner.pan.value=Math.max(-.75,Math.min(.75,pan));gain.connect(panner).connect(bus);nodes.push(panner);}else gain.connect(bus);
-    this._track(osc, nodes, time, time + duration + .025);
+    this._track(osc, nodes, time, time + duration + .025);return osc;
   }
 
   _noise(time, duration, volume, frequency = 1000, type = 'bandpass', bus = this.fx, pan = 0) {
@@ -167,7 +171,7 @@ export class GameAudio {
     gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
     const nodes=[filter,gain];source.connect(filter).connect(gain);
     if(pan && typeof c.createStereoPanner==='function'){const panner=c.createStereoPanner();panner.pan.value=Math.max(-.75,Math.min(.75,pan));gain.connect(panner).connect(bus);nodes.push(panner);}else gain.connect(bus);
-    this._track(source, nodes, time, time + duration + .015);
+    this._track(source, nodes, time, time + duration + .015);return source;
   }
 
   cue(name, meta = {}) {
@@ -183,6 +187,7 @@ export class GameAudio {
     const noise = (time,duration,volume,frequency=1000,type='bandpass') => this._noise(time,duration,volume,frequency,type,this.fx,pan);
     const swell = (f,offset,d,v,type='triangle',end=f) => this._note(f,t+offset,d,v,type,this.fx,end,pan,d*.65);
     if (['director-skill','actor-skill','director-ultimate','actor-ultimate','cinematic','domain','finish','void','shrine','purple','fatal','ultimate-finisher'].includes(name)) this._duck(name === 'cinematic' ? .9 : .55);
+    if (['final-track','final-lock','final-cross','pursuit-track','pursuit-lock','blade-prealert','max-focus','max-lock','moving-track','moving-lock','casting-track','seat-track','cap-track'].includes(name))this._duck(.38);
     if (name === 'cinematic' && meta.kind === 'bossIntro') {
       const boss=meta.bossId||meta.actorId, ignis=boss==='ignis', mime=boss==='mime';
       const duration=Math.max(1,Math.min(4.6,Number(meta.duration)||3.4)), low=ignis?65.41:mime?58.27:boss==='sukuna'?43.65:49;
@@ -366,6 +371,31 @@ export class GameAudio {
       noise(t+.028,.12,.027,2300);note(146.83,0,.09,.035,'sine',65.41);
     } else if (name === 'moving-stop') {
       noise(t,.11,.026,1500,'bandpass');note(98,0,.12,.032,'triangle',65.41);
+    } else if (name === 'final-record') {
+      // Dry footstep/film ticks mark recorded motion, without a damage transient.
+      note(196,0,.12,.025,'triangle',294);noise(t,.032,.025,2500,'bandpass');
+      note(783.99,.045,.12,.019,'sine',659.25);
+    } else if (name === 'final-track') {
+      swell(146.83,0,.23,.026,'triangle',311.13);noise(t,.09,.018,3500,'highpass');
+    } else if (name === 'final-lock') {
+      note(1396.91,0,.065,.04,'sine',1046.5);noise(t,.024,.04,4200,'highpass');
+      note(220,.025,.09,.025,'triangle',164.81);
+    } else if (name === 'final-cross') {
+      // A crossing blade wall gets two restrained stereo sweeps, not a fake hit.
+      noise(t,.15,.055,3100,'highpass');noise(t+.035,.14,.038,3900,'highpass');
+      note(880,0,.14,.03,'sine',246.94);note(130.81,.012,.17,.027,'triangle',65.41);
+    } else if (name === 'final-release') {
+      const i=Math.max(1,Math.min(12,Number(meta.index)||1));
+      noise(t,.12,.054,2900+i*90,'highpass');note(740+i*26,0,.12,.028,'sine',220);
+    } else if (name === 'final-replay') {
+      noise(t,.04,.06,3800,'highpass');note(164.81,0,.14,.046,'triangle',65.41);
+      note(1174.66,.018,.1,.025,'sine',587.33);
+    } else if (name === 'final-dash') {
+      noise(t,.16,.06,3500,'highpass');note(1046.5,0,.15,.03,'sine',261.63);
+      note(98,.008,.12,.035,'triangle',49);
+    } else if (name === 'final-finish') {
+      noise(t,.13,.025,1800,'bandpass');note(130.81,0,.2,.035,'triangle',65.41);
+      note(523.25,.035,.16,.022,'sine',392);
     } else if (name === 'counter-open') {
       // A bright opening answers the dark takeover score; no false hit transient.
       [329.63,493.88,659.25].forEach((f,i)=>note(f,i*.045,.24,.044,'triangle'));
@@ -482,37 +512,6 @@ export class GameAudio {
     }
   }
 
-  _score() {
-    const c = this.context;
-    if (!c || c.state !== 'running') return;
-    // Sixteenth-note swing, with a two-bar bass groove and sparse call/response.
-    const sixteenth = 60 / 108 / 4;
-    if (this.nextBeat < c.currentTime - .25) this.nextBeat = c.currentTime + .025;
-    while (this.nextBeat < c.currentTime + .15) {
-      const i = this.beat % 32, bar = Math.floor(this.beat / 32), t = this.nextBeat + (i % 2 ? .015 : 0);
-      const bass = {0:38, 3:38, 6:45, 8:38, 10:41, 14:36, 16:34, 19:34, 22:41, 24:36, 27:43, 30:37};
-      const hz = midi => 440 * 2 ** ((midi - 69) / 12);
-      if (bass[i] !== undefined) this._note(hz(bass[i]), t, i % 8 ? .12 : .22, .18, 'triangle', this.music);
-      if ([0, 7, 10, 16, 22, 26].includes(i)) this._note(105, t, .13, .23, 'sine', this.music, 43);
-      if (i % 8 === 4) {
-        this._noise(t, .085, .15, 1600, 'bandpass', this.music);
-        this._note(170, t, .07, .08, 'triangle', this.music, 90);
-      }
-      if (i % 2 === 0) this._noise(t, .035, i % 4 ? .035 : .06, 5700, 'highpass', this.music);
-      if ([2, 11, 18, 27].includes(i)) {
-        const chord = i < 16 ? [62, 65, 69] : [58, 62, 65];
-        chord.forEach(midi => this._note(hz(midi), t, .09, .025, 'square', this.music));
-      }
-      if (this.fever && i % 2 === 1) this._noise(t,.025,.027,6800,'highpass',this.music);
-      if ((this.fever || bar % 2 === 1) && [6, 14, 21, 23, 30].includes(i)) {
-        const melody = {6:74, 14:72, 21:69, 23:65, 30:67};
-        this._note(hz(melody[i]), t, .16, .06, 'triangle', this.music);
-      }
-      this.beat++;
-      this.nextBeat += sixteenth;
-    }
-  }
-
   update(state, dt) {
     if (this.destroyed) return;
     // Practice can replace a state or reset the same object. Both release scheduled tails.
@@ -604,6 +603,12 @@ export class GameAudio {
           const origin=Number.isFinite(e.originX)?e.originX:Number.isFinite(e.x)?e.x:640;
           this.cue(name,{...e,eventId:e.id,pan:Math.max(-.62,Math.min(.62,(origin-640)/800)),audioDelay:Math.min(.06,i*.008)});
         }
+        for(const [i,e] of incoming.filter(e=>e.type==='finalShot').slice(0,16).entries()){
+          const name=e.kind==='tracking'?(e.patternKind==='retake'?'final-record':'final-track'):e.kind==='lock'?'final-lock':e.kind==='finish'?'final-finish':e.kind==='phase'?'final-cross':e.kind==='launch'?(e.shotKind==='final-dash'?'final-dash':e.shotKind==='final-projectile'?'final-release':e.shotKind==='final-trail'||e.patternKind==='retake'?'final-replay':e.patternKind==='cross-edit'?'final-cross':'final-release'):null;
+          if(!name)continue;const key=`${state.stage}:${e.attackId}:${e.shotId??e.index}:${e.index}:${e.kind}`;if(this.finalCueKeys.has(key))continue;
+          this.finalCueKeys.add(key);if(this.finalCueKeys.size>384)this.finalCueKeys.delete(this.finalCueKeys.values().next().value);
+          const x=e.origin?.x??e.originX??e.x??640;this.cue(name,{...e,eventId:e.id,pan:Math.max(-.62,Math.min(.62,(x-640)/800)),audioDelay:Math.min(.07,i*.009)});
+        }
         const maxNames={tracking:'max-focus',lock:'max-lock',launch:'max-shutter','return-warning':'max-recall',return:'max-return',finish:'max-finish','archive-warning':'max-archive-warning','archive-close':'max-archive-close','archive-lock':'max-archive-lock','archive-flash':'max-archive-flash'};
         for(const [i,e] of incoming.filter(e=>e.type==='maxShot').slice(0,12).entries()){
           const name=maxNames[e.kind];if(!name)continue;
@@ -648,12 +653,12 @@ export class GameAudio {
       this.lastState=state;this.snapshot=now;this.fever=now.fever;this.stage=state.stage;
     }else this.cinematicActive=false;
     this._musicVolume();
-    if(this.enabled&&!this.paused&&(!state||state.status==='playing'))this._score();
+    this.combatMusic.sync(state,{enabled:this.enabled,paused:this.paused,domain:this.domainMusic.playing});
   }
 
   pause(value) {
     this.paused = !!value;
-    if(this.paused)this._clearSources();
+    if(this.paused){this.combatMusic.stop();this._clearSources();}
     this.domainMusic.sync(this.lastState, {enabled: this.enabled, paused: this.paused});
     this._volume(this.enabled && !this.paused ? .43 : 0);
     if (!this.paused && this.context) this.nextBeat = this.context.currentTime + .04;
@@ -662,7 +667,7 @@ export class GameAudio {
   destroy() {
     this.enabled = false;
     this.destroyed = true;
-    this.domainMusic.destroy();
+    this.domainMusic.destroy();this.combatMusic.destroy();
     this._clearSources();
     if (this.context && this.context.state !== 'closed') this.context.close().catch(() => {});
     this.context = null;

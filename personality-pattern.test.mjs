@@ -17,10 +17,10 @@ function run(s,{dt=1/60,policy='walk',reaction=.35,observe=()=>{}}={}){
 }
 
 test('personal skills extend all previous pattern lists with distinct ordinary audition techniques',()=>{
- assert.deepEqual(LEGACY.map(b=>b.patterns.at(-1)),['빨뚜 통째로, 액션!','끝까지 캐스팅','자리해야지~','원테이크, 따라와']);
- assert.deepEqual(LEGACY.map(b=>b.patterns.length),[7,7,7,7]);assert.deepEqual(LEGACY.map(b=>[b.hp,b.damage]),[[4100,18],[5800,26],[8800,38],[10100,50]]);
+ assert.deepEqual(LEGACY.map(b=>b.patterns[6]),['빨뚜 통째로, 액션!','끝까지 캐스팅','자리해야지~','원테이크, 따라와']);
+ assert.deepEqual(LEGACY.map(b=>b.patterns.length),[7,7,7,10]);assert.deepEqual(LEGACY.map(b=>[b.hp,b.damage]),[[4100,18],[5800,26],[8800,38],[10100,50]]);
  for(const c of Object.values(CHARACTERS))assert.equal(c.hp,260);
- for(const id of ids){assert.equal(rankedPatternAt(id,0),6);const seen=new Set(Array.from({length:11},(_,turn)=>rankedPatternAt(id,turn)));assert.deepEqual([...seen].sort(),[0,1,2,3,4,5,6]);assert.equal(patternTurnFor(id,3),['ignis','mime'].includes(id)?4:1);}
+ for(const id of ids){assert.equal(rankedPatternAt(id,0),id==='sukuna'?7:6);const seen=new Set(Array.from({length:11},(_,turn)=>rankedPatternAt(id,turn)));assert.deepEqual([...seen].sort(),id==='sukuna'?[0,1,2,3,4,5,6,7,8,9]:[0,1,2,3,4,5,6]);assert.equal(patternTurnFor(id,3),['ignis','mime'].includes(id)?4:1);}
 });
 
 test('ignoring each personal attack takes ordinary damage at 30 and 60 Hz, never domain instant death',()=>{
@@ -139,17 +139,6 @@ function finalPhase({hp=.45,completed=1,count=1,index=2,counter=0}={}){
  const s=createGame({mode:'challenge'});startStage(s,BOSSES.findIndex(b=>b.id==='sukuna'),{retry:true});s.cinematic=null;Object.assign(s.boss,{hp:s.boss.maxHp*hp,takeoverCount:count,takeoversCompleted:completed,patternIndex:index,patternCooldown:0,counterRemaining:counter});return s;
 }
 
-test('Moving reserves the second takeover below 45 percent without consuming a pending normal skill',()=>{
- const s=finalPhase(),turn=s.boss.patternIndex;step(s);assert.equal(s.boss.telegraph.index,3);assert.equal(s.hazards[0].domainType,'chasing-slashes');assert.equal(s.boss.patternIndex,turn);assert.equal(s.boss.takeoverCount,2);
- s.cinematic=null;s.hazards=[];s.boss.telegraph=null;s.boss.patternCooldown=0;s.boss.stun=0;step(s);assert.equal(s.boss.telegraph.index,rankedPatternAt('sukuna',turn));assert.equal(s.boss.patternIndex,turn+1);
-});
-
-test('the final second takeover waits for earned counters, live hazards and shots, and a truly completed first takeover',()=>{
- for(const options of [{hp:.451},{completed:0},{count:2}]){const s=finalPhase(options);step(s);assert.equal(s.boss.telegraph.index,1);}
- const counter=finalPhase({counter:1.8});for(let i=0;i<108;i++){step(counter);assert.equal(counter.boss.telegraph,null);}while(!counter.boss.telegraph)step(counter);assert.equal(counter.boss.telegraph.index,3);
- const blocked=finalPhase();blocked.hazards.push({id:999,type:'circle',kind:'ordinary-test',x:100,y:350,radius:5,radiusY:5,active:true,life:1,damage:1});step(blocked);assert.equal(blocked.boss.telegraph,null);blocked.hazards=[];blocked.projectiles.push({id:1000,owner:'enemy',x:76,y:340,vx:1,vy:0,life:1,radius:1,radiusY:1,hits:[],damage:1});step(blocked);assert.equal(blocked.boss.telegraph,null);blocked.projectiles=[];step(blocked);assert.equal(blocked.boss.telegraph.index,3);
-});
-
-test('an already scheduled second takeover is consumed once instead of duplicated by the priority rule',()=>{
- const s=finalPhase({index:patternTurnFor('sukuna',3,{occurrence:1})}),turn=s.boss.patternIndex;step(s);assert.equal(s.hazards[0].domainType,'chasing-slashes');assert.equal(s.boss.takeoverCount,2);assert.equal(s.boss.patternIndex,turn+1);
-});
+test('Moving keeps the scheduled attack at low HP without an artificial takeover gate',()=>{const s=finalPhase(),turn=s.boss.patternIndex;step(s);assert.equal(s.boss.telegraph.index,rankedPatternAt('sukuna',turn));assert.equal(s.boss.patternIndex,turn+1);assert.equal(s.boss.takeoverCount,1);});
+test('earned counter and live attack geometry still block a new final cast',()=>{const s=finalPhase({counter:1.8});for(let i=0;i<108;i++){step(s);assert.equal(s.boss.telegraph,null);}while(!s.boss.telegraph)step(s);assert.equal(s.boss.telegraph.index,8);const blocked=finalPhase();blocked.hazards.push({id:999,type:'circle',kind:'ordinary-test',blocksBoss:true,x:100,y:350,radius:5,radiusY:5,active:true,life:1,damage:1});step(blocked);assert.equal(blocked.boss.telegraph,null);});
+test('scheduled second takeover is blade walls and consumes exactly one normal turn',()=>{const s=finalPhase({index:patternTurnFor('sukuna',3,{occurrence:1})}),turn=s.boss.patternIndex;step(s);assert.equal(s.hazards[0].domainType,'blade-waves');assert.equal(s.boss.takeoverCount,2);assert.equal(s.boss.patternIndex,turn+1);});

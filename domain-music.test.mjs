@@ -437,7 +437,7 @@ test('wave cues use finite original envelopes with bounded voices and release al
 test('live Caden waves synchronize with emitted events and fatal sound requires a real collision', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
   for(const {walk,lowHealth} of [{walk:true},{walk:false},{walk:false,lowHealth:true}]){
-    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;if(lowHealth)s.player.hp=100;
+    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.takeoverCount=1;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;if(lowHealth)s.player.hp=100;
     audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);
     audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};let sawDomain=false;
     for(let i=0;i<3000&&s.status==='playing';i++){
@@ -531,7 +531,7 @@ test('late Caden decoding cannot revive a cancelled chasing takeover or an aband
 test('live chasing slashes play actual tracking, lock, seven-shot bursts and finale without phantom collisions', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
   for(const {walk,lowHealth} of [{walk:true},{walk:false},{walk:false,lowHealth:true}]){
-    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.takeoverCount=1;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;if(lowHealth)s.player.hp=100;
+    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.takeoverCount=2;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;if(lowHealth)s.player.hp=100;
     audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);let sawDomain=false;
     audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};
     for(let i=0;i<2400&&s.status==='playing';i++){
@@ -685,4 +685,29 @@ test('real Max photo release and return events have matching camera sounds and n
  const heard=[],events=new Map(),cue=audio.cue.bind(audio);audio.cue=(name,meta={})=>{heard.push({name,meta});cue(name,meta);};audio.update(s,1/60);let began=false;
  for(let i=0;i<700;i++){step(s,{down:s.player.y<610},1/60);for(const e of s.effects)if(e.type==='maxShot')events.set(e.id,e);audio.context.currentTime+=1/60;audio.update(s,1/60);const n=heard.length;audio.update(s,1/60);assert.equal(heard.length,n);if(s.maxPattern)began=true;if(s.boss.attacks)s.boss.patternCooldown=999;if(began&&!s.maxPattern)break;}
  assert(began);assert.equal(heard.filter(e=>e.name==='max-shutter').length,6);assert(s.stats.maxReturns>0);assert.equal(heard.filter(e=>e.name==='max-return').length,s.stats.maxReturns);assert.equal(heard.filter(e=>e.name==='max-recall').length,[...events.values()].filter(e=>e.kind==='return-warning').length);
+});
+
+test('final audition sounds keep bounded original synth voices and release tails on mute',async t=>{
+ const {audio,starts,shapers,panners}=audioHarness(t,{holdSources:true});await audio.setEnabled(true);
+ const names=['final-record','final-track','final-lock','final-cross','final-release','final-replay','final-dash','final-finish'];
+ for(let i=0;i<96;i++)audio.cue(names[i%names.length],{eventId:9000+i,index:i%12+1,pan:i%2?.62:-.62,audioDelay:(i%3)*.009});
+ assert(starts.length>0);assert(audio.sources.size<=96);assert(panners.every(n=>Math.abs(n.pan.value)<=.75));assert(shapers[0].curve.every(n=>Number.isFinite(n)&&Math.abs(n)<.92));
+ await audio.setEnabled(false);assert.equal(audio.sources.size,0);assert.equal(audio.sourceNodes.size,0);
+});
+
+test('final audition milestones deduplicate by real shot and never turn attack release into a hit cue',()=>{
+ const s=createGame({stage:4,skipIntro:true}),audio=new GameAudio(),heard=[];audio.cue=(name,meta={})=>heard.push({name,...meta});audio.update(s,1/60);
+ for(const [index,kind] of ['tracking','lock','launch','hit','finish'].entries()){
+  s.effects.push({id:++s.uid,type:'finalShot',kind,bossId:'sukuna',attackId:800,shotId:801,index:1,total:6,patternKind:'cross-edit',origin:{x:700,y:420},life:.5});audio.update(s,1/60);audio.update(s,1/60);
+ }
+ assert.deepEqual(heard.map(e=>e.name),['final-track','final-lock','final-cross','final-finish']);assert(!heard.some(e=>['hit','impact','fatal'].includes(e.name)));
+ assert.equal(audio.finalCueKeys.size,4);audio.reset();assert.equal(audio.finalCueKeys.size,0);audio.destroy();
+});
+
+test('combat score remains continuous through intro and important warnings duck only its own mix',async t=>{
+ const {audio}=audioHarness(t,{holdSources:true});await audio.setEnabled(true);const s=createGame({stage:4,skipIntro:true});audio.update(s,1/60);const beat=audio.combatMusic.step;assert.equal(audio.combatMusic.status().mode,'finale');assert.equal(audio.musicLevel,.9);
+ audio.cue('final-lock',{eventId:101010});assert.equal(audio.musicLevel,.22);assert(audio.duckUntil>audio.context.currentTime);
+ audio.context.currentTime+=.5;audio.update(s,.5);assert.equal(audio.musicLevel,.9);assert(audio.combatMusic.step>beat);
+ s.cinematic={id:++s.uid,kind:'bossIntro',remaining:1,duration:3,bossId:'sukuna'};audio.update(s,1/60);assert.equal(audio.musicLevel,.09);assert(audio.combatMusic.playing);s.cinematic=null;audio.context.currentTime+=4;audio.update(s,1/60);assert.equal(audio.musicLevel,.9);
+ assert(audio.combatMusic.voices.size<=40);audio.pause(true);assert.equal(audio.combatMusic.voices.size,0);audio.pause(false);audio.context.currentTime+=.1;audio.update(s,.1);assert(audio.combatMusic.playing);s.status='gameover';audio.update(s,1/60);assert(!audio.combatMusic.playing);assert.equal(audio.combatMusic.voices.size,0);
 });

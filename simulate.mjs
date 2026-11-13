@@ -6,7 +6,7 @@ import {createHash} from 'node:crypto';
 // These are deterministic input bots, NOT a probabilistic damage calculator.
 // Every attack, collider, cooldown, energy refill and invulnerability frame is
 // resolved by the same fixed-step engine used by the browser game.
-const sourceHashes=()=>Object.fromEntries(['engine.js','max-patterns.js'].map(name=>[name,createHash('sha256').update(readFileSync(new URL('./'+name,import.meta.url))).digest('hex')]));
+const sourceHashes=()=>Object.fromEntries(['engine.js','max-patterns.js','final-patterns.js'].map(name=>[name,createHash('sha256').update(readFileSync(new URL('./'+name,import.meta.url))).digest('hex')]));
 const loadedSourceSha256=sourceHashes(),loadedEngineSha256=loadedSourceSha256['engine.js'];
 const arg=process.argv.find(x=>x.startsWith('--seeds='));
 const seeds=arg?Number(arg.split('=')[1]):100;
@@ -22,7 +22,7 @@ const originalBossIds=['ignis','mime','gojo','sukuna'];
 const dist=(a,b)=>Math.hypot(a.x-b.x,(a.y-b.y)*1.5);
 const bound=(v,a,b)=>Math.max(a,Math.min(b,v));
 export function makeController(profile,loadout,seed){
-  const random=rng(seed^0xc0ffee);let wait=0,command={},ignore=0,lastDomainPhase='',phaseReaction=0,pursuitMotorTarget=null,pursuitMotorLanes=null,auditionId=null,auditionChoice=null;const projectileSeen=new Map(),personalCueSeen=new Map(),maxCueSeen=new Map();
+  const random=rng(seed^0xc0ffee);let wait=0,command={},ignore=0,lastDomainPhase='',phaseReaction=0,pursuitMotorTarget=null,pursuitMotorLanes=null,auditionId=null,auditionChoice=null;const projectileSeen=new Map(),personalCueSeen=new Map(),maxCueSeen=new Map(),finalCueSeen=new Map();
   return (s,dt)=>{
     if(s.cinematic){wait=0;command={};pursuitMotorTarget=null;pursuitMotorLanes=null;return {};}
     wait-=dt;if(wait>0){const held={...command,skill:false,buff:false,ultimate:false,dodge:false,attackPressed:false};
@@ -42,7 +42,7 @@ export function makeController(profile,loadout,seed){
       return risk+(Math.hypot(dx-vx*t,dy-vy*t)<1?5:0);
     },0);
     let target=s.enemies.length?s.enemies.reduce((a,e)=>dist(e,p)<dist(a,p)?e:a):b;
-    const ordinary=getPatternGuide(s),personal=getPersonalityGuide(s),camera=s.maxPattern?ordinary:null,audition=s.audition&&!s.audition.selected?s.audition:null,rehearsal=ordinary?.kind==='rehearsal';
+    const ordinary=getPatternGuide(s),personal=getPersonalityGuide(s),camera=s.maxPattern?ordinary:null,final=s.finalPattern?ordinary:null,audition=s.audition&&!s.audition.selected?s.audition:null,rehearsal=ordinary?.kind==='rehearsal';
     if(audition){if(auditionId!==audition.id){auditionId=audition.id;const chooseReal=random()>=profile.slip*.25;auditionChoice=audition.figures.find(f=>f.real===chooseReal);}target=auditionChoice;}else{auditionId=null;auditionChoice=null;}
     let dest={x:bound(target.x+(p.x>target.x?1:-1)*68,80,1200),y:target.y};
     const conceptVisible=s.hazards.some(h=>h.conceptPattern&&!h.decoy&&(h.active||h.duration-h.remaining>=profile.reaction));
@@ -61,25 +61,26 @@ export function makeController(profile,loadout,seed){
     const cameraNoticed=cameraKey&&maxCueSeen.has(cameraKey)&&s.time-maxCueSeen.get(cameraKey)>=profile.reaction;
     if(camera)dest=cameraNoticed&&camera.target?camera.target:{x:p.x,y:p.y};
 
+    if(final){for(const q of final.shots||[])if(q.locked&&!finalCueSeen.has(q.id))finalCueSeen.set(q.id,s.time);const noticed=finalCueSeen.has(final.cueId)&&s.time-finalCueSeen.get(final.cueId)>=profile.reaction;dest=noticed?final.target:{x:p.x,y:p.y};}
     // React to signs only after the chosen controller delay, occasionally miss one.
     if(!s.hazards.some(h=>h.kind==='domain'&&h.active)&&random()<profile.slip*.16)ignore=.45;ignore=Math.max(0,ignore-.1);
     const threats=ignore>0?[]:s.hazards.filter(h=>!h.decoy&&h.kind!=='flowers'&&h.kind!=='rehearsal-light'&&(h.active||h.duration-h.remaining>=profile.reaction));
     const dangerAt=(point)=>threats.reduce((sum,h)=>sum+(isInsideHazard(point.x,point.y,h,18)?h.active?5:2.5:0),projectileRisk(point));
     const dangerNow=dangerAt(p);
     const safe=threats.find(h=>h.kind==='domain');
-    if(safe){const guide=getDomainGuide(s,safe),phaseKey=safe.domainType==='memory-archive'?`${guide.cueId}:${guide.locked??false}`:safe.id+':'+safe.domainPhase+':'+(guide.continuous?guide.navigationPhase:safe.phaseWarning+':'+(safe.bladeCheckpoint||0)+':'+(safe.pursuitState||''));if(lastDomainPhase&&lastDomainPhase!==phaseKey&&safe.active&&(guide.continuous||safe.phaseWarning||safe.domainType==='memory-archive'&&guide.locked||safe.domainType==='blade-waves'&&safe.domainPhase===4&&safe.bladeCheckpoint===1))phaseReaction=profile.reaction;lastDomainPhase=phaseKey;if(phaseReaction>0){phaseReaction-=.1;return {...command,attack:false,skill:false,buff:false,ultimate:false,dodge:false,attackPressed:false};}dest=guide.kind==='memory-archive'&&guide.archivePhase==='final'&&guide.tracking?{x:p.x,y:p.y}:guide.target;}else{lastDomainPhase='';phaseReaction=0;}
-    if(!safe&&(dangerNow||dangerAt(dest))){
+    if(safe){const guide=getDomainGuide(s,safe),phaseKey=['memory-archive','last-cut'].includes(safe.domainType)?`${guide.cueId}:${guide.locked??false}`:safe.id+':'+safe.domainPhase+':'+(guide.continuous?guide.navigationPhase:safe.phaseWarning+':'+(safe.bladeCheckpoint||0)+':'+(safe.pursuitState||''));if(lastDomainPhase&&lastDomainPhase!==phaseKey&&safe.active&&(guide.continuous||safe.phaseWarning||['memory-archive','last-cut'].includes(safe.domainType)&&guide.locked||safe.domainType==='blade-waves'&&safe.domainPhase===4&&safe.bladeCheckpoint===1))phaseReaction=profile.reaction;lastDomainPhase=phaseKey;if(phaseReaction>0){phaseReaction-=.1;return {...command,attack:false,skill:false,buff:false,ultimate:false,dodge:false,attackPressed:false};}dest=guide.kind==='memory-archive'&&guide.archivePhase==='final'&&guide.tracking?{x:p.x,y:p.y}:guide.target;}else{lastDomainPhase='';phaseReaction=0;}
+    if(!safe&&!final&&(dangerNow||dangerAt(dest))){
       const candidates=[dest,{x:p.x,y:p.y}];
       for(const r of [70,135,210,290])for(let n=0;n<16;n++){const a=n*Math.PI/8;candidates.push({x:bound(p.x+Math.cos(a)*r,80,1200),y:bound(p.y+Math.sin(a)*r*.72,342,622)});}
       let best=Infinity;for(const q of candidates){const score=dangerAt(q)*10000+dist(q,p)+dist(q,target)*.15;if(score<best){best=score;dest=q;}}
     }
-    pursuitMotorTarget=['chasing-slashes','memory-archive'].includes(safe?.domainType)||camera?{...dest}:null;
+    pursuitMotorTarget=['chasing-slashes','memory-archive','last-cut'].includes(safe?.domainType)||camera||final?{...dest}:null;
     pursuitMotorLanes=safe?.domainType==='chasing-slashes'&&safe.section!=='burst'&&safe.pursuitState!=='tracking'?safe.previewRegions.map(r=>({...r})):null;
     let dx=dest.x-p.x,dy=dest.y-p.y;
     const incoming=observedProjectiles.find(q=>{const dx=p.x-q.x,dy=p.y-q.y;return dist(q,p)<220&&dx*q.vx+dy*q.vy>0&&projectileRisk(p)>0;});
     const imminent=threats.some(h=>isInsideHazard(p.x,p.y,h,10)&&(h.active||h.remaining<.23));
     const moveTolerance=12;
-    command={left:dx<-moveTolerance,right:dx>moveTolerance,up:dy<-10,down:dy>10,attack:!safe&&!rehearsal&&(!personal||dist(p,dest)<18)&&(!camera||cameraNoticed&&dist(p,dest)<18)&&(!audition||audition.active&&dist(p,target)<100),
+    command={left:dx<-moveTolerance,right:dx>moveTolerance,up:dy<-10,down:dy>10,attack:!safe&&!rehearsal&&(!final||dist(p,dest)<18)&&(!personal||dist(p,dest)<18)&&(!camera||cameraNoticed&&dist(p,dest)<18)&&(!audition||audition.active&&dist(p,target)<100),
       skill:!safe&&!rehearsal&&!audition&&p.cooldowns.skill===0&&dist(p,target)<(character==='director'?320:600)&&random()<profile.skillChance&&(character!=='director'||!b.telegraph||b.telegraph.remaining<.28||profile.reaction>.4),
       buff:p.cooldowns.buff===0&&dist(p,target)<420,
       dodge:(imminent||!!incoming)&&p.cooldowns.dodge===0&&random()<profile.dodgeChance,
@@ -148,7 +149,7 @@ export function runTakeoverRoute({boss='ignis',character='director',x=520,y=500,
 
 export function runBladeRoute({character='director',variant=0,mirror=false,x=640,y=480,bossX=1000,bossY=480,reaction=.35,policy='follow'}={}){
   const s=createGame({stage:BOSSES.findIndex(b=>b.id==='sukuna'),character,skipIntro:true}),dt=1/60;
-  Object.assign(s.player,{x,y});s.player.cooldowns.dodge=99;Object.assign(s.boss,{x:bossX,y:bossY,attacks:variant===0?2:variant-1,phase:mirror?2:1,patternIndex:3,patternCooldown:0});step(s);
+  Object.assign(s.player,{x,y});s.player.cooldowns.dodge=99;Object.assign(s.boss,{x:bossX,y:bossY,attacks:variant===0?2:variant-1,phase:mirror?2:1,takeoverCount:1,patternIndex:3,patternCooldown:0});step(s);
   let key='',wait=0;const warnings=new Map();
   for(let f=0;f<2400&&s.status==='playing'&&s.hazards.length;f++){
     const h=s.hazards[0],g=getDomainGuide(s,h),k=h.domainPhase+':'+h.phaseWarning+':'+h.bladeCheckpoint;
@@ -162,7 +163,7 @@ export function runBladeRoute({character='director',variant=0,mirror=false,x=640
 
 export function runPursuitRoute({character='director',phase=1,x=640,y=482,bossX=1000,bossY=480,reaction=.35,policy='follow',dodgeAssist=false}={}){
   const s=createGame({stage:BOSSES.findIndex(b=>b.id==='sukuna'),character,skipIntro:true}),dt=1/60;
-  Object.assign(s.player,{x,y});s.player.cooldowns.dodge=dodgeAssist?0:99;Object.assign(s.boss,{x:bossX,y:bossY,phase,takeoverCount:1,patternIndex:3,patternCooldown:0});step(s);
+  Object.assign(s.player,{x,y});s.player.cooldowns.dodge=dodgeAssist?0:99;Object.assign(s.boss,{x:bossX,y:bossY,phase,takeoverCount:2,patternIndex:3,patternCooldown:0});step(s);
   let key='',wait=0,dashBeat=-1;const phases=new Set(),launches=new Map();let maxConcurrentBlades=0;
   for(let f=0;f<1800&&s.status==='playing'&&s.hazards.length;f++){
     const h=s.hazards[0],g=getDomainGuide(s,h),k=h.domainPhase+':'+(g.continuous?g.navigationPhase:h.pursuitState);
@@ -181,13 +182,17 @@ function rankedFixture({stage,character='director',x=640,y=482,phase=1,takeoverC
   step(s,{},1/60);return s;
 }
 
+function finalLedger(){return{seen:new Set(),shots:{},completed:{},cuts:0,ultimates:0};}
+function recordFinalEvents(s,ledger){for(const e of s.effects){if(ledger.seen.has(e.id))continue;if(e.type==='finalShot'){ledger.seen.add(e.id);if(e.kind==='launch')ledger.shots[e.patternKind]=(ledger.shots[e.patternKind]||0)+1;if(e.kind==='finish')ledger.completed[e.patternKind]=(ledger.completed[e.patternKind]||0)+1;}if(s.boss.id==='sukuna'&&e.type==='comic'&&e.text==='컷 타이밍!'){ledger.seen.add(e.id);ledger.cuts++;}if(s.boss.id==='sukuna'&&e.type==='cinematic'&&e.kind==='playerUltimate'){ledger.seen.add(e.id);ledger.ultimates++;}}}
+function finalSummary(ledger){return{launched:{...ledger.shots},completed:{...ledger.completed},precisionCuts:ledger.cuts,ultimates:ledger.ultimates};}
+
 // This is a fresh single-boss ranked setup, not the legacy story runner. No HP,
 // damage, cooldown, projectile or invulnerability value is changed in this run.
 export function runRankedDuel({seed=1009,stage=0,loadout='director',profile='regular',safetyLimitSeconds=180}={}){
   const s=createGame({mode:'challenge',character:loadout});startStage(s,stage,{retry:true,entrance:true});
-  const control=makeController(profiles[profile],loadout,seed),dt=1/60;
-  while(s.status==='playing'&&!s.stats.stagesCleared&&s.runTime<safetyLimitSeconds)step(s,control(s,dt),dt);
-  return {boss:BOSSES[stage].id,character:loadout,profile,win:s.stats.stagesCleared===1,safetyStopped:s.status==='playing'&&!s.stats.stagesCleared,seconds:+s.runTime.toFixed(2),damageTaken:s.stats.damageTaken,hp:s.player.hp,endReason:s.endReason,patternCasts:{...s.stats.patternCasts},variantCasts:{...s.stats.takeoverVariantCasts}};
+  const control=makeController(profiles[profile],loadout,seed),dt=1/60,final=finalLedger();
+  while(s.status==='playing'&&!s.stats.stagesCleared&&s.runTime<safetyLimitSeconds){step(s,control(s,dt),dt);recordFinalEvents(s,final);}
+  return {finalExposure:finalSummary(final),boss:BOSSES[stage].id,character:loadout,profile,win:s.stats.stagesCleared===1,safetyStopped:s.status==='playing'&&!s.stats.stagesCleared,seconds:+s.runTime.toFixed(2),damageTaken:s.stats.damageTaken,hp:s.player.hp,endReason:s.endReason,patternCasts:{...s.stats.patternCasts},variantCasts:{...s.stats.takeoverVariantCasts}};
 }
 
 export function runVariantRoute({boss='ignis',character='director',phase=1,takeoverCount=0,x=640,y=482,reaction=.35,policy='follow'}={}){
@@ -235,12 +240,12 @@ function recordConceptEvents(s,ledger){
 
 export function runChallenge({seed=1009,loadout='director',profile='regular',safetyLimitSeconds=300}={}){
   const s=createGame({mode:'challenge',character:loadout}),control=makeController(profiles[profile],loadout,seed),dt=1/60,clears=[];
-  let lastClear=0,lastStageClock=0,firstUltimateAt=null;const pursuitLaunches=new Map(),concept=conceptLedger();
+  let lastClear=0,lastStageClock=0,firstUltimateAt=null;const pursuitLaunches=new Map(),concept=conceptLedger(),final=finalLedger();
   // This guard protects the offline test runner; the game has no timeout branch.
-  while(s.status==='playing'&&s.runTime<safetyLimitSeconds){step(s,control(s,dt),dt);recordConceptEvents(s,concept);for(const e of s.effects)if(e.type==='pursuitSlash'&&e.kind==='launch')pursuitLaunches.set(e.slashId,{phase:e.phase,shot:e.shotIndex,section:e.section,time:+e.actualFireTime.toFixed(6),scheduled:+(e.scheduledFireTime??e.actualFireTime).toFixed(6)});if(firstUltimateAt===null&&s.stats.ultimates>0)firstUltimateAt=+s.runTime.toFixed(2);if(s.stats.stagesCleared>lastClear){clears.push({boss:s.boss.id,seconds:+(s.runTime-lastStageClock).toFixed(2)});lastStageClock=s.runTime;lastClear=s.stats.stagesCleared;}}
+  while(s.status==='playing'&&s.runTime<safetyLimitSeconds){step(s,control(s,dt),dt);recordConceptEvents(s,concept);recordFinalEvents(s,final);for(const e of s.effects)if(e.type==='pursuitSlash'&&e.kind==='launch')pursuitLaunches.set(e.slashId,{phase:e.phase,shot:e.shotIndex,section:e.section,time:+e.actualFireTime.toFixed(6),scheduled:+(e.scheduledFireTime??e.actualFireTime).toFixed(6)});if(firstUltimateAt===null&&s.stats.ultimates>0)firstUltimateAt=+s.runTime.toFixed(2);if(s.stats.stagesCleared>lastClear){clears.push({boss:s.boss.id,seconds:+(s.runTime-lastStageClock).toFixed(2)});lastStageClock=s.runTime;lastClear=s.stats.stagesCleared;}}
   if(s.duration!==0||s.timeLeft!==null||s.endReason==='timeout')throw new Error('Challenge must never have a game time limit');
   if(![s.score,s.player.hp,s.runTime,s.boss.hp].every(Number.isFinite))throw new Error('Non-finite challenge result');
-  return {lastClearTime:s.lastClearTime,stageClearTimes:[...s.stageClearTimes],domainHits:s.stats.domainHits,maxPatternCasts:{...s.stats.maxPatternCasts},maxShots:s.stats.maxShots||0,maxReturns:s.stats.maxReturns||0,personalityCasts:{...s.stats.personalityCasts},personalityShots:{...s.stats.personalityShots},personalityHits:{...s.stats.personalityHits},personalityCompletions:{...s.stats.personalityCompletions},personalityAvoided:{...s.stats.personalityAvoided},conceptEffects:concept.byBoss,pursuitLaunches:[...pursuitLaunches.values()],win:s.status==='victory',status:s.status,endReason:s.endReason,deathTakeover:s.domainDeath?.domainType||null,deathVariant:s.domainDeath?.hazard?.variantId||null,takeoverVariantCasts:{...s.stats.takeoverVariantCasts},takeoverVariantActivations:{...s.stats.takeoverVariantActivations},takeoverVariantSurvived:{...s.stats.takeoverVariantSurvived},takeoverCasts:{...s.stats.takeoverCasts},takeoverActivations:{...s.stats.takeoverActivations},takeoverSurvived:{...s.stats.takeoverSurvived},safetyStopped:s.status==='playing',seconds:s.runTime,score:s.score,firstUltimateAt,patternCasts:{...s.stats.patternCasts},extraActivations:{...s.stats.extraActivations},extraCompletions:{...s.stats.extraCompletions},extraSuccesses:{...s.stats.extraSuccesses},counterWindows:s.stats.counterWindows,counterDamage:s.stats.counterDamage,rehearsals:s.stats.rehearsals,auditionSuccesses:s.stats.auditionSuccesses,auditionMistakes:s.stats.auditionMistakes,ultimates:s.stats.ultimates,adlibs:s.stats.adlibs,methodFinishers:s.stats.methodFinishers,cueDetonations:s.stats.cueDetonations,crewBursts:s.stats.crewBursts,cleared:s.stats.stagesCleared,hp:s.player.hp,damage:s.stats.damageTaken,justHits:s.stats.justHits,justDodges:s.stats.justDodges,finishers:s.stats.finishers,maxCombo:s.maxCombo,clears};
+  return {finalExposure:finalSummary(final),lastClearTime:s.lastClearTime,stageClearTimes:[...s.stageClearTimes],domainHits:s.stats.domainHits,maxPatternCasts:{...s.stats.maxPatternCasts},maxShots:s.stats.maxShots||0,maxReturns:s.stats.maxReturns||0,personalityCasts:{...s.stats.personalityCasts},personalityShots:{...s.stats.personalityShots},personalityHits:{...s.stats.personalityHits},personalityCompletions:{...s.stats.personalityCompletions},personalityAvoided:{...s.stats.personalityAvoided},conceptEffects:concept.byBoss,pursuitLaunches:[...pursuitLaunches.values()],win:s.status==='victory',status:s.status,endReason:s.endReason,deathTakeover:s.domainDeath?.domainType||null,deathVariant:s.domainDeath?.hazard?.variantId||null,takeoverVariantCasts:{...s.stats.takeoverVariantCasts},takeoverVariantActivations:{...s.stats.takeoverVariantActivations},takeoverVariantSurvived:{...s.stats.takeoverVariantSurvived},takeoverCasts:{...s.stats.takeoverCasts},takeoverActivations:{...s.stats.takeoverActivations},takeoverSurvived:{...s.stats.takeoverSurvived},safetyStopped:s.status==='playing',seconds:s.runTime,score:s.score,firstUltimateAt,patternCasts:{...s.stats.patternCasts},extraActivations:{...s.stats.extraActivations},extraCompletions:{...s.stats.extraCompletions},extraSuccesses:{...s.stats.extraSuccesses},counterWindows:s.stats.counterWindows,counterDamage:s.stats.counterDamage,rehearsals:s.stats.rehearsals,auditionSuccesses:s.stats.auditionSuccesses,auditionMistakes:s.stats.auditionMistakes,ultimates:s.stats.ultimates,adlibs:s.stats.adlibs,methodFinishers:s.stats.methodFinishers,cueDetonations:s.stats.cueDetonations,crewBursts:s.stats.crewBursts,cleared:s.stats.stagesCleared,hp:s.player.hp,damage:s.stats.damageTaken,justHits:s.stats.justHits,justDodges:s.stats.justDodges,finishers:s.stats.finishers,maxCombo:s.maxCombo,clears};
 }
 
 if(process.argv[1]===fileURLToPath(import.meta.url)){

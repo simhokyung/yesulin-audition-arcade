@@ -1,6 +1,7 @@
 // Original-photo takeover teaching: every judge keeps their existing movement rule.
 import { drawTakeoverMap, mimePresentation } from './takeover-vfx.js';
 import { BOSS_VISUALS, getBossPhoto, bossPhotoAssetStatus, drawBossPhotoPanel } from './boss-visuals.js';
+import { drawFinalTakeoverMap } from './final-vfx.js';
 import { drawMaxTakeoverMap } from './max-vfx.js';
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
 const ease=x=>1-Math.pow(1-clamp(x),3);
@@ -18,6 +19,12 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   g.addColorStop(0,visual.wall);g.addColorStop(1,'#04060f');
   c.fillStyle=g;c.fillRect(0,0,w,h);
   drawBossPhotoPanel(c,id,{x:350,y:112,w:580,h:380,progress:p,reduced:reduceMotion});
+  if(zone?.domainType==='last-cut'){
+    // Editing rails frame the original photo; no overlay crosses the face or hands.
+    for(const side of [-1,1]){c.save();const x=640+side*(reduceMotion?448:496-48*ease(p*2));c.translate(x,310);c.rotate(side*(reduceMotion?.12:.2-.08*ease(p*2)));c.fillStyle='#0a131d';c.fillRect(-26,-157,52,314);c.strokeStyle='#f3d4b3aa';c.lineWidth=2;c.strokeRect(-26,-157,52,314);
+      for(let i=0;i<9;i++){const yy=-146+i*36;c.fillStyle=i%2?'#e9d2ba':'#6e4048';c.beginPath();c.moveTo(-22,yy);c.lineTo(22,yy-10);c.lineTo(22,yy+9);c.lineTo(-22,yy+19);c.closePath();c.fill();}c.restore();}
+    c.save();c.textAlign='center';c.font='800 12px "Noto Sans KR",sans-serif';c.fillStyle='#ffe4cd';c.fillText('끝났다고 생각한 순간, 마지막 컷이 온다.',640,100);c.restore();
+  }
   if(id==='max'){for(const side of [-1,1]){const x=640+side*450;c.fillStyle='#121c23';c.fillRect(x-29,145,58,312);for(let i=0;i<12;i++){c.fillStyle='#d3b48188';c.fillRect(x-20,153+i*25,40,12);}c.strokeStyle='#e5c68f80';c.lineWidth=1;c.strokeRect(x-49,185,98,218);} }
   if(!reduceMotion){
     c.save();c.globalCompositeOperation='screen';
@@ -43,6 +50,7 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   const rules={ignis:['움직이는 조명','민트 조명 안에서 계속 따라가세요!','조명 밖은 체력 −40% · 화살표 끝 ‘여기’로'],mime:['발판 교대','민트 발판으로! 신호가 바뀌면 이동!','민트 = 지금 · 금색 = 다음 · 연결 통로를 따라가기'],gojo:['가로 ↔ 세로 전환','빔이 꺼지면 새 민트 통로로!','민트 = 지금 · 금색은 다음 통로라 아직 위험'],max:['필름 칸 이동 → 되감기 → 마지막 촬영','민트 칸으로! 되감기엔 반대로 이동!','닫힌 셔터는 체력 −40% · 마지막 촬영은 옆으로!'],sukuna:['날아오는 칼날 벽','민트 빈틈에 맞추고 통과할 때까지 대기!','칼날에 닿으면 체력 −40% · Space로 뚫을 수 없어요']};
   const takeoverTitle=zone?.name?.replace(/^무대 장악\s*[·:]\s*/, '')||visual.takeover;
   let rule=chasing?['가로 7연사 → 세로 7연사 → 3방향','계속 이동! 반전 신호에 방향을 바꾸세요!','가로 칼날은 위아래 · 세로 칼날은 좌우 · 접촉 시 체력 −40%']:rules[id]||rules.ignis;if(id==='mime'&&zone){const m=mimePresentation(s,zone);rule=['발판 교대',`${m.symbol} 민트 발판으로 이동!`,'금색 ‘다음’은 예고 · 이동 신호에 연결 통로 따라가기'];}
+  if(zone?.domainType==='last-cut')rule=['이동하는 칼날 벽 + 따라오는 조준선','벽 틈으로 이동! 흰 선이 멈추면 옆으로!','벽과 조준선을 함께 피하세요 · 맞으면 체력 −40%'];
   if(zone?.variantId==='return-light')rule=['중간에 방향이 바뀌는 조명','민트 조명을 따라가다 반대로 이동!','조명 밖은 체력 −40% · 금색 점선은 곧 이동할 위치'];
   if(zone?.variantId==='double-swap')rule=[`두 번의 배역 교대 · ${mimePresentation(s,zone).symbol}부터`,rule[1],'두 번 이동합니다 · 통로가 열리면 새 민트 발판으로'];
   if(zone?.variantId==='reverse-frames')rule=['위치가 반전되는 통로','빔이 꺼지면 새 민트 통로로!','민트 = 지금 · 금색은 다음 통로라 아직 위험'];
@@ -55,7 +63,7 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   c.fillText(rule[1],565,649);
   c.fillStyle='#d7e7df';c.font='600 13px "Noto Sans KR",sans-serif';c.fillText(rule[2],565,674);
   if(chasing){c.save();const locked=p>.62,ink=locked?'#f4eddc':'#f27b91';c.strokeStyle=ink;c.lineWidth=2;for(const side of [-1,1]){const cx=640+side*514,cy=290;c.beginPath();c.arc(cx,cy,34,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(cx-46,cy);c.lineTo(cx+46,cy);c.moveTo(cx,cy-46);c.lineTo(cx,cy+46);c.stroke();}c.textAlign='center';c.fillStyle=ink;c.font='800 12px "Noto Sans KR",sans-serif';c.fillText(locked?'조준 고정 → 옆으로':'추적 중 → 계속 이동',640,100);c.restore();}
-  if(id==='max')drawMaxTakeoverMap(c,s,zone);else if(chasing&&zone?.section==='burst')drawBurstLesson(c,zone);else drawTakeoverMap(c,s,zone);
+  if(zone?.domainType==='last-cut')drawFinalTakeoverMap(c,s,zone);else if(id==='max')drawMaxTakeoverMap(c,s,zone);else if(chasing&&zone?.section==='burst')drawBurstLesson(c,zone);else drawTakeoverMap(c,s,zone);
   c.restore();return true;
 }
 

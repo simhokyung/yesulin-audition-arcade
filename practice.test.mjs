@@ -17,11 +17,11 @@ test('practice keeps its non-ranked identity while all Q W E R inputs remain usa
 test('practice remains untimed beyond 120 seconds and clamps invalid choices safely',()=>{const s=createPractice({stage:99,character:'missing',kind:'pattern',demonstrate:true,difficulty:'hard'});assert.equal(s.boss.id,'sukuna');assert.equal(s.player.character,'director');assert.equal(s.practice.kind,'duel');assert.equal(s.practice.phase,'attempt');assert.equal(s.difficulty,'standard');s.boss.patternCooldown=1000;tick(s,125);assert.equal(s.status,'playing');assert.equal(s.timeLeft,null);assert.equal(s.endReason,null);assert.equal(createPractice({stage:-100}).boss.id,'ignis');});
 test('invalid practice time deltas cannot advance simulation',()=>{const s=createPractice(),before=JSON.stringify(s);for(const dt of [NaN,Infinity,-1,0])stepPractice(s,{right:true},dt);assert.equal(JSON.stringify(s),before);});
 
-test('practice uses the same first blade and second pursuit as production and resets the alternation on retry',()=>{
+test('practice uses the same Last Cut, blade and pursuit sequence as production and resets the alternation on retry',()=>{
  for(const character of ['director','actor']){
   const practice=createPractice({stage:stageOf('sukuna'),character}),production=createGame({mode:'challenge',character});startStage(production,stageOf('sukuna'),{retry:true,entrance:true});finishIntro(production);
   while(practice.cinematic){stepPractice(practice);step(production);}
-  for(const [occurrence,type] of [[0,'blade-waves'],[1,'chasing-slashes']]){
+  for(const [occurrence,type] of [[0,'last-cut'],[1,'blade-waves'],[2,'chasing-slashes']]){
    while(practice.boss.counterRemaining>0){stepPractice(practice);step(production);}
    for(const s of [practice,production]){s.boss.patternIndex=patternTurnFor(s.boss.id,3,{occurrence});s.boss.patternCooldown=0;}
    stepPractice(practice);step(production);assert.equal(practice.hazards[0].domainType,type);
@@ -31,7 +31,7 @@ test('practice uses the same first blade and second pursuit as production and re
    }
    assert.equal(practice.status,'playing');assert.equal(practice.hazards.length,0);assert.equal(practice.player.hp,CHARACTERS[character].hp);
   }
-  assert.equal(practice.boss.takeoverCount,2);assert.equal(practice.stats.takeoverSurvived['chasing-slashes'],1);assert.equal(createPractice({stage:stageOf('sukuna'),character}).boss.takeoverCount,0);
+  assert.equal(practice.boss.takeoverCount,3);assert.equal(practice.stats.takeoverSurvived['chasing-slashes'],1);assert.equal(createPractice({stage:stageOf('sukuna'),character}).boss.takeoverCount,0);
  }
 });
 
