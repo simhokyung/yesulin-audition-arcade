@@ -1,4 +1,14 @@
 /* A crew challenge poster. Existing entry, casting and ranking controls stay in place. */
+/* Keep every participant reachable without stretching the home or ranking dialog. */
+.rank-participant-count{font-size:15px;font-weight:800;margin:8px 0 14px;color:var(--lime)}
+.visible-ranking .rank-participant-count{color:#344727}
+.visible-rank-rows,#ranking-rows{overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin}
+.visible-rank-rows{max-height:360px;max-height:min(360px,50vh);grid-template-columns:1fr;scrollbar-color:#738858 #e1e6d6}
+.visible-rank-row{grid-template-columns:minmax(30px,max-content) minmax(0,1fr) auto}
+#ranking-rows{max-height:480px;max-height:min(480px,50vh);scrollbar-color:#96af6d #252d20}
+.visible-rank-rows:focus-visible,#ranking-rows:focus-visible{outline:2px solid #7b9d41;outline-offset:-2px}
+.rank-scroll-hint{margin:8px 10px 10px;font-size:11px;font-weight:600;line-height:1.5;text-align:center;color:#bdcbae}
+.visible-ranking .rank-scroll-hint{color:#53653e}
 body[data-screen="entry"] .entry-screen{
   grid-template-columns:minmax(0,1fr) minmax(285px,340px);
   grid-template-rows:auto auto auto auto;

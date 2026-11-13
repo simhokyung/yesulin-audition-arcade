@@ -2,6 +2,7 @@ import {LocalRanking,createEntry,getIndividualBoard,toCSV,normalizeIdentity,getP
 import {SharedRanking,newSessionNonce} from './shared-ranking.js';
 const $=id=>document.getElementById(id);
 const el=(tag,className,text)=>{const n=document.createElement(tag);n.className=className;if(text!==undefined)n.textContent=text;return n};
+const replaceRankRows=(id,rows)=>{const list=$(id),scrollTop=list.scrollTop;list.replaceChildren(...rows);list.scrollTop=scrollTop;list.tabIndex=rows.length?0:-1;};
 export class BoothUI {
   constructor(onSettings,notify){
     this.duration=0;this.mode='challenge';this.boardDuration=0;this.board='individual';this.ranking=new LocalRanking();this.entries=[];this.notify=notify;this.onSettings=onSettings;this.shared=new SharedRanking();this.activeRun=null;this.onSaved=null;
@@ -50,7 +51,7 @@ export class BoothUI {
     $('visible-live-gap').textContent=!own?'통과 수가 같으면 통과 시간이 짧을수록 유리해요.':passed>own.bosses?'내 최고보다 더 많은 관문 통과!':passed<own.bosses?'내 최고 '+own.bosses+'/5 통과 · 현재 '+passed+'/5 통과':timed&&run.lastClearTime<own.lastClearTime?'내 최고보다 '+(own.lastClearTime-run.lastClearTime).toFixed(2)+'초 빠르게 통과!':timed&&run.lastClearTime>own.lastClearTime?'내 최고 통과 시간 '+formatRunTime(own.lastClearTime):score>own.score?'같은 통과 기록 · 내 최고보다 +'+(score-own.score).toLocaleString()+'점':score===own.score?'내 최고 기록과 동점!':'내 최고까지 '+(own.score-score).toLocaleString()+'점';
   }
   renderVisibleBoard(rows,identity,hasName){
-    $('visible-rank-rows').replaceChildren(...rows.slice(0,5).map((r,i)=>{
+    replaceRankRows('visible-rank-rows',rows.map((r,i)=>{
       const me=hasName&&r.name===identity.name&&r.crew===identity.crew;
       const row=el('li','visible-rank-row'+(me?' is-me':'')),person=el('div','visible-rank-person'),name=el('strong','',r.name);
       if(me)name.append(el('span','you-tag','MY'));
@@ -64,17 +65,25 @@ export class BoothUI {
     $('visible-rank-me').replaceChildren(el('span','',hasName?identity.name+' · 내 최고 기록':'내 기록'),el('strong','',hasName&&own.best?own.rank+'위 · '+own.best.bosses+'/5 통과':hasName?'첫 기록에 도전!':'닉네임을 입력하세요'),el('small','',hasName&&own.best?(own.best.bosses>0?formatRunTime(own.best.lastClearTime)+' · ':'')+own.best.score.toLocaleString()+'점':'통과 수 → 통과 시간 → 점수'));
     $('visible-rank-note').textContent=this.statusText(rows.length);
   }
+  renderParticipantCount(count){
+    const confirmed=this.shared.status==='ready';
+    const text=confirmed?'총 '+count.toLocaleString()+'명 참여':count?'확인된 참가자 '+count.toLocaleString()+'명':'참가자 확인 중…';
+    for(const id of ['visible-rank-count','ranking-count'])$(id).textContent=text;
+    const hint=count>5?'스크롤해서 전체 순위를 확인하세요 ↓':'';
+    for(const id of ['visible-rank-scroll-hint','ranking-scroll-hint']){$(id).textContent=hint;$(id).classList.toggle('hidden',!hint);}
+  }
   render(){
     const identity=normalizeIdentity({name:$('player-name').value}),hasName=$('player-name').value.trim().length>=2;
     const opts={duration:this.boardDuration,difficulty:'standard'},individual=getIndividualBoard(this.entries,opts),rows=individual;
     $('ranking-name-label').textContent='도전자';$('ranking-stat-label').textContent='통과 / 시간';
-    $('ranking-rows').replaceChildren(...rows.slice(0,10).map((r,i)=>{const me=hasName&&r.name===identity.name&&r.crew===identity.crew;const li=el('li','rank-row'+(me?' is-me':'')),pos=el('span','rank-position',String(i+1).padStart(2,'0')),person=el('div','rank-person'),detail=el('span','rank-detail');person.append(el('strong','',r.name),el('span','',r.character==='actor'?'배우':'감독'));if(me)person.firstChild.append(el('span','you-tag','MY'));detail.append(el('b','',r.bosses+' / 5 통과'),document.createTextNode(r.bosses>0?formatRunTime(r.lastClearTime):'통과 시간 --'));li.append(pos,person,el('strong','rank-score',Math.round(r.score).toLocaleString()),detail);return li}));
+    replaceRankRows('ranking-rows',rows.map((r,i)=>{const me=hasName&&r.name===identity.name&&r.crew===identity.crew;const li=el('li','rank-row'+(me?' is-me':'')),pos=el('span','rank-position',String(i+1).padStart(2,'0')),person=el('div','rank-person'),detail=el('span','rank-detail');person.append(el('strong','',r.name),el('span','',r.character==='actor'?'배우':'감독'));if(me)person.firstChild.append(el('span','you-tag','MY'));detail.append(el('b','',r.bosses+' / 5 통과'),document.createTextNode(r.bosses>0?formatRunTime(r.lastClearTime):'통과 시간 --'));li.append(pos,person,el('strong','rank-score',Math.round(r.score).toLocaleString()),detail);return li}));
     const standing=getPersonalStanding(this.entries,identity,opts),personal=$('personal-standing');
     personal.replaceChildren();const summary=el('div','',hasName?identity.name+' · 무제한 도전':'닉네임을 정하고 첫 기록에 도전하세요.');
     summary.append(el('small','',hasName?(identity.crew||'개인 참가')+' · '+standing.total+'명 참여':'다섯 관문에 도전하고 최고 기록을 남기세요.'));
     personal.append(summary,el('strong','',hasName&&standing.best?standing.rank+'위 · '+standing.best.bosses+'/5 통과 · '+(standing.best.bosses>0?formatRunTime(standing.best.lastClearTime):standing.best.score.toLocaleString()+'점'):'아직 기록 없음'));
     $('ranking-empty').classList.toggle('hidden',rows.length>0);$('ranking-empty').querySelector('h3').textContent=this.shared.status==='ready'?'첫 번째 기록을 남겨 보세요.':'전체 순위를 확인하고 있어요.';$('ranking-empty').querySelector('p').textContent=this.shared.status==='ready'?'새 기록부터 전체 순위에 반영돼요.':'연결되면 자동으로 갱신돼요.';
     $('ranking-summary').textContent='시즌 '+RANKING_SEASON+' · '+this.statusText(individual.length);
+    this.renderParticipantCount(individual.length);
     this.renderVisibleBoard(individual,identity,hasName);
   }
 }
