@@ -22,6 +22,7 @@ function clearInput(){keys.clear();pressed.clear();touch.clear()}
 function updateExitControls(){const active=mode==='playing'&&state?.status==='playing';$('exit-game').disabled=!active;$('exit-fullscreen').disabled=!active;setHidden('exit-fullscreen',!active||paused);}
 try{const profile=JSON.parse(localStorage.getItem('yesulin-audition-profile-v6')||'null');if(profile?.name){const identity=normalizeIdentity({name:profile.name});$('player-name').value=identity.name;}}catch{}
 const booth=new BoothUI(syncMode,toast);
+booth.onSaved=result=>{if(result.runId&&runMeta?.runId===result.runId&&state?.status!=='playing'&&mode==='playing')applySavedResult(result);};
 function syncMode(){
  if(mode==='playing')return;
  $('scene-label').textContent='도전 준비';$('game-status').textContent='시간 제한 없는 5연전 · Q/W 공격 · E 강화 · R 궁극기 · Space 회피';
@@ -56,10 +57,11 @@ function startPractice(stage){if(mode!=='lobby'||document.body.dataset.screen!==
 function lockCast(locked){document.querySelectorAll('.cast-card').forEach(card=>{card.disabled=locked;card.classList.toggle('cast-locked',locked)});}
 function updateScenes(stage=0,complete=false){document.querySelectorAll('.scene').forEach((el,i)=>{el.classList.toggle('active',i===stage&&!complete);el.classList.toggle('done',!practice&&(i<stage||complete));el.querySelector('.scene-glyph').textContent=!practice&&(i<stage||complete)?'✓':i===stage?'↗':'·'});$('scene-label').textContent=auditionLabel(stage)+' · '+BOSSES[stage].name+(practice?' · 연습':complete?' · 통과':'');}
 function launch({stage=0,isPractice=false}={}){
+  booth.abandonRun();const nextRun=isPractice?null:booth.newRun(selected);
   booth.setLiveRun(null);audio.reset();combatGuideKey='';void setSound(audioWanted);document.body.dataset.screen='playing';clearInput();practice=isPractice;paused=false;mode='playing';previousStatus='playing';observedStage=-1;observedRound=-1;
   state=isPractice?createPractice({character:selected,stage}):createGame({mode:'challenge',character:selected,difficulty:campaignDifficulty,seed:Math.floor(Math.random()*0xffffffff),stage});
   practiceViewKey='';practicePickerOpen=false;setHidden('practice-bar',!isPractice);if(isPractice){practiceStage=stage;updatePracticeUI(state);}updateExitControls();
-  runMeta=state.mode==='challenge'?booth.newRun(selected):null;booth.lock(true);lockCast(true);$('result-overlay').querySelector('.result-card').classList.toggle('booth-result',state.mode==='challenge');
+  runMeta=state.mode==='challenge'?nextRun:null;booth.lock(true);lockCast(true);$('result-overlay').querySelector('.result-card').classList.toggle('booth-result',state.mode==='challenge');
   setHidden('intro',true);setHidden('result-overlay',true);setHidden('pause-overlay',true);
   updateScenes(stage);audio.pause(false);audio.cue('start');
   $('game-status').textContent=state.mode==='challenge'?'피노 → 대길 → 이프 → 맥스 → 무빙 · 시간 제한 없는 5연전 · Q/W 공격 · E 강화 · R 궁극기':isPractice?auditionLabel(stage)+' · '+BOSSES[stage].name+' 실전 연습':'엑스트라를 정리하고 보스를 만나세요. 조명 안에서는 공격력이 올라갑니다.';
@@ -68,6 +70,7 @@ function launch({stage=0,isPractice=false}={}){
   accumulator=0;canvas.focus({preventScroll:true});$('game').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function lobby({showPractice=false}={}){
+ booth.abandonRun();booth.refresh();
  mode='lobby';state=null;runMeta=null;previousStatus='';exitContext=null;paused=false;practice=false;accumulator=0;clearInput();
  updateExitControls();returnFromModal=false;noteWasPlaying=false;rankingResume=false;
  for(const dialog of document.querySelectorAll('dialog[open]'))dialog.close();
@@ -110,24 +113,30 @@ function failureTip(s){
  return tips[s.domainDeath?.domainType]||'무대 장악의 실제 칼날과 위험 범위 밖으로 이동하세요.';
 }
 function showResult(){
- updateExitControls();clearInput();
+ updateExitControls();clearInput();booth.setLiveRun(null);
  const challenge=state.mode==='challenge',won=state.status==='stageclear'||state.status==='victory';
  const passed=challenge?Math.min(BOSSES.length,Math.max(0,state.stats.bossKills??state.stats.stagesCleared??0)):(won?1:0);
  const completed=challenge&&state.status==='victory'&&state.stage===BOSSES.length-1&&passed===BOSSES.length,role=state.player.character;
- const result=challenge?booth.finish(state,runMeta):null;
+ const finishedState=state,finishedRun=runMeta;
+ const result=challenge?{ok:false,pending:true,rank:null,copy:'기록을 서버에 저장하는 중…'}:null;
  const card=$('result-overlay').querySelector('.result-card');card.classList.toggle('practice-result',!challenge);
  $('result-kicker').textContent=auditionLabel(state.stage)+' · '+state.boss.name+(challenge?'':' · 연습');
  $('result-title').textContent=completed?(role==='actor'?'최종 오디션 합격!':'마지막 장면, 완성!'):won?(challenge?'오디션 통과!':'연습 완료!'):'도전 종료';
  const values=[stat('통과 관문',passed+' / '+(challenge?BOSSES.length:1)),stat('점수',Math.round(state.score).toLocaleString())];
- if(challenge)values.push(stat('현재 순위',result.ok&&Number.isInteger(result.rank)?result.rank+'위':'—'));
+ if(challenge)values.push(stat('전체 순위',result.ok&&Number.isInteger(result.rank)?result.rank+'위':'—'));
  $('result-stats').replaceChildren(...values);$('result-copy').textContent=completed?(role==='actor'?'당신의 다음 배역을 만나보세요.':'다음 무대의 배우를 만나보세요.'):won?'':failureTip(state);setHidden('result-copy',won&&!completed);
- $('result-save-status').textContent=challenge&&!result.ok?result.copy:'';setHidden('result-save-status',!challenge||result.ok);
+ $('result-save-status').style.color='';$('result-save-status').textContent=challenge?result.copy:'';setHidden('result-save-status',!challenge);
  const service=document.querySelector('.result-service');service.href=role==='actor'?'https://yesulin.art/auditions':'https://yesulin.art/producer-service';service.querySelector('b').textContent=role==='actor'?'오디션 찾아보기':'배우 모집·심사하기';
  $('result-action').textContent='재도전';$('back-lobby').textContent='홈';
  if(completed)updateScenes(state.stage,true);
  setHidden('result-overlay',false);$('result-action').focus({preventScroll:true});
  $('game-status').textContent=challenge?(result.ok?'오디션 기록을 저장했습니다.':result.copy):'연습 기록은 순위에 등록되지 않습니다.';
  $('live-status').textContent=$('result-title').textContent+' · '+passed+'개 관문 통과 · '+Math.round(state.score)+'점';
+ if(challenge)void booth.finish(finishedState,finishedRun).then(saved=>{if(state===finishedState&&runMeta?.runId===finishedRun?.runId&&mode==='playing')applySavedResult(saved);});
+}
+function applySavedResult(result){
+ const rank=$('result-stats').children[2]?.querySelector('b');if(rank)rank.textContent=result.ok&&Number.isInteger(result.rank)?result.rank+'위':result.pending?'전송 대기':'—';
+ $('result-save-status').style.color=result.ok?'#dfff70':'';$('result-save-status').textContent=result.copy;setHidden('result-save-status',false);$('game-status').textContent=result.copy;
 }
 function resultAction(){launch(practice?{stage:practiceStage,isPractice:true}:{});}
 function openGuide(){returnFromModal=mode==='playing'&&!paused&&state?.status==='playing';if(returnFromModal)togglePause(true);$('guide-dialog').showModal();}
@@ -151,7 +160,7 @@ function enterAudition(e){
 $('entry-form').addEventListener('submit',enterAudition);
 $('change-name').onclick=()=>{document.body.dataset.screen='entry';$('player-name').focus();};
 let rankingResume=false;
-function openRanking(){rankingResume=mode==='playing'&&!paused&&state?.status==='playing';if(rankingResume)togglePause(true);booth.render();$('ranking-dialog').showModal();}
+function openRanking(){rankingResume=mode==='playing'&&!paused&&state?.status==='playing';if(rankingResume)togglePause(true);booth.render();booth.refresh();$('ranking-dialog').showModal();}
 function closeRanking(){$('ranking-dialog').close();if(rankingResume)togglePause(false);rankingResume=false;}
 document.querySelectorAll('[data-open-ranking]').forEach(button=>button.onclick=openRanking);
 $('ranking-dialog').querySelector('.dialog-close').onclick=closeRanking;$('ranking-dialog').addEventListener('cancel',e=>{e.preventDefault();closeRanking()});

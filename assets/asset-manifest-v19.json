@@ -1,0 +1,16 @@
+{
+  "version": "19.0.0",
+  "asset": "assets/photos/max.jpg",
+  "originalFilename": "IMG_0702.jpg",
+  "sha256": "352e49229085ef084c7e6e86ac2735c646b3650f3814be6abef6d09d38171368",
+  "bytes": 519198,
+  "originalBytesPreserved": true,
+  "usage": [
+    "home",
+    "practice selection",
+    "boss introduction",
+    "takeover cutscene",
+    "original face pixels on animated 2D body"
+  ],
+  "edits": "No photo pixel edits. Display uses contain layout; face contour is clipped by the renderer."
+}
