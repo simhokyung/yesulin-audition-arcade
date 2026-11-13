@@ -1,6 +1,6 @@
-/* Show the official silhouette directly on the dark stage, without a badge. */
+/* Show the unmodified official logo directly on the stage, without a badge. */
 .brand-logo-surface{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;padding:0;border:0;background:transparent;line-height:0}
-.yesulin-wordmark{display:block;width:114px;height:auto;max-width:100%;object-fit:contain;aspect-ratio:707/320;filter:brightness(0) invert(1)}
+.yesulin-wordmark{display:block;width:114px;height:auto;max-width:100%;object-fit:contain;aspect-ratio:707/320}
 .site-header .brand-official{gap:12px;text-decoration:none;flex-shrink:0}
 .site-header .brand-official .arcade-label{display:block;margin:0;color:#b8c2a9;font:600 8px/1.7 var(--font);letter-spacing:2px}
 .brand-official:focus-visible{outline:2px solid var(--lime);outline-offset:6px;border-radius:8px}
