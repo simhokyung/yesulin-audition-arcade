@@ -9,7 +9,7 @@
       "width": 707,
       "height": 320,
       "sha256": "53651b4f5b8895a4c4bf6620aac785f5ba70faa30654a4367dbd179ab58e4ec5",
-      "treatment": "Original image unchanged; rendered with object-fit contain on a light CSS surface in the header, footer and results."
+      "treatment": "Original transparent PNG unchanged. CSS brightness(0) invert(1) displays a white monochrome logo directly on the game background, without badge padding, background or border (v16.0.1)."
     }
   ]
 }

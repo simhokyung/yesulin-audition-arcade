@@ -61,7 +61,7 @@ function launch({stage=0,isPractice=false}={}){
   runMeta=state.mode==='challenge'?booth.newRun(selected):null;booth.lock(true);lockCast(true);$('result-overlay').querySelector('.result-card').classList.toggle('booth-result',state.mode==='challenge');
   setHidden('intro',true);setHidden('result-overlay',true);setHidden('pause-overlay',true);
   updateScenes(stage);audio.pause(false);audio.cue('start');
-  $('game-status').textContent=state.mode==='challenge'?'이그니스 → 미메 → 프리즘 → 카덴 · 시간 제한 없는 4연전 · Q/W 공격 · E 강화 · R 궁극기':isPractice?auditionLabel(stage)+' · '+BOSSES[stage].name+' 실전 연습':'엑스트라를 정리하고 보스를 만나세요. 조명 안에서는 공격력이 올라갑니다.';
+  $('game-status').textContent=state.mode==='challenge'?'피노 → 대길 → 이프 → 무빙 · 시간 제한 없는 4연전 · Q/W 공격 · E 강화 · R 궁극기':isPractice?auditionLabel(stage)+' · '+BOSSES[stage].name+' 실전 연습':'엑스트라를 정리하고 보스를 만나세요. 조명 안에서는 공격력이 올라갑니다.';
   $('live-status').textContent=CHARACTERS[selected].name+(selected==='actor'?'로 ':'으로 ')+auditionLabel(stage)+' '+BOSSES[stage].name+' 시작';
   $('pause-toggle').textContent='Ⅱ';$('pause-toggle').setAttribute('aria-label','일시정지');
   accumulator=0;canvas.focus({preventScroll:true});$('game').scrollIntoView({behavior:'smooth',block:'start'});
@@ -134,7 +134,7 @@ function closeGuide(){$('guide-dialog').close();if(returnFromModal)togglePause(f
 const patternDetails={
  ignis:['발밑에 조명이 켜지면 밝은 타원 밖으로 한 걸음 이동하세요.','긴 빛의 길이 나타납니다. 길의 진행 방향이 아닌 옆으로 피하세요.','세 개의 바닥 조명이 순서대로 터집니다. 켜진 조명 밖을 유지하세요.','안전한 민트색 조명의 중심을 계속 따라가세요.','1 → 2 → 3 순서로 조명 안에 들어가면 1.8초 반격 기회가 열립니다.'],
  mime:['리본이 뻗는 긴 선의 옆으로 피하세요.','점선 FAKE는 가짜입니다. HIT가 쓰인 진한 범위 밖으로 이동하세요.','두 리본이 교차합니다. 두 예고선을 모두 벗어난 빈 공간으로 움직이세요.','큰 번호와 같은 민트색 발판으로 이동해 “도착!”을 확인하세요.','★ 표시가 있는 진짜를 공격하세요. ○ 대역을 때리면 피해를 받고 실패합니다.'],
- gojo:['푸른 구체가 끌어당깁니다. 파란 범위 중심에서 멀어지세요.','프리즘 주변으로 붉은 충격파가 터집니다. 발사 전에 거리를 벌리세요.','공격 예고선이 처음에는 나를 따라옵니다. 조준 고정 신호가 뜨면 진행 방향의 옆으로 빠르게 이동하세요. 고정 후 0.5초 뒤 발사합니다.','전환 예고가 끝나기 전에 다음 민트색 통로로 이동하세요.','직전 이동 경로의 기억 지점이 차례로 공격되니 다른 방향으로 벗어나세요.'],
+ gojo:['푸른 구체가 끌어당깁니다. 파란 범위 중심에서 멀어지세요.','이프 주변으로 붉은 충격파가 터집니다. 발사 전에 거리를 벌리세요.','공격 예고선이 처음에는 나를 따라옵니다. 조준 고정 신호가 뜨면 진행 방향의 옆으로 빠르게 이동하세요. 고정 후 0.5초 뒤 발사합니다.','전환 예고가 끝나기 전에 다음 민트색 통로로 이동하세요.','직전 이동 경로의 기억 지점이 차례로 공격되니 다른 방향으로 벗어나세요.'],
  sukuna:['참격이 겹치는 궤적을 확인하고 선 사이로 빠져나오세요.','가까운 거리를 강하게 베어냅니다. 칼날 예고 범위를 벗어나세요.','불꽃이 직선을 태우고 폭발합니다. 공격이 끝날 때까지 범위 밖을 유지하세요.','칼날 파도는 민트색 빈틈으로 이동하세요. 추격 난무의 가로 7연사는 위아래로 피하다 반전 신호에 방향을 바꾸세요. 다음 세로 7연사는 좌우로, 마지막은 세 공격선 밖으로 피하세요.','빠른 3타 뒤 긴 예고의 4타가 남아 있으니 마지막 참격까지 피하세요.']
 };
 let noteStage=0,noteWasPlaying=false;
