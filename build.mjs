@@ -13,9 +13,14 @@ for(const entry of await readdir(root,{withFileTypes:true})){
     await copyFile(join(root,entry.name),join(out,entry.name));count++;
   }
 }
-for(const entry of await readdir(join(root,'assets'),{withFileTypes:true})){
-  if(entry.isFile()&&/\.(png|wav|svg|webp|ogg|mp3)$/.test(entry.name)){
-    await copyFile(join(root,'assets',entry.name),join(out,'assets',entry.name));count++;
+async function copyAssets(relative='assets'){
+  for(const entry of await readdir(join(root,relative),{withFileTypes:true})){
+    const path=join(relative,entry.name);
+    if(entry.isDirectory()){await mkdir(join(out,path),{recursive:true});await copyAssets(path);}
+    else if(entry.isFile()&&/\.(png|jpe?g|wav|svg|webp|ogg|mp3)$/i.test(entry.name)){
+      await copyFile(join(root,path),join(out,path));count++;
+    }
   }
 }
+await copyAssets();
 console.log(`Static build ready: ${count} files in dist/`);

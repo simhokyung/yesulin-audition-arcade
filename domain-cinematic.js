@@ -1,37 +1,22 @@
-// Illustrated takeover teaching: every judge has a different movement rule.
+// Original-photo takeover teaching: every judge keeps their existing movement rule.
 import { drawTakeoverMap, mimePresentation } from './takeover-vfx.js';
-import { BOSS_VISUALS } from './boss-visuals.js';
+import { BOSS_VISUALS, getBossPhoto, bossPhotoAssetStatus, drawBossPhotoPanel } from './boss-visuals.js';
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
 const ease=x=>1-Math.pow(1-clamp(x),3);
-const art={};
-for(const [id,visual] of Object.entries(BOSS_VISUALS)){
-  if(typeof Image==='undefined')continue;
-  const image=new Image(); image.decoding='async';
-  image.src=new URL(`./assets/${visual.asset}-takeover-v8.png`,import.meta.url).href;
-  art[id]=image;
-}
-export function getTakeoverArtwork(id){return art[id];}
-export function domainAssetStatus(){return Object.fromEntries(Object.keys(BOSS_VISUALS).map(id=>[id,!!(art[id]?.complete&&art[id]?.naturalWidth)]));}
+export function getTakeoverArtwork(id){return getBossPhoto(id);}
+export function domainAssetStatus(){return bossPhotoAssetStatus();}
 export function drawDomainCutscene(c,s,t,reduceMotion=false){
   const shot=s?.cinematic;
   if(!shot||shot.kind!=='domain'||shot.remaining<=0)return false;
   const id=s.boss.id,visual=BOSS_VISUALS[id]||BOSS_VISUALS.ignis,zone=s.hazards.find(h=>h.kind==='domain'&&h.type==='safezone'),chasing=zone?.domainType==='chasing-slashes';
   const p=clamp(1-shot.remaining/shot.duration),color=visual.color;
-  const image=art[id],w=1280,h=720;
+  const w=1280,h=720;
   c.save();c.globalAlpha=1;c.globalCompositeOperation='source-over';
   c.fillStyle=visual.deep;c.fillRect(0,0,w,h);
-  if(image?.complete&&image.naturalWidth){
-    // Keep the face AND hand seal visible throughout the push-in. No pose stretching.
-    const z=reduceMotion?1:chasing?1.04+.025*ease(p):1.015+.045*ease(p);
-    const cover=Math.max(w/image.naturalWidth,h/image.naturalHeight)*z;
-    const dw=image.naturalWidth*cover,dh=image.naturalHeight*cover;
-    c.drawImage(image,(w-dw)/2+(reduceMotion?0:(1-ease(p))*(chasing?-24:18)),(h-dh)/2+6+(reduceMotion||!chasing?0:(1-ease(p))*10),dw,dh);
-  }else{
-    // A readable, non-blocking fallback if an optional image has not decoded yet.
-    const g=c.createRadialGradient(640,320,30,640,320,660);
-    g.addColorStop(0,visual.wall);g.addColorStop(1,'#04060f');
-    c.fillStyle=g;c.fillRect(0,0,w,h);
-  }
+  const g=c.createRadialGradient(640,320,30,640,320,660);
+  g.addColorStop(0,visual.wall);g.addColorStop(1,'#04060f');
+  c.fillStyle=g;c.fillRect(0,0,w,h);
+  drawBossPhotoPanel(c,id,{x:350,y:112,w:580,h:380,progress:p,reduced:reduceMotion});
   if(!reduceMotion){
     c.save();c.globalCompositeOperation='screen';
     // Peripheral motion keeps eyes and fingers free of glare.

@@ -6,6 +6,59 @@ export const BOSS_VISUALS={
  gojo:{audition:'3차 오디션',name:'이프',title:'달라진 흐름에 응답하기',role:'경계심사관',stage:'프레임 심사실',asset:'prism',color:'#a5dce5',deep:'#152333',wall:'#344b60',cloth:'#253d59',takeover:'무한 시사회',quote:'아까 통했던 동선이, 이번에도 통할까?',quoteLines:['아까 통했던 동선이,','이번에도 통할까?']},
  sukuna:{audition:'최종 오디션',name:'무빙',title:'마지막까지 집중을 지키기',role:'종막집행관',stage:'종막 대극장',asset:'caden',color:'#efb3bf',deep:'#261d2c',wall:'#593e4c',cloth:'#5a2d3e',takeover:'종막 집행',quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',quoteLines:['마지막 장면이다.','끝까지 네 박자를 지켜라.']},
 };
+/** User-supplied originals. These images are shared by UI, portraits and photo-face rigs. */
+export const BOSS_PHOTOS={
+ ignis:{src:'./assets/photos/pino.png'},
+ mime:{src:'./assets/photos/daegil.png'},
+ gojo:{src:'./assets/photos/if.jpg'},
+ sukuna:{src:'./assets/photos/moving.png'},
+};
+const bossPhotos={};
+for(const [id,photo] of Object.entries(BOSS_PHOTOS)){
+ if(typeof Image==='undefined')continue;
+ const image=new Image();image.decoding='async';
+ image.src=new URL(photo.src,import.meta.url).href;bossPhotos[id]=image;
+}
+export function getBossPhoto(id){return bossPhotos[id]||null;}
+export function bossPhotoAssetStatus(){return Object.fromEntries(Object.keys(BOSS_PHOTOS).map(id=>[id,!!(bossPhotos[id]?.complete&&bossPhotos[id]?.naturalWidth)]));}
+/** Contain the entire original, including hair and gestures; animation never crops the photo. */
+export function bossPhotoPlacement(image,{x=350,y=82,w=580,h=360,progress=1,reduced=false}={}){
+ const iw=image?.naturalWidth||image?.width,ih=image?.naturalHeight||image?.height;
+ if(!(iw>0&&ih>0&&w>0&&h>0))return null;
+ const p=Math.max(0,Math.min(1,progress)),ease=1-Math.pow(1-p,3),zoom=reduced?1:.975+.025*ease;
+ const scale=Math.min(w/iw,h/ih)*zoom,dw=iw*scale,dh=ih*scale;
+ return{x:x+(w-dw)/2,y:y+(h-dh)/2,w:dw,h:dh};
+}
+/** A light-box portrait: no tint, face warp, invented expression or painted-over pixels. */
+export function drawBossPhotoPanel(c,id,options={}){
+ const v=BOSS_VISUALS[id]||BOSS_VISUALS.ignis,image=getBossPhoto(id),
+  {x=350,y=82,w=580,h=360,progress=1,reduced=false}=options;
+ const rect=bossPhotoPlacement(image,{x,y,w,h,progress,reduced});
+ c.save();
+ const glow=c.createRadialGradient(x+w/2,y+h/2,24,x+w/2,y+h/2,w*.78);
+ glow.addColorStop(0,v.color+'33');glow.addColorStop(1,v.color+'00');
+ c.fillStyle=glow;c.fillRect(x-w*.4,y-h*.25,w*1.8,h*1.5);
+ if(rect&&image?.complete&&image.naturalWidth){
+  c.shadowColor='#00000099';c.shadowBlur=28;c.shadowOffsetY=12;
+  c.fillStyle=v.deep;c.fillRect(rect.x-7,rect.y-7,rect.w+14,rect.h+14);
+  c.shadowBlur=0;c.shadowOffsetY=0;
+  c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
+  c.drawImage(image,rect.x,rect.y,rect.w,rect.h);
+  c.strokeStyle=v.color+'90';c.lineWidth=1;c.strokeRect(rect.x-7.5,rect.y-7.5,rect.w+15,rect.h+15);
+  // Corner tabs remain outside the original image rather than across a face.
+  for(const sx of [-1,1])for(const sy of [-1,1]){
+   const xx=rect.x+rect.w/2+sx*(rect.w/2+11),yy=rect.y+rect.h/2+sy*(rect.h/2+11);
+   c.beginPath();c.moveTo(xx-sx*19,yy);c.lineTo(xx,yy);c.lineTo(xx,yy-sy*19);
+   c.strokeStyle=v.color;c.lineWidth=2;c.stroke();
+  }
+ }else{
+  c.fillStyle=v.deep;c.fillRect(x+90,y+30,w-180,h-60);
+  c.strokeStyle=v.color+'66';c.lineWidth=1;c.strokeRect(x+90,y+30,w-180,h-60);
+  c.font='800 38px "Noto Sans KR",sans-serif';c.textAlign='center';c.fillStyle=v.color;
+  c.fillText(v.name,x+w/2,y+h/2+12);
+ }
+ c.restore();return !!(rect&&image?.complete&&image.naturalWidth);
+}
 const TAU=Math.PI*2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 function line(c,points,color,width=2){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.stroke()}
 function polygon(c,points,fill,stroke=null,width=1){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke()}}

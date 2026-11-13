@@ -1,4 +1,6 @@
 /** Original anime-style 2D cast: articulated anatomy, cloth follow-through and optional pose atlases. */
+import { drawPhotoFighter2D } from './photo-fighter2d.js';
+import { BOSS_PHOTOS, getBossPhoto, bossPhotoAssetStatus } from './boss-visuals.js';
 const TAU=Math.PI*2,clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),mix=(a,b,t)=>a+(b-a)*t;
 const INK='#182333',SKIN='#d5a68c';
 function path(c,fn,fill,stroke=INK,w=1.5){c.beginPath();fn(c);if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=w;c.lineJoin='round';c.lineCap='round';c.stroke()}}
@@ -140,6 +142,7 @@ function atlasFighter(c,kind,x,y,scale,o){
 }
 export function drawFighter2D(c,kind,x,y,scale=1,options={}){
  const o={facing:1,time:0,attack:0,attackKind:'',attackProgress:.5,comboIndex:1,role:'sword',walk:false,reduced:false,...options};
+ if(drawPhotoFighter2D(c,kind,x,y,scale,o))return;
  if(atlasFighter(c,kind,x,y,scale,o))return;
  const gojo=kind==='gojo',sukuna=kind==='sukuna',director=kind==='director',actor=kind==='actor',ignis=kind==='ignis',mime=kind==='mime',extra=!gojo&&!sukuna&&!director&&!actor&&!ignis&&!mime,t=o.reduced?0:o.time,gait=o.walk&&!o.reduced?Math.sin(t*12):0,ap=clamp(o.attackProgress??.5,0,1),active=o.attack>0;
  const strike=active?(ap<.18?-.28*Math.sin(ap/.18*Math.PI/2):ap<.43?Math.sin((ap-.18)/.25*Math.PI/2):Math.pow(clamp(1-(ap-.43)/.57,0,1),1.45)):0;
@@ -180,12 +183,8 @@ export function drawFighter2D(c,kind,x,y,scale=1,options={}){
  c.restore();c.restore();
 }
 
-setFighterAtlas('ignis',new URL('./assets/ignis-fighter-v8.png',import.meta.url).href,{displayHeight:207});
-setFighterAtlas('mime',new URL('./assets/mime-fighter-v8.png',import.meta.url).href,{displayHeight:198});
-setFighterAtlas('gojo',new URL('./assets/prism-fighter-v8.png',import.meta.url).href,{displayHeight:207});
-setFighterAtlas('sukuna',new URL('./assets/caden-fighter-v8.png',import.meta.url).href,{displayHeight:216});
 setFighterAtlas('director',new URL('./assets/director-fighter-v5.png',import.meta.url).href,{rows:3,displayHeight:185});
 setFighterAtlas('actor',new URL('./assets/actor-fighter-v5.png',import.meta.url).href,{rows:3,displayHeight:188});
-export function fighterAtlasStatus(){return Object.fromEntries([...atlases].map(([kind,a])=>[kind,{ready:a.ready,width:a.image.naturalWidth||0,height:a.image.naturalHeight||0}]))}
+export function fighterAtlasStatus(){return {...Object.fromEntries([...atlases].map(([kind,a])=>[kind,{ready:a.ready,width:a.image.naturalWidth||0,height:a.image.naturalHeight||0}])),...Object.fromEntries(Object.entries(bossPhotoAssetStatus()).map(([kind,ready])=>[kind,{ready,width:getBossPhoto(kind)?.naturalWidth||0,height:getBossPhoto(kind)?.naturalHeight||0,source:'original-photo-rig'}]))}}
 
-export function whenFighterAtlasReady(kind,callback){const entry=atlases.get(kind);if(!entry||entry.ready)return;if(!entry.listeners)entry.listeners=new Set();entry.listeners.add(callback);}
+export function whenFighterAtlasReady(kind,callback){if(BOSS_PHOTOS[kind]){const image=getBossPhoto(kind);if(image&&!image.complete)image.addEventListener?.('load',callback,{once:true});return;}const entry=atlases.get(kind);if(!entry||entry.ready)return;if(!entry.listeners)entry.listeners=new Set();entry.listeners.add(callback);}

@@ -1,0 +1,125 @@
+{
+  "version": "17.1.0",
+  "baseCommit": "48daa4579a7a604d839c7810209b659aebb54b3d",
+  "scope": "Original photo portraits and original face pixels on animated 2D bodies; combat unchanged",
+  "unitTests": {
+    "passed": 262,
+    "failed": 0,
+    "newPhotoTests": 11
+  },
+  "unchangedLogicSha256": {
+    "engine.js": "2b1014558d4c9302aaffa2facc5a196684c88798ce32c9013ec9e9de34a5a08e",
+    "audio.js": "8a93403ec591a49617d82f44d2aa39648cc4b95461d53c59816a86420c774d12",
+    "ranking.js": "b12b6ea45fc203b8a3d8a1aec61507b842ea5bc78c786344318b48d0b5723009",
+    "main.js": "86528146f8e6d75514db14bba0895372aedd4caac32351aadc5fafa12c59a78a",
+    "simulate.mjs": "c6fffa23423ae512bae882cc3cdcda97727fa7cdd96405ac8e3ac96c12c6f602",
+    "skill-vfx.js": "3ef459fa601bff58ff119d20a574d160be7a7e0c293cf02e43d3415340ca2558",
+    "takeover-vfx.js": "9e200341bae41891d105f413a501cac3662e104464c728cd13dd618a26d17cdf",
+    "pursuit-vfx.js": "7ee5334d6a60272fa3e066557e03c008de98b85d27f860de60b51c358bf8fd0d",
+    "normal-pattern-vfx.js": "9b2a5d6c0c3a0fc48c4603d20f7f328d330d2c4a6ba76feb590700eff3fd05aa",
+    "engine.test.mjs": "6a2a9a1dc45bbf17bcf3b5da78b65b5e2888ba62f1cb127715d17fce0139f435",
+    "practice.test.mjs": "4c3c7c3d8eec535698471ad7acbac5cd8a536ac549624457e6d7a7a0cf446555",
+    "ranking.test.mjs": "44e9b4311d2ae9a00ab5f89e8f5c71fe69b4bc43dd067b8c4d55b6a28ed2c675",
+    "domain-music.test.mjs": "e5bf29b4fda6b7e2d10450fd9adc6fa090dee181be63c7b487e6cb5b9e77c9ad"
+  },
+  "originalPhotoAssets": [
+    {
+      "bossId": "ignis",
+      "name": "피노",
+      "file": "assets/photos/pino.png",
+      "bytes": 1034321,
+      "sha256": "f826c16e1c7e754335a30d728d8220dee5826acd588a2c7528db72b9ad5d3634"
+    },
+    {
+      "bossId": "mime",
+      "name": "대길",
+      "file": "assets/photos/daegil.png",
+      "bytes": 491600,
+      "sha256": "9779dd349c88ba60ca78d2d05020ebc27ea11f68bf994623283357ed563275e9"
+    },
+    {
+      "bossId": "gojo",
+      "name": "이프",
+      "file": "assets/photos/if.jpg",
+      "bytes": 477950,
+      "sha256": "f2fcb0a11346e6e0f7c680989edf7758005581e0c538f560d964f1bc74175daa"
+    },
+    {
+      "bossId": "sukuna",
+      "name": "무빙",
+      "file": "assets/photos/moving.png",
+      "bytes": 418199,
+      "sha256": "87486f30d97cc5e7406f866ae71ecd10e34c874240f0d2bb94594e9e2c1d854d"
+    }
+  ],
+  "motionChecks": {
+    "sampledPoses": 5784,
+    "faceOrientationChecks": 112,
+    "wholePhotoPlacementCases": 1936,
+    "inverseKinematicLegLengths": true,
+    "stateMutation": false,
+    "headMirroredOrStretched": false
+  },
+  "rendering": {
+    "frames": 21234,
+    "normalFrames": 5136,
+    "variantFrames": 15338,
+    "finiteCanvasCalls": 22426823,
+    "maxFrameCalls": 1496,
+    "hudFits": 48054,
+    "lockChecks": 5784
+  },
+  "visualReview": {
+    "method": "Offline native Canvas renders of actual source using original photo bytes",
+    "reviewed": [
+      "four photo rigs: idle,walking,casting,hurt",
+      "all four boss entrances",
+      "all four takeover cutscenes",
+      "battle with original effects/HUD"
+    ],
+    "browserInteractivePlaytest": false
+  },
+  "localHttp": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "file": "boss-photos.css",
+      "status": 200,
+      "contentType": "text/css; charset=utf-8"
+    },
+    {
+      "file": "photo-fighter2d.js",
+      "status": 200,
+      "contentType": "text/javascript; charset=utf-8"
+    },
+    {
+      "file": "assets/photos/pino.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "assets/photos/daegil.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "assets/photos/if.jpg",
+      "status": 200,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "assets/photos/moving.png",
+      "status": 200,
+      "contentType": "image/png"
+    }
+  ],
+  "rankingSeason": 17,
+  "balance": "engine and simulator byte-identical to v17; no balance/skill/AI/collision/cooldown changes; existing v17 simulation remains applicable",
+  "build": {
+    "runtimeFiles": 45,
+    "jpegAndNestedPhotosIncluded": true
+  }
+}

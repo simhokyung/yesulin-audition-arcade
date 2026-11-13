@@ -11,13 +11,14 @@
   <link rel="stylesheet" href="encore.css">
   <link rel="stylesheet" href="rehearsal.css">
   <link rel="stylesheet" href="brand.css">
+  <link rel="stylesheet" href="boss-photos.css">
 </head>
 <body data-screen="entry">
   <header class="site-header"><a class="brand brand-official" href="./" aria-label="예술in 아케이드 홈"><span class="brand-logo-surface"><img class="yesulin-wordmark" src="assets/yesulin-wordmark.png" width="707" height="320" alt="예술in"></span><small class="arcade-label">ARCADE<br>CLUB</small></a><nav aria-label="메인 메뉴"><button data-open-ranking>순위표</button><button id="guide-open">조작법</button><a href="https://yesulin.art/" target="_blank" rel="noopener noreferrer">예술in 방문 ↗</a></nav><div class="build-tag"><i></i> FINAL AUDITION <span>VOL. 17</span></div></header>
   <main>
   <section id="entry-screen" class="entry-screen" aria-labelledby="entry-title">
     <div class="stage-glow" aria-hidden="true"></div>
-    <div class="entry-poster"><span class="eyebrow">예술in ARCADE · FINAL AUDITION</span><h1 id="entry-title">최종<br><em>오디션</em><span class="poster-star">✳</span></h1><p class="entry-value"><strong>네 번의 관문을 넘어, 당신의 무대를 완성하세요.</strong><span>배우는 배역으로, 감독은 연출로 도전합니다.</span></p><div class="entry-bosses" aria-label="네 명의 오리지널 심사위원"><span>1차 · 피노</span><i>→</i><span>2차 · 대길</span><i>→</i><span>3차 · 이프</span><i>→</i><span>최종 · 무빙</span></div><div class="judge-lineup" aria-hidden="true"><div class="judge-art ignis"><span>첫 등장</span></div><div class="judge-art mime"><span>배역 발견</span></div><div class="judge-art prism"><span>변화 대응</span></div><div class="judge-art caden"><span>마지막 무대</span></div></div></div>
+    <div class="entry-poster"><span class="eyebrow">예술in ARCADE · FINAL AUDITION</span><h1 id="entry-title">최종<br><em>오디션</em><span class="poster-star">✳</span></h1><p class="entry-value"><strong>네 번의 관문을 넘어, 당신의 무대를 완성하세요.</strong><span>배우는 배역으로, 감독은 연출로 도전합니다.</span></p><div class="entry-bosses" aria-label="네 명의 오디션 심사위원"><span>1차 · 피노</span><i>→</i><span>2차 · 대길</span><i>→</i><span>3차 · 이프</span><i>→</i><span>최종 · 무빙</span></div><div class="judge-lineup" aria-label="오디션 심사위원 사진"><div class="judge-art ignis"><img src="assets/photos/pino.png" alt="피노" decoding="async"><span>첫 등장</span></div><div class="judge-art mime"><img src="assets/photos/daegil.png" alt="대길" decoding="async"><span>배역 발견</span></div><div class="judge-art prism"><img src="assets/photos/if.jpg" alt="이프" decoding="async"><span>변화 대응</span></div><div class="judge-art caden"><img src="assets/photos/moving.png" alt="무빙" decoding="async"><span>마지막 무대</span></div></div></div>
     <div class="entry-card"><span class="ticket-label">참가 신청 <span>01 / 02</span></span><h2>닉네임을 입력하세요</h2><form id="entry-form" novalidate>
       <label for="player-name">닉네임 <small>필수 · 2–12자</small></label><input id="player-name" maxlength="12" placeholder="맥스" autocomplete="off" spellcheck="false" aria-describedby="entry-error" required>
       <p id="entry-error" class="entry-error" role="alert"></p><button class="primary-button" type="submit">다음 · 역할 선택 <span class="button-key">ENTER ↵</span></button>
@@ -37,10 +38,10 @@
     <section id="practice-picker" class="practice-picker hidden" aria-label="연습모드 보스 선택">
       <div class="practice-heading"><div><h2>연습할 보스 선택</h2></div></div>
       <div class="practice-boss-grid" aria-label="연습할 보스">
-        <button data-practice-stage="0"><span class="practice-art ignis" aria-hidden="true"></span><span class="practice-number">1차 오디션</span><b>피노</b><small>입문 · 조명 따라가기</small></button>
-        <button data-practice-stage="1"><span class="practice-art mime" aria-hidden="true"></span><span class="practice-number">2차 오디션</span><b>대길</b><small>중급 · 진짜 발판 찾기</small></button>
-        <button data-practice-stage="2"><span class="practice-art prism" aria-hidden="true"></span><span class="practice-number">3차 오디션</span><b>이프</b><small>상급 · 안전 통로 바꾸기</small></button>
-        <button data-practice-stage="3"><span class="practice-art caden" aria-hidden="true"></span><span class="practice-number">최종 오디션</span><b>무빙</b><small>최상급 · 두 가지 무대 장악</small></button>
+        <button data-practice-stage="0"><span class="practice-art ignis" aria-hidden="true"><img src="assets/photos/pino.png" alt="" decoding="async"></span><span class="practice-number">1차 오디션</span><b>피노</b><small>입문 · 조명 따라가기</small></button>
+        <button data-practice-stage="1"><span class="practice-art mime" aria-hidden="true"><img src="assets/photos/daegil.png" alt="" decoding="async"></span><span class="practice-number">2차 오디션</span><b>대길</b><small>중급 · 진짜 발판 찾기</small></button>
+        <button data-practice-stage="2"><span class="practice-art prism" aria-hidden="true"><img src="assets/photos/if.jpg" alt="" decoding="async"></span><span class="practice-number">3차 오디션</span><b>이프</b><small>상급 · 안전 통로 바꾸기</small></button>
+        <button data-practice-stage="3"><span class="practice-art caden" aria-hidden="true"><img src="assets/photos/moving.png" alt="" decoding="async"></span><span class="practice-number">최종 오디션</span><b>무빙</b><small>최상급 · 두 가지 무대 장악</small></button>
       </div>
       <p class="practice-help">보스를 누르면 바로 시작해요. · 순위 미등록</p>
     </section>

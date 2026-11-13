@@ -1,0 +1,35 @@
+{
+  "version": "17.1.0",
+  "kind": "user-supplied-original-photographs",
+  "transformation": "Original files copied byte-for-byte. Canvas clips face/antler contours at render time; no generated or recolored face. Body is a procedural 2D rig.",
+  "files": [
+    {
+      "bossId": "ignis",
+      "name": "피노",
+      "file": "assets/photos/pino.png",
+      "bytes": 1034321,
+      "sha256": "f826c16e1c7e754335a30d728d8220dee5826acd588a2c7528db72b9ad5d3634"
+    },
+    {
+      "bossId": "mime",
+      "name": "대길",
+      "file": "assets/photos/daegil.png",
+      "bytes": 491600,
+      "sha256": "9779dd349c88ba60ca78d2d05020ebc27ea11f68bf994623283357ed563275e9"
+    },
+    {
+      "bossId": "gojo",
+      "name": "이프",
+      "file": "assets/photos/if.jpg",
+      "bytes": 477950,
+      "sha256": "f2fcb0a11346e6e0f7c680989edf7758005581e0c538f560d964f1bc74175daa"
+    },
+    {
+      "bossId": "sukuna",
+      "name": "무빙",
+      "file": "assets/photos/moving.png",
+      "bytes": 418199,
+      "sha256": "87486f30d97cc5e7406f866ae71ecd10e34c874240f0d2bb94594e9e2c1d854d"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+/* Keep the source photographs intact: fit the whole image, never crop a head. */
+.judge-lineup{gap:7px}
+.judge-art{
+  display:flex;flex-direction:column;align-items:stretch;
+  height:148px;max-height:none;aspect-ratio:auto;min-width:0;overflow:hidden;
+  border:1px solid #465047;border-bottom:2px solid var(--judge);
+  background-color:#1b211e;
+}
+.judge-art.ignis,.judge-art.mime,.judge-art.prism,.judge-art.caden,
+.practice-art.ignis,.practice-art.mime,.practice-art.prism,.practice-art.caden{
+  background-image:none;
+}
+.judge-art img{
+  display:block;width:100%;height:calc(100% - 25px);min-height:0;
+  object-fit:contain;object-position:center;
+}
+.judge-art span{
+  position:static;display:flex;align-items:center;justify-content:center;
+  flex:0 0 25px;padding:4px 2px;letter-spacing:0;
+  background:#151d18;color:var(--judge);font-size:10px;white-space:nowrap;
+}
+.practice-art{
+  display:flex;align-items:center;justify-content:center;
+  aspect-ratio:4/3;height:auto;min-height:150px;
+  background-color:#101714;border-bottom:1px solid #485443;
+}
+.practice-art:after{display:none}
+.practice-art img{
+  display:block;width:100%;height:100%;max-height:240px;
+  aspect-ratio:4/3;object-fit:contain;object-position:center;
+}
+.practice-boss-grid>button.selected .practice-art{border-bottom-color:#c5ed66}
+@media(max-width:1150px){
+  .judge-art{height:124px}
+  .judge-art span{font-size:9px}
+  .practice-art{min-height:125px}
+}
+@media(max-width:650px){
+  .judge-lineup{gap:6px;max-width:420px}
+  .judge-art{height:clamp(108px,29vw,138px);max-height:none}
+  .judge-art span{font-size:10px}
+  .practice-art{aspect-ratio:4/3;min-height:120px}
+}

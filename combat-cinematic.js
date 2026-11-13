@@ -1,6 +1,5 @@
 /** Original hero ultimates and four distinct judge introductions. Combat remains 2D. */
-import { BOSS_VISUALS } from './boss-visuals.js';
-import { getTakeoverArtwork } from './domain-cinematic.js';
+import { BOSS_VISUALS, drawBossPhotoPanel } from './boss-visuals.js';
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),ease=x=>1-Math.pow(1-clamp(x),3),TAU=Math.PI*2;
 const heroArt={};
 for(const role of ['actor','director']){if(typeof Image==='undefined')continue;const image=new Image();image.decoding='async';image.src=new URL(`./assets/${role}-ultimate-v9.png`,import.meta.url).href;heroArt[role]=image;}
@@ -53,10 +52,12 @@ export function drawCombatCinematic(c,s,t,reduced=false){
   else if(!reduced){const a=clamp((p-.6)/.4);c.save();c.globalAlpha=.22*a;c.beginPath();c.moveTo(-40,448);c.bezierCurveTo(420,520,780,290,1330,391);c.strokeStyle='#d6e1f3';c.lineWidth=5;c.stroke();c.restore();}
  }else{
   const id=shot.actorId,third=id==='gojo',opening=reduced?1:ease(p/.43);
-  coverArt(c,getTakeoverArtwork(id),p,v.wall,reduced,third||id==='ignis'?1:-1,id==='ignis'?'lamp':id==='mime'?'ribbon':'classic');
+  const portraitBg=c.createRadialGradient(640,280,70,640,320,760);portraitBg.addColorStop(0,v.wall);portraitBg.addColorStop(1,'#07101e');box(c,0,0,1280,720,portraitBg);
+  // The real photograph sits inside the shot. Its full frame stays clear of the title.
+  drawBossPhotoPanel(c,id,{x:330,y:65,w:620,h:370,progress:p,reduced});
   if(id==='ignis')lampOpening(c,p,reduced);
   else if(id==='mime')ribbonOpening(c,p,reduced);
-  else if(third){peripheralStreaks(c,p,color,reduced);for(let i=0;i<4;i++){const w=180+opening*(960-i*84),h=90+opening*(480-i*32);corners(c,640,325,w,h,i%2?'#d6c18a7a':'#a9dbe579');}if(!reduced){c.save();c.globalAlpha=(1-opening)*.9;box(c,0,0,640*(1-opening),720,'#0a1d2d');box(c,1280-640*(1-opening),0,640*(1-opening),720,'#0a1d2d');c.restore();}}
+  else if(third){peripheralStreaks(c,p,color,reduced);for(let i=0;i<4;i++){const w=780+opening*(280-i*64),h=426+opening*(80-i*20);corners(c,640,250,w,h,i%2?'#d6c18a7a':'#a9dbe579');}if(!reduced){c.save();c.globalAlpha=(1-opening)*.9;box(c,0,0,640*(1-opening),720,'#0a1d2d');box(c,1280-640*(1-opening),0,640*(1-opening),720,'#0a1d2d');c.restore();}}
   else{const curtain=(1-opening)*653;for(const side of [0,1]){c.save();if(side){c.translate(1280,0);c.scale(-1,1)}c.beginPath();c.rect(0,0,curtain,720);c.clip();box(c,0,0,curtain,720,'#361c32');for(let i=0;i<15;i++)line(c,[[i*47,0],[i*47+8,720]],i%2?'#6e354d':'#1c1428',9);c.restore();}line(c,[[90,442],[1190,442]],'#d7c1c644',1);}
   const shade=c.createLinearGradient(0,400,0,720);shade.addColorStop(0,'#070f1b00');shade.addColorStop(.4,'#070f1bbd');shade.addColorStop(1,'#070f1bf5');box(c,0,400,1280,320,shade);
   box(c,0,0,1280,39,'#07101b');box(c,0,681,1280,39,'#07101b');
