@@ -9,6 +9,37 @@ const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
 function server(){const sessions=new Map(),records=new Map(),calls=[];return{sessions,records,calls,fetch:async(url,options)=>{const body=options.body?JSON.parse(options.body):null;calls.push({url,options,body});if(!body)return response({ok:true,entries:getIndividualBoard([...records.values()])});if(body.action==='start'){const s=body.session,existing=sessions.get(s.runId);if(existing&&JSON.stringify(existing.session)!==JSON.stringify(s))return response({ok:false,error:'다른 시작 정보입니다.'},409);const token='token-'+s.runId;sessions.set(s.runId,{session:s,token});return response({ok:true,token});}if(body.action==='finish'){const session=[...sessions.values()].find(s=>s.token===body.token);if(!session)return response({ok:false,error:'시작을 확인할 수 없습니다.'},400);const e=createEntry({...body.entry,createdAt:'2026-11-13T09:00:00Z'});if(!records.has(e.runId))records.set(e.runId,e);return response({ok:true,entry:records.get(e.runId),entries:getIndividualBoard([...records.values()])});}}};}
 const client=(s,storage=store(),extra={})=>new SharedRanking({fetchImpl:s.fetch,storage,timeoutMs:50,retryDelayMs:0,...extra});
 
+test('server exclusions remove cached ranks before merging a new finish response',async()=>{
+ const s=server(),c=client(s),removed=entry(run('removed','해커'),{bosses:5,lastClearTime:20,endReason:'clear'}),r=run('valid','정상 크루');
+ c.entries=[removed];await c.startRun(r);
+ c.fetch=async()=>response({ok:true,entry:entry(r),entries:[entry(r)],excludedRunIds:['removed']});
+ const saved=await c.finishRun(r,entry(r));
+ assert.equal(saved.rank,1);assert.deepEqual(c.entries.map(e=>e.runId),['valid']);
+});
+test('older GET and POST responses cannot resurrect a removed record after an exclusion arrives',async()=>{
+ const s=server(),c=client(s),removed=entry(run('removed','해커'),{bosses:5,lastClearTime:20,endReason:'clear'}),r=run('valid','정상 크루'),oldPost=deferred();
+ c.entries=[removed];await c.startRun(r);c.fetch=()=>oldPost.promise;
+ const finishing=c.finishRun(r,entry(r));
+ c.fetch=async()=>response({ok:true,entries:[],excludedRunIds:['removed']});await c.refresh();
+ oldPost.resolve(response({ok:true,entry:entry(r),entries:[removed,entry(r)]}));
+ assert.equal((await finishing).rank,1);assert.deepEqual(c.entries.map(e=>e.runId),['valid']);
+ c.fetch=async()=>response({ok:true,entries:[removed,entry(r)]});await c.refresh();
+ assert.deepEqual(c.entries.map(e=>e.runId),['valid']);
+});
+test('rejected removed runs clear their queue and cached rank without blocking a new run with the same name',async()=>{
+ const s=server(),c=client(s),r=run('removed','해커');await c.startRun(r);c.entries=[entry(r)];
+ c.fetch=async()=>response({ok:false,error:'운영자가 제외한 기록입니다.',excludedRunIds:[r.runId]},403);
+ const rejected=await c.finishRun(r,entry(r));assert.equal(rejected.pending,false);assert.equal(rejected.rank,null);assert.equal(c.pending.length,0);assert.equal(c.entries.length,0);
+ assert.equal((await c.finishRun(r,entry(r))).ok,false);
+ c.fetch=s.fetch;const next=run('normal-retry','해커');await c.startRun(next);
+ assert.equal((await c.finishRun(next,entry(next))).rank,1);
+});
+test('malformed exclusion lists never remove otherwise valid records',async()=>{
+ const s=server(),c=client(s),saved=entry();c.entries=[saved];
+ c.fetch=async()=>response({ok:true,entries:[],excludedRunIds:[saved.runId,123]});
+ assert.equal((await c.refresh()).ok,false);assert.equal(c.entries[0].runId,saved.runId);
+});
+
 test('only server rows enter the public board; local legacy rows are never uploaded',async()=>{const s=server(),storage=store();storage.setItem('yesulin-ranking-v18',JSON.stringify({entries:[entry(run('old'))]}));s.records.set('remote',entry(run('remote','다른 크루'),{score:900}));const c=client(s,storage);await c.refresh();assert.deepEqual(c.entries.map(e=>e.runId),['remote']);assert.equal(s.calls.filter(c=>c.body).length,0);});
 test('server session precedes finish and confirmed server record controls rank and timestamp',async()=>{const s=server(),c=client(s),r=run();await c.startRun(r);const saved=await c.finishRun(r,entry(r));assert.equal(saved.ok,true);assert.equal(saved.rank,1);assert.equal(saved.entry.createdAt,'2026-11-13T09:00:00.000Z');assert.deepEqual(s.calls.map(c=>c.body.action),['start','finish']);assert.equal(s.calls[0].body.session.clientNonce,r.clientNonce);assert.equal(s.calls[0].options.headers.Origin,undefined);});
 test('concurrent duplicate start and finish calls are idempotent',async()=>{const s=server(),c=client(s),r=run();await Promise.all([c.startRun(r),c.startRun(r)]);const[a,b]=await Promise.all([c.finishRun(r,entry(r)),c.finishRun(r,entry(r))]);assert.deepEqual(a,b);assert.equal(s.calls.filter(c=>c.body.action==='start').length,1);assert.equal(s.calls.filter(c=>c.body.action==='finish').length,1);assert.equal(c.pending.length,0);});

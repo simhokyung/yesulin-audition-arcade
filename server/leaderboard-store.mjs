@@ -1,4 +1,5 @@
 import {neon} from '@neondatabase/serverless';
+import {LEADERBOARD_REMOVALS,isExcludedRun} from './leaderboard-moderation.mjs';
 
 /** All writes use row locks/unique keys in Postgres; no per-process ranking cache. */
 export function createLeaderboardStore(databaseUrl, {sql: suppliedSql} = {}) {
@@ -26,6 +27,25 @@ export function createLeaderboardStore(databaseUrl, {sql: suppliedSql} = {}) {
       sql.query(`CREATE TABLE IF NOT EXISTS yesulin_arcade_rate (
         bucket_key text PRIMARY KEY, hits integer NOT NULL, expires_at timestamptz NOT NULL
       )`),
+      sql.query(`CREATE TABLE IF NOT EXISTS yesulin_arcade_removed (
+        scope text NOT NULL, rules_version text NOT NULL, run_id varchar(80) NOT NULL,
+        name text NOT NULL, entry jsonb NOT NULL, reason text NOT NULL,
+        removed_at timestamptz NOT NULL DEFAULT now(),
+        PRIMARY KEY (scope,rules_version,run_id)
+      )`),
+      ...LEADERBOARD_REMOVALS.flatMap(row=>[
+        sql.query(`INSERT INTO yesulin_arcade_removed (scope,rules_version,run_id,name,entry,reason)
+          SELECT scope,rules_version,run_id,name,entry,$5 FROM yesulin_arcade_best
+          WHERE scope=$1 AND rules_version=$2 AND run_id=$3 AND name=$4
+          ON CONFLICT (scope,rules_version,run_id) DO NOTHING`,
+        [row.scope,row.rulesVersion,row.runId,row.name,row.reason]),
+        sql.query(`DELETE FROM yesulin_arcade_best AS best
+          WHERE best.scope=$1 AND best.rules_version=$2 AND best.run_id=$3 AND best.name=$4
+          AND EXISTS (SELECT 1 FROM yesulin_arcade_removed AS removed
+            WHERE removed.scope=best.scope AND removed.rules_version=best.rules_version
+              AND removed.run_id=best.run_id AND removed.name=best.name)`,
+        [row.scope,row.rulesVersion,row.runId,row.name]),
+      ]),
       sql.query('DELETE FROM yesulin_arcade_rate WHERE expires_at < now()'),
       sql.query("DELETE FROM yesulin_arcade_sessions WHERE entry IS NULL AND started_at < now() - interval '24 hours'")
     ]).catch(error => { schemaPromise = null; throw error; });
@@ -60,6 +80,7 @@ export function createLeaderboardStore(databaseUrl, {sql: suppliedSql} = {}) {
     },
     async finishSession({scope,rulesVersion,runId,tokenHash,entry}) {
       await ready();
+      if(isExcludedRun({scope,rulesVersion,runId}))return null;
       // COALESCE is evaluated after the session row lock is acquired. Concurrent
       // retries always use the first accepted entry, including for the best-row upsert.
       const rows = await sql.query(`WITH accepted AS (

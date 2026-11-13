@@ -1,6 +1,7 @@
 import {createHash,randomBytes,timingSafeEqual} from 'node:crypto';
 import {createEntry,getIndividualBoard,compareEntries,normalizeIdentity,RANKING_RULES_VERSION,RANKING_SEASON} from '../ranking.js';
 import {BOSSES} from '../engine.js';
+import {excludedRunIdsFor,isExcludedRun} from './leaderboard-moderation.mjs';
 
 const MAX_BODY=8192,SESSION_SECONDS=6*60*60;
 const LEGACY_RULES=['challenge-v18','challenge-v19'];
@@ -19,8 +20,8 @@ function seasonEntry(input,rules){
   return{...entry,version:seasonOf(rules),rulesVersion:rules};
 }
 function legacyCompare(a,b){return b.bosses-a.bosses||b.score-a.score||b.maxCombo-a.maxCombo||a.createdAt.localeCompare(b.createdAt)||a.runId.localeCompare(b.runId);}
-function seasonBoard(rows,rules){
-  const normalized=[];for(const row of rows){try{normalized.push(seasonEntry(row,rules));}catch{}}
+function seasonBoard(rows,rules,scope){
+  const normalized=[];for(const row of rows){if(isExcludedRun({scope,rulesVersion:rules,runId:row?.runId}))continue;try{normalized.push(seasonEntry(row,rules));}catch{}}
   if(rules===RANKING_RULES_VERSION)return getIndividualBoard(normalized);
   const compare=TIME_RULES.includes(rules)?compareEntries:legacyCompare;
   const best=new Map();for(const row of normalized){if(row.duration!==0||row.difficulty!=='standard')continue;const key=JSON.stringify([row.name,row.crew]);if(!best.has(key)||compare(row,best.get(key))<0)best.set(key,row);}
@@ -77,29 +78,35 @@ function response(res,status,payload){res.statusCode=status;res.setHeader('Conte
 /** Injectable store/clock make HTTP validation and concurrent retries independently testable. */
 export function createLeaderboardHandler({getStore,now=()=>Date.now(),makeToken=()=>randomBytes(32).toString('hex')}={}){
   return async function leaderboard(req,res){
+    let context={};
+    const send=(status,payload)=>response(res,status,{...payload,excludedRunIds:excludedRunIdsFor(context)});
     try{
       if(!['GET','POST'].includes(req.method)){res.setHeader('Allow','GET, POST');fail(405,'지원하지 않는 요청입니다.');}
       validateOrigin(req);
       const body=req.method==='POST'?await bodyOf(req):null,url=new URL(req.url||'/api/leaderboard','http://localhost'),scope=scopeOf(body?body.scope:url.searchParams.get('scope')??undefined);
       const action=body?.action;if(body&&!['start','finish'].includes(action))fail(400,'요청 종류를 확인해 주세요.');
+      context={scope,rulesVersion:(body?(action==='start'?body.session?.rulesVersion:body.entry?.rulesVersion):url.searchParams.get('rulesVersion'))??LEGACY_RULES[0]};
       const store=await getStore?.();if(!store)fail(503,'전체 순위 서버가 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.');
       const time=now(),ip=String(req.headers?.['x-vercel-forwarded-for']||req.headers?.['x-forwarded-for']||req.socket?.remoteAddress||'unknown').split(',')[0].trim();
       const minute=Math.floor(time/60000),rateKey=digest(`${Math.floor(time/86400000)}|${ip}|${action||'read'}|${minute}`),limit=action==='start'?180:action==='finish'?360:1200;
       if(!await store.rateLimit(rateKey,limit,new Date((minute+2)*60000).toISOString())){res.setHeader('Retry-After','60');fail(429,'요청이 많습니다. 잠시 후 다시 시도해 주세요.');}
-      if(!body){const rulesVersion=rulesOf(url.searchParams.get('rulesVersion')??undefined,{legacyDefault:true}),entries=seasonBoard(await store.listEntries({scope,rulesVersion}),rulesVersion);return response(res,200,{ok:true,entries,error:null});}
+      if(!body){const rulesVersion=rulesOf(url.searchParams.get('rulesVersion')??undefined,{legacyDefault:true}),entries=seasonBoard(await store.listEntries({scope,rulesVersion}),rulesVersion,scope);return send(200,{ok:true,entries,error:null});}
       if(action==='start'){
-        const identity=startIdentity(body.session),rulesVersion=rulesOf(body.session.rulesVersion,{legacyDefault:true}),token=makeToken(),nonceHash=digest(identity.clientNonce),session=await store.startSession({...identity,scope,rulesVersion,nonceHash,tokenHash:digest(token),token});
+        const identity=startIdentity(body.session),rulesVersion=rulesOf(body.session.rulesVersion,{legacyDefault:true});
+        if(isExcludedRun({scope,rulesVersion,runId:identity.runId}))fail(422,'관리자가 순위에서 제외한 기록입니다. 새 게임으로 시작해 주세요.');
+        const token=makeToken(),nonceHash=digest(identity.clientNonce),session=await store.startSession({...identity,scope,rulesVersion,nonceHash,tokenHash:digest(token),token});
         if(session.name!==identity.name||session.character!==identity.character||!sameHash(session.nonceHash,nonceHash))fail(409,'이미 사용 중인 플레이 ID입니다. 새 게임으로 시작해 주세요.');
         if(time-new Date(session.startedAt).getTime()>(SESSION_SECONDS+300)*1000)fail(409,'참가 기록이 만료되었습니다. 새 게임으로 시작해 주세요.');
-        return response(res,200,{ok:true,token:session.token,entries:[],error:null});
+        return send(200,{ok:true,token:session.token,entries:[],error:null});
       }
       if(typeof body.token!=='string'||!/^[a-f0-9]{64}$/.test(body.token)||!record(body.entry)||typeof body.entry.runId!=='string')fail(400,'참가 인증 정보가 올바르지 않습니다.');
       const rulesVersion=rulesOf(body.entry.rulesVersion),key={scope,rulesVersion,runId:body.entry.runId},session=await store.getSession(key),tokenHash=digest(body.token);
       if(!session||!sameHash(session.tokenHash,tokenHash))fail(409,'참가 정보를 확인할 수 없습니다. 이 게임에서 다시 시작해 주세요.');
+      if(isExcludedRun(key))fail(422,'관리자가 순위에서 제외한 기록입니다. 새 게임으로 시작해 주세요.');
       let entry=session.entry;
       if(!entry){const value=canonicalFinish(body.entry,session,time,rulesVersion);entry=await store.finishSession({...key,tokenHash,entry:value});if(!entry)fail(409,'참가 정보를 확인할 수 없습니다. 다시 시도해 주세요.');}
-      const entries=seasonBoard(await store.listEntries({scope,rulesVersion}),rulesVersion);
-      return response(res,200,{ok:true,entry,entries,error:null});
-    }catch(error){const status=error instanceof RequestError?error.status:503;if(!(error instanceof RequestError)){const name=/^[A-Za-z][A-Za-z0-9]{0,40}$/.test(error?.name||'')?error.name:'Error',code=/^[A-Z0-9_]{1,32}$/.test(error?.code||'')?error.code:undefined;console.error(JSON.stringify({event:'leaderboard_store_error',name,...(code?{code}:{})}));}return response(res,status,{ok:false,entries:[],entry:null,error:status===503?'전체 순위 서버에 연결하지 못했습니다. 기록을 보관하고 다시 시도해 주세요.':error.message});}
+      const entries=seasonBoard(await store.listEntries({scope,rulesVersion}),rulesVersion,scope);
+      return send(200,{ok:true,entry,entries,error:null});
+    }catch(error){const status=error instanceof RequestError?error.status:503;if(!(error instanceof RequestError)){const name=/^[A-Za-z][A-Za-z0-9]{0,40}$/.test(error?.name||'')?error.name:'Error',code=/^[A-Z0-9_]{1,32}$/.test(error?.code||'')?error.code:undefined;console.error(JSON.stringify({event:'leaderboard_store_error',name,...(code?{code}:{})}));}return send(status,{ok:false,entries:[],entry:null,error:status===503?'전체 순위 서버에 연결하지 못했습니다. 기록을 보관하고 다시 시도해 주세요.':error.message});}
   };
 }

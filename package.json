@@ -1,11 +1,11 @@
 {
   "name": "yesulin-directors-cut",
-  "version": "22.0.1",
+  "version": "22.0.2",
   "type": "module",
   "private": true,
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test engine.test.mjs final-patterns.test.mjs final-vfx.test.mjs practice.test.mjs ranking.test.mjs booth-ui.test.mjs combat-music.test.mjs domain-music.test.mjs photo-appearance.test.mjs personality-pattern.test.mjs max-patterns.test.mjs boss-features.test.mjs domain-guide.test.mjs takeover-feedback.test.mjs leaderboard-api.test.mjs shared-ranking.test.mjs server.test.mjs",
+    "test": "node --test engine.test.mjs final-patterns.test.mjs final-vfx.test.mjs practice.test.mjs ranking.test.mjs booth-ui.test.mjs combat-music.test.mjs domain-music.test.mjs photo-appearance.test.mjs personality-pattern.test.mjs max-patterns.test.mjs boss-features.test.mjs domain-guide.test.mjs takeover-feedback.test.mjs leaderboard-api.test.mjs leaderboard-moderation.test.mjs shared-ranking.test.mjs server.test.mjs",
     "balance": "node simulate.mjs --challenge --seeds=30",
     "balance:booth": "node simulate.mjs --booth --seeds=30",
     "balance:challenge": "node simulate.mjs --challenge --seeds=30",
