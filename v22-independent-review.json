@@ -1,0 +1,1096 @@
+{
+  "version": 22,
+  "generatedAt": "2026-11-13T04:43:10.908Z",
+  "reviewer": "independent balance review",
+  "sourceSha256": {
+    "engine.js": "a4c725eed7e943b95d0716e4d74019ec876d4258d487f3130c13f5a132af199c",
+    "final-patterns.js": "ea3d60d75f0cb6eb4a5e0837ee9b257ced0261f3e2b9285328fc5706047fbe3c",
+    "max-patterns.js": "0343cf86c48f4d5809d327cafab40e9baf93eb95d0b282fd856c37d770857aad"
+  },
+  "baselineSha256": {
+    "engine.js": "73c1a52a97264cd5a84fa9a0efe47e53e0d8e4fa162c43c6a52d88c46be8b92d",
+    "final-patterns.js": "6d0f3115b4dbee660e827d1dcfdd7cedffc948dcfd1311a19719ed712470f00f",
+    "max-patterns.js": "0343cf86c48f4d5809d327cafab40e9baf93eb95d0b282fd856c37d770857aad"
+  },
+  "controllerSha256": "9b6d2f76fc42ce58d6fc67470758fb941de2257b7096b66f2c22ba96bc4e81b7",
+  "methods": {
+    "comparison": "Actual engine60Hz, unmodified260HP and boss resources. Two initial fixtures only: normal stage entrance and90px ahead of boss. Qheld, Q/W/E/R/Space edges every240ms; movement sampled and held100ms with14x/12y tolerance, no per-frame target braking. Delayed policies observe only public guide at10Hz and apply old targets after300/450ms; simple policies do not inspect hazards. All retain real damage/cooldowns/ultimate-cancel rules. Not human win rates.",
+    "protectUltimateVariant": "Same inputs, except Space is not pressed during the visible ultimate attack sequence so the controller does not self-cancel R.",
+    "geometry": "Actual engine keyboard movement only after initial fixture setup; untouched HP/cooldowns. Independent locked geometry, cleanup, shared domain grace, guide read-only, CPU and350ms walking checks. Guide-following is an idealized controller: exact public guide geometry with current-projectile prediction and instantaneous motor updates after the initial per-cue delay. These are not human win rates; per-frame timing is local Node CPU without rendering.",
+    "firstFour": "Paired actual engine inputs, deployed v21 baseline versus candidate; all seven opening patterns, two phases, both roles,30/60Hz. Initial pattern and phase fixture setup only. No HP edits, no teleports during traversal, no cooldown overrides after initial cast."
+  },
+  "comparison": {
+    "totalEngineRuns": 960,
+    "pairedScenarios": 480,
+    "safetyStopped": 0,
+    "mashing": {
+      "stationary-mash": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.028127812781278128,
+            "medianWinSeconds": null,
+            "meanDodges": 11,
+            "meanUltimates": 0
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.021360218728639788,
+            "medianWinSeconds": null,
+            "meanDodges": 11.666666666666666,
+            "meanUltimates": 0
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.28748874887488746,
+            "medianWinSeconds": null,
+            "meanDodges": 22.208333333333332,
+            "meanUltimates": 1
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.04567669172932328,
+            "medianWinSeconds": null,
+            "meanDodges": 12,
+            "meanUltimates": 0
+          }
+        }
+      },
+      "constant-orbit": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.1801080108010801,
+            "medianWinSeconds": null,
+            "meanDodges": 29.041666666666668,
+            "meanUltimates": 0.4166666666666667
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.08081567555251766,
+            "medianWinSeconds": null,
+            "meanDodges": 15.958333333333334,
+            "meanUltimates": 0.25
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.34897989798979895,
+            "medianWinSeconds": null,
+            "meanDodges": 42.041666666666664,
+            "meanUltimates": 0.7916666666666666
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.11644452039188884,
+            "medianWinSeconds": null,
+            "meanDodges": 17.416666666666668,
+            "meanUltimates": 0.08333333333333333
+          }
+        }
+      },
+      "close-weave": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.4872487248724873,
+            "medianWinSeconds": null,
+            "meanDodges": 17.75,
+            "meanUltimates": 1.0416666666666667
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.31002506265664165,
+            "medianWinSeconds": null,
+            "meanDodges": 15.708333333333334,
+            "meanUltimates": 1
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 15,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 9
+              },
+              "close": {
+                "runs": 12,
+                "wins": 6
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 188.16666666666666,
+            "meanBossFractionDealt": 0.8874962496249624,
+            "medianWinSeconds": 48.75,
+            "meanDodges": 26.958333333333332,
+            "meanUltimates": 1
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.43411369332421956,
+            "medianWinSeconds": null,
+            "meanDodges": 17.166666666666668,
+            "meanUltimates": 1
+          }
+        }
+      },
+      "delayed300": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 2,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 1
+              },
+              "close": {
+                "runs": 12,
+                "wins": 1
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 258.9166666666667,
+            "meanBossFractionDealt": 0.7205670567056705,
+            "medianWinSeconds": 71,
+            "meanDodges": 43.75,
+            "meanUltimates": 1.5416666666666667
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.4957678286625656,
+            "medianWinSeconds": null,
+            "meanDodges": 44.583333333333336,
+            "meanUltimates": 1.375
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 18,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 7
+              },
+              "close": {
+                "runs": 12,
+                "wins": 11
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 158.04166666666666,
+            "meanBossFractionDealt": 0.9797104710471047,
+            "medianWinSeconds": 63.33,
+            "meanDodges": 44.083333333333336,
+            "meanUltimates": 1.375
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 1,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 1
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 255.16666666666666,
+            "meanBossFractionDealt": 0.5220836181362498,
+            "medianWinSeconds": 101.55,
+            "meanDodges": 41.5,
+            "meanUltimates": 1.2083333333333333
+          }
+        }
+      },
+      "delayed450": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 2,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 1
+              },
+              "close": {
+                "runs": 12,
+                "wins": 1
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 256.7083333333333,
+            "meanBossFractionDealt": 0.5971347134713471,
+            "medianWinSeconds": 76.53,
+            "meanDodges": 36.5,
+            "meanUltimates": 1.3333333333333333
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.29032809295967194,
+            "medianWinSeconds": null,
+            "meanDodges": 26.5,
+            "meanUltimates": 0.9583333333333334
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 17,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 9
+              },
+              "close": {
+                "runs": 12,
+                "wins": 8
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 170.66666666666666,
+            "meanBossFractionDealt": 0.940871587158716,
+            "medianWinSeconds": 64.55,
+            "meanDodges": 43.333333333333336,
+            "meanUltimates": 1.2916666666666667
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.37620756436545905,
+            "medianWinSeconds": null,
+            "meanDodges": 28.208333333333332,
+            "meanUltimates": 0.7916666666666666
+          }
+        }
+      }
+    },
+    "preserveR": {
+      "stationary-mash": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.028127812781278128,
+            "medianWinSeconds": null,
+            "meanDodges": 11,
+            "meanUltimates": 0
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.021360218728639788,
+            "medianWinSeconds": null,
+            "meanDodges": 11.666666666666666,
+            "meanUltimates": 0
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.5727422742274229,
+            "medianWinSeconds": null,
+            "meanDodges": 23.25,
+            "meanUltimates": 1
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.04567669172932328,
+            "medianWinSeconds": null,
+            "meanDodges": 12,
+            "meanUltimates": 0
+          }
+        }
+      },
+      "constant-orbit": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.28487848784878483,
+            "medianWinSeconds": null,
+            "meanDodges": 28.708333333333332,
+            "meanUltimates": 0.4166666666666667
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.13316814764183185,
+            "medianWinSeconds": null,
+            "meanDodges": 15.625,
+            "meanUltimates": 0.25
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.5242199219921991,
+            "medianWinSeconds": null,
+            "meanDodges": 41.5,
+            "meanUltimates": 0.7916666666666666
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.13780473912052862,
+            "medianWinSeconds": null,
+            "meanDodges": 17.291666666666668,
+            "meanUltimates": 0.08333333333333333
+          }
+        }
+      },
+      "close-weave": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 2,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 1
+              },
+              "close": {
+                "runs": 12,
+                "wins": 1
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 253,
+            "meanBossFractionDealt": 0.7684293429342935,
+            "medianWinSeconds": 33.63,
+            "meanDodges": 14.583333333333334,
+            "meanUltimates": 1
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.6047619047619047,
+            "medianWinSeconds": null,
+            "meanDodges": 15.75,
+            "meanUltimates": 1
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 15,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 8
+              },
+              "close": {
+                "runs": 12,
+                "wins": 7
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 145.29166666666666,
+            "meanBossFractionDealt": 0.9628562856285628,
+            "medianWinSeconds": 35.97,
+            "meanDodges": 19.041666666666668,
+            "meanUltimates": 1
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 0,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 260,
+            "meanBossFractionDealt": 0.6316643882433356,
+            "medianWinSeconds": null,
+            "meanDodges": 16,
+            "meanUltimates": 1
+          }
+        }
+      },
+      "delayed300": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 13,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 7
+              },
+              "close": {
+                "runs": 12,
+                "wins": 6
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 200.20833333333334,
+            "meanBossFractionDealt": 0.8867236723672368,
+            "medianWinSeconds": 62,
+            "meanDodges": 36.125,
+            "meanUltimates": 1.2916666666666667
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 3,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 0
+              },
+              "close": {
+                "runs": 12,
+                "wins": 3
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 251.70833333333334,
+            "meanBossFractionDealt": 0.6569491911597175,
+            "medianWinSeconds": 79.45,
+            "meanDodges": 37.708333333333336,
+            "meanUltimates": 1.25
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 22,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 11
+              },
+              "close": {
+                "runs": 12,
+                "wins": 11
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 62.5,
+            "meanBossFractionDealt": 0.993136813681368,
+            "medianWinSeconds": 47.98,
+            "meanDodges": 31.041666666666668,
+            "meanUltimates": 1.0416666666666667
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 6,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 3
+              },
+              "close": {
+                "runs": 12,
+                "wins": 3
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 249.33333333333334,
+            "meanBossFractionDealt": 0.7645705172020961,
+            "medianWinSeconds": 74.92,
+            "meanDodges": 39.583333333333336,
+            "meanUltimates": 1.25
+          }
+        }
+      },
+      "delayed450": {
+        "actor": {
+          "v21": {
+            "runs": 24,
+            "wins": 14,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 9
+              },
+              "close": {
+                "runs": 12,
+                "wins": 5
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 210.45833333333334,
+            "meanBossFractionDealt": 0.8823207320732074,
+            "medianWinSeconds": 58.82,
+            "meanDodges": 37.458333333333336,
+            "meanUltimates": 1.25
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 1,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 1
+              },
+              "close": {
+                "runs": 12,
+                "wins": 0
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 259.4166666666667,
+            "meanBossFractionDealt": 0.5123319662793346,
+            "medianWinSeconds": 61.83,
+            "meanDodges": 28,
+            "meanUltimates": 0.9166666666666666
+          }
+        },
+        "director": {
+          "v21": {
+            "runs": 24,
+            "wins": 23,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 12
+              },
+              "close": {
+                "runs": 12,
+                "wins": 11
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 78.375,
+            "meanBossFractionDealt": 0.9992724272427242,
+            "medianWinSeconds": 48.32,
+            "meanDodges": 30.75,
+            "meanUltimates": 1
+          },
+          "v22": {
+            "runs": 24,
+            "wins": 2,
+            "byStart": {
+              "default": {
+                "runs": 12,
+                "wins": 1
+              },
+              "close": {
+                "runs": 12,
+                "wins": 1
+              }
+            },
+            "safetyStopped": 0,
+            "meanDamage": 257.25,
+            "meanBossFractionDealt": 0.4981430849851904,
+            "medianWinSeconds": 100.98,
+            "meanDodges": 27,
+            "meanUltimates": 0.8333333333333334
+          }
+        }
+      }
+    },
+    "closeWeaveAttribution": [
+      {
+        "role": "actor",
+        "v21": {
+          "runs": 24,
+          "meanActualBossDamage": 4268.625,
+          "meanPlayerDamage": 253,
+          "castsActivated": {
+            "last-cut": 24
+          },
+          "precisionCuts": 0
+        },
+        "v22": {
+          "runs": 24,
+          "meanActualBossDamage": 4423.833333333333,
+          "meanPlayerDamage": 260,
+          "castsActivated": {
+            "last-cut": 24
+          },
+          "precisionCuts": 0
+        }
+      },
+      {
+        "role": "director",
+        "v21": {
+          "runs": 24,
+          "meanActualBossDamage": 5348.666666666667,
+          "meanPlayerDamage": 145.29166666666666,
+          "castsActivated": {
+            "last-cut": 10
+          },
+          "precisionCuts": 10
+        },
+        "v22": {
+          "runs": 24,
+          "meanActualBossDamage": 4620.625,
+          "meanPlayerDamage": 260,
+          "castsActivated": {
+            "last-cut": 24
+          },
+          "precisionCuts": 3
+        }
+      }
+    ]
+  },
+  "firstFour": {
+    "pairs": 224,
+    "identical": 224,
+    "phase": [
+      1,
+      2
+    ],
+    "hz": [
+      30,
+      60
+    ],
+    "roles": [
+      "actor",
+      "director"
+    ],
+    "patternsPerBoss": 7
+  },
+  "fairness": {
+    "harnessSha256": "228bd76a2b5c2566ba21bca3f466d30993d1806845c8b1a258638be57ed2c9ed",
+    "reactionSeconds": 0.35,
+    "routes": 480,
+    "summary": {
+      "3": {
+        "cases": 120,
+        "clean": 120,
+        "survived": 120,
+        "completed": 120,
+        "meanDamage": 0,
+        "maxDamage": 0
+      },
+      "7": {
+        "cases": 120,
+        "clean": 120,
+        "survived": 120,
+        "completed": 120,
+        "meanDamage": 0,
+        "maxDamage": 0
+      },
+      "8": {
+        "cases": 120,
+        "clean": 119,
+        "survived": 120,
+        "completed": 120,
+        "meanDamage": 0.31666666666666665,
+        "maxDamage": 38
+      },
+      "9": {
+        "cases": 120,
+        "clean": 120,
+        "survived": 120,
+        "completed": 120,
+        "meanDamage": 0,
+        "maxDamage": 0
+      }
+    },
+    "lockedGeometryCleanupReadOnlyRuns": 32,
+    "sharedDomainDamageCooldownRuns": 4,
+    "domainHitSamples": [
+      {
+        "hz": 30,
+        "phase": 1,
+        "hits": [
+          {
+            "time": 3.7999999999999963,
+            "damage": 104
+          },
+          {
+            "time": 4.799999999999993,
+            "damage": 104
+          },
+          {
+            "time": 5.799999999999989,
+            "damage": 52
+          }
+        ]
+      },
+      {
+        "hz": 30,
+        "phase": 2,
+        "hits": [
+          {
+            "time": 3.7999999999999963,
+            "damage": 104
+          },
+          {
+            "time": 4.799999999999993,
+            "damage": 104
+          },
+          {
+            "time": 5.799999999999989,
+            "damage": 52
+          }
+        ]
+      },
+      {
+        "hz": 60,
+        "phase": 1,
+        "hits": [
+          {
+            "time": 3.766666666666658,
+            "damage": 104
+          },
+          {
+            "time": 4.766666666666655,
+            "damage": 104
+          },
+          {
+            "time": 5.7666666666666515,
+            "damage": 52
+          }
+        ]
+      },
+      {
+        "hz": 60,
+        "phase": 2,
+        "hits": [
+          {
+            "time": 3.766666666666658,
+            "damage": 104
+          },
+          {
+            "time": 4.766666666666655,
+            "damage": 104
+          },
+          {
+            "time": 5.7666666666666515,
+            "damage": 52
+          }
+        ]
+      }
+    ]
+  },
+  "performance": {
+    "guideCpu": {
+      "calls": 14031,
+      "meanMs": 0.010542831444658307,
+      "p95Ms": 0.04887499999999534,
+      "p99Ms": 0.09654199999999946,
+      "maxMs": 0.9200839999999744
+    },
+    "stepCpu": {
+      "calls": 14031,
+      "meanMs": 0.0043728288076404455,
+      "p95Ms": 0.011832999999995764,
+      "p99Ms": 0.03283399999999759,
+      "maxMs": 0.7150829999999928
+    },
+    "peakObjects": {
+      "hazards": 5,
+      "projectiles": 3,
+      "effects": 12
+    }
+  },
+  "limitations": [
+    "Scripted policies are reproducible stress tests, not measured human success rates.",
+    "Stationary/orbit/weave policies never inspect hazards. Delayed policies sample exact publicly rendered guide targets at10Hz then apply them300/450ms later; movement is held between samples and can overshoot.",
+    "The isolated fairness controller uses exact public guide geometry and a per-cue reaction delay with ideal movement updates; it is stronger than the delayed battle policies.",
+    "A close-start fixture sets only initial player position; every run retains normal260HP, game damage, cooldowns and incoming hazards. No runtime teleporting or healing.",
+    "Node CPU excludes rendering, browser overhead and device variation.",
+    "The boss HP increase and pressure changes are evaluated together; actual damage taken, actual boss damage inflicted and takeover activation are also reported so reduced wins are not attributed solely to mechanics."
+  ]
+}

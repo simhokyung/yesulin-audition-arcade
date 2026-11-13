@@ -77,16 +77,16 @@ export function createLeaderboardStore(databaseUrl, {sql: suppliedSql} = {}) {
           run_id=EXCLUDED.run_id,bosses=EXCLUDED.bosses,score=EXCLUDED.score,
           max_combo=EXCLUDED.max_combo,created_at=EXCLUDED.created_at,entry=EXCLUDED.entry
         WHERE (EXCLUDED.bosses,
-          CASE WHEN EXCLUDED.rules_version IN ('challenge-v20','challenge-v21') AND EXCLUDED.bosses>0 THEN -(EXCLUDED.entry->>'lastClearTime')::double precision ELSE 0 END,
+          CASE WHEN EXCLUDED.rules_version IN ('challenge-v20','challenge-v21','challenge-v22') AND EXCLUDED.bosses>0 THEN -(EXCLUDED.entry->>'lastClearTime')::double precision ELSE 0 END,
           EXCLUDED.score,EXCLUDED.max_combo) >
           (yesulin_arcade_best.bosses,
-          CASE WHEN yesulin_arcade_best.rules_version IN ('challenge-v20','challenge-v21') AND yesulin_arcade_best.bosses>0 THEN -(yesulin_arcade_best.entry->>'lastClearTime')::double precision ELSE 0 END,
+          CASE WHEN yesulin_arcade_best.rules_version IN ('challenge-v20','challenge-v21','challenge-v22') AND yesulin_arcade_best.bosses>0 THEN -(yesulin_arcade_best.entry->>'lastClearTime')::double precision ELSE 0 END,
           yesulin_arcade_best.score,yesulin_arcade_best.max_combo)
           OR ((EXCLUDED.bosses,
-          CASE WHEN EXCLUDED.rules_version IN ('challenge-v20','challenge-v21') AND EXCLUDED.bosses>0 THEN -(EXCLUDED.entry->>'lastClearTime')::double precision ELSE 0 END,
+          CASE WHEN EXCLUDED.rules_version IN ('challenge-v20','challenge-v21','challenge-v22') AND EXCLUDED.bosses>0 THEN -(EXCLUDED.entry->>'lastClearTime')::double precision ELSE 0 END,
           EXCLUDED.score,EXCLUDED.max_combo) =
           (yesulin_arcade_best.bosses,
-          CASE WHEN yesulin_arcade_best.rules_version IN ('challenge-v20','challenge-v21') AND yesulin_arcade_best.bosses>0 THEN -(yesulin_arcade_best.entry->>'lastClearTime')::double precision ELSE 0 END,
+          CASE WHEN yesulin_arcade_best.rules_version IN ('challenge-v20','challenge-v21','challenge-v22') AND yesulin_arcade_best.bosses>0 THEN -(yesulin_arcade_best.entry->>'lastClearTime')::double precision ELSE 0 END,
           yesulin_arcade_best.score,yesulin_arcade_best.max_combo)
           AND (EXCLUDED.created_at,EXCLUDED.run_id) <
             (yesulin_arcade_best.created_at,yesulin_arcade_best.run_id))
@@ -99,7 +99,7 @@ export function createLeaderboardStore(databaseUrl, {sql: suppliedSql} = {}) {
       const rows = await sql.query(`SELECT entry FROM yesulin_arcade_best
         WHERE scope=$1 AND rules_version=$2
         ORDER BY bosses DESC,
-          CASE WHEN rules_version IN ('challenge-v20','challenge-v21') AND bosses>0 THEN (entry->>'lastClearTime')::double precision ELSE NULL END ASC NULLS LAST,
+          CASE WHEN rules_version IN ('challenge-v20','challenge-v21','challenge-v22') AND bosses>0 THEN (entry->>'lastClearTime')::double precision ELSE NULL END ASC NULLS LAST,
           score DESC,max_combo DESC,created_at ASC,run_id ASC`, [scope,rulesVersion]);
       return rows.map(row => row.entry);
     }

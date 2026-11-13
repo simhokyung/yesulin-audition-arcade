@@ -145,12 +145,12 @@ for (const bossId of ['ignis','mime']) {
   });
 }
 
-function audioHarness(t, {holdSources=false}={}) {
+function audioHarness(t, {holdSources=false,scheduledSources=false}={}) {
   const starts=[],sourceNodes=[],shapers=[],panners=[];
   const param=()=>({value:0,cancelScheduledValues(){},setTargetAtTime(...xs){xs.forEach(x=>assert(Number.isFinite(x)));},
     setValueAtTime(...xs){xs.forEach(x=>assert(Number.isFinite(x)));},exponentialRampToValueAtTime(...xs){xs.forEach(x=>assert(Number.isFinite(x)));}});
   const node=()=>({connect(n){return n;},disconnect(){},gain:param(),frequency:param(),Q:param(),threshold:param(),knee:param(),ratio:param(),attack:param(),release:param(),
-    start(time){starts.push(time);assert(Number.isFinite(time));},stop(time){if(!holdSources||time===undefined)this.onended?.();}});
+    start(time){starts.push(time);assert(Number.isFinite(time));},stop(time){if(scheduledSources&&Number.isFinite(time))this.stopAt=time;else if(!holdSources||time===undefined)this.onended?.();}});
   const previousContext=Object.getOwnPropertyDescriptor(globalThis,'AudioContext');
   t.after(()=>{if(previousContext)Object.defineProperty(globalThis,'AudioContext',previousContext);else delete globalThis.AudioContext;});
   globalThis.AudioContext=class {
@@ -162,7 +162,8 @@ function audioHarness(t, {holdSources=false}={}) {
     createBuffer(_,n){const values=new Float32Array(n);return {getChannelData:()=>values};}async close(){this.state='closed';}
   };
   const audio=new GameAudio();audio.setDomainTracks({});t.after(()=>audio.destroy());
-  return {audio,starts,sourceNodes,shapers,panners};
+  const advance=seconds=>{audio.context.currentTime+=seconds;for(const source of sourceNodes)if(!source._gameAudioEnded&&source.stopAt<=audio.context.currentTime)source.onended?.();};
+  return {audio,starts,sourceNodes,shapers,panners,advance};
 }
 
 test('new boss attack sounds use hazard kinds, with a distinct harmless feint cue', async t => {
@@ -710,4 +711,25 @@ test('combat score remains continuous through intro and important warnings duck 
  audio.context.currentTime+=.5;audio.update(s,.5);assert.equal(audio.musicLevel,.9);assert(audio.combatMusic.step>beat);
  s.cinematic={id:++s.uid,kind:'bossIntro',remaining:1,duration:3,bossId:'sukuna'};audio.update(s,1/60);assert.equal(audio.musicLevel,.09);assert(audio.combatMusic.playing);s.cinematic=null;audio.context.currentTime+=4;audio.update(s,1/60);assert.equal(audio.musicLevel,.9);
  assert(audio.combatMusic.voices.size<=40);audio.pause(true);assert.equal(audio.combatMusic.voices.size,0);audio.pause(false);audio.context.currentTime+=.1;audio.update(s,.1);assert(audio.combatMusic.playing);s.status='gameover';audio.update(s,1/60);assert(!audio.combatMusic.playing);assert.equal(audio.combatMusic.voices.size,0);
+});
+
+
+test('Moving real W interrupt and R continuation notices each sound once and never fabricate hits',()=>{
+ const s=createGame({stage:4,character:'director',skipIntro:true}),audio=new GameAudio(),heard=[];audio.cue=(name,meta={})=>heard.push({name,...meta});audio.update(s,1/60);s.player.hp=s.player.maxHp=9999;s.boss.patternIndex=9;s.boss.patternCooldown=0;s.player.x=620;s.player.y=482;s.boss.x=800;s.boss.y=482;step(s);while(s.boss.telegraph.remaining>.25){step(s);audio.update(s,1/60);}step(s,{skill:true});audio.update(s,1/60);audio.update(s,1/60);assert.equal(heard.filter(e=>e.name==='final-interrupt').length,1);assert.equal(heard.filter(e=>e.kind==='interrupt'&&e.name==='hit').length,0);
+ for(let i=0;i<2;i++){for(let n=0;n<15;n++){step(s,{});audio.update(s,1/60);}s.player.hype=100;s.player.cooldowns.ultimate=0;s.player.attackSequence=null;step(s,{ultimate:true});assert.equal(s.cinematic?.kind,'playerUltimate');audio.update(s,1/60);while(s.cinematic){step(s);audio.update(s,1/60);}audio.update(s,1/60);}assert.equal(heard.filter(e=>e.name==='final-resume').length,2,'each R is a distinct real notice even without a shot id');audio.destroy();
+});
+
+test('Moving pressure phase cue occurs once on phase transition, with finite restrained envelopes',async t=>{
+ const {audio,starts}=audioHarness(t);await audio.setEnabled(true);const s=createGame({stage:4,skipIntro:true});audio.update(s,1/60);const heard=[],cue=audio.cue.bind(audio);audio.cue=(name,meta={})=>{heard.push(name);cue(name,meta);};s.boss.hp=s.boss.maxHp*.4;step(s);audio.update(s,1/60);audio.update(s,1/60);assert.equal(heard.filter(x=>x==='final-pressure').length,1);for(const [i,name]of ['final-interrupt','final-resume','final-pressure'].entries())audio.cue(name,{eventId:22000+i});assert(starts.length>0);assert(audio.sources.size<=96);
+});
+
+test('dense Moving sequences keep every real lock and release audible below the shared source cap',async t=>{
+ const {audio,advance}=audioHarness(t,{scheduledSources:true});await audio.setEnabled(true);let peakSources=0,peakMusic=0,droppedVoices=0,peakCues=0;const runs=[];
+ for(const key of ['_note','_noise']){const play=audio[key].bind(audio);audio[key]=(...args)=>{const source=play(...args);if(!source)droppedVoices++;peakSources=Math.max(peakSources,audio.sources.size);return source;};}
+ const cue=audio.cue.bind(audio),heard=[];audio.cue=(name,meta={})=>{const before=audio.context.currentTime,created=audio.sources.size;cue(name,meta);if(meta.type==='finalShot')heard.push({name,...meta,time:before,voices:audio.sources.size-created});};
+ for(const index of [7,8,9,3]){audio.reset();heard.length=0;const s=createGame({stage:4,skipIntro:true});s.player.hp=s.player.maxHp=9999;s.boss.hp=s.boss.maxHp*.4;s.boss.patternIndex=index;s.boss.patternCooldown=0;audio.update(s,1/60);const events=new Map();let began=false;
+  for(let f=0;f<1600;f++){const h=s.hazards.find(h=>h.domainType==='last-cut'),g=h?getDomainGuide(s,h):null;step(s,g?{left:g.target.x<s.player.x-3,right:g.target.x>s.player.x+3,up:g.target.y<s.player.y-3,down:g.target.y>s.player.y+3}:{},1/60);if(s.boss.attacks)s.boss.patternCooldown=999;const active=index===3?s.hazards.some(h=>h.domainType==='last-cut'):!!s.finalPattern;began||=active;for(const e of s.effects)if(e.type==='finalShot')events.set(e.id,e);advance(1/60);const count=heard.length;audio.update(s,1/60);peakCues=Math.max(peakCues,heard.length-count);const after=heard.length;audio.update(s,1/60);assert.equal(heard.length,after);peakMusic=Math.max(peakMusic,audio.combatMusic.voices.size);if(began&&!active)break;}
+  assert(began);const expected=[...events.values()].filter(e=>['lock','launch'].includes(e.kind)),actual=heard.filter(e=>['lock','launch'].includes(e.kind));assert.equal(actual.length,expected.length);assert(actual.every(e=>e.voices>0),'no lock or release is dropped at the source cap');assert.equal(heard.filter(e=>e.kind==='launch').length,{7:5,8:13,9:15,3:9}[index]);runs.push({pattern:index,locksAndReleases:actual.length});
+ }
+ assert.equal(droppedVoices,0);assert(peakSources<96);assert(peakMusic<=40);await audio.setEnabled(false);assert.equal(audio.sources.size,0);assert.equal(audio.combatMusic.voices.size,0);t.diagnostic(JSON.stringify({peakSources,peakMusic,peakCues,droppedVoices,runs}));
 });

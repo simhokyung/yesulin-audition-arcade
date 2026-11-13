@@ -183,7 +183,7 @@ function rankedFixture({stage,character='director',x=640,y=482,phase=1,takeoverC
 }
 
 function finalLedger(){return{seen:new Set(),shots:{},completed:{},cuts:0,ultimates:0};}
-function recordFinalEvents(s,ledger){for(const e of s.effects){if(ledger.seen.has(e.id))continue;if(e.type==='finalShot'){ledger.seen.add(e.id);if(e.kind==='launch')ledger.shots[e.patternKind]=(ledger.shots[e.patternKind]||0)+1;if(e.kind==='finish')ledger.completed[e.patternKind]=(ledger.completed[e.patternKind]||0)+1;}if(s.boss.id==='sukuna'&&e.type==='comic'&&e.text==='컷 타이밍!'){ledger.seen.add(e.id);ledger.cuts++;}if(s.boss.id==='sukuna'&&e.type==='cinematic'&&e.kind==='playerUltimate'){ledger.seen.add(e.id);ledger.ultimates++;}}}
+function recordFinalEvents(s,ledger){for(const e of s.effects){if(ledger.seen.has(e.id))continue;if(e.type==='finalShot'){ledger.seen.add(e.id);if(e.kind==='interrupt')ledger.cuts++;if(e.kind==='launch')ledger.shots[e.patternKind]=(ledger.shots[e.patternKind]||0)+1;if(e.kind==='finish')ledger.completed[e.patternKind]=(ledger.completed[e.patternKind]||0)+1;}if(s.boss.id==='sukuna'&&e.type==='comic'&&e.text==='컷 타이밍!'){ledger.seen.add(e.id);ledger.cuts++;}if(s.boss.id==='sukuna'&&e.type==='cinematic'&&e.kind==='playerUltimate'){ledger.seen.add(e.id);ledger.ultimates++;}}}
 function finalSummary(ledger){return{launched:{...ledger.shots},completed:{...ledger.completed},precisionCuts:ledger.cuts,ultimates:ledger.ultimates};}
 
 // This is a fresh single-boss ranked setup, not the legacy story runner. No HP,

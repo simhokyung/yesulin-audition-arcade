@@ -1,21 +1,21 @@
 import {createHash,randomBytes,timingSafeEqual} from 'node:crypto';
-import {createEntry,getIndividualBoard,compareEntries,normalizeIdentity,RANKING_RULES_VERSION} from '../ranking.js';
+import {createEntry,getIndividualBoard,compareEntries,normalizeIdentity,RANKING_RULES_VERSION,RANKING_SEASON} from '../ranking.js';
 import {BOSSES} from '../engine.js';
 
 const MAX_BODY=8192,SESSION_SECONDS=6*60*60;
 const LEGACY_RULES=['challenge-v18','challenge-v19'];
-const TIME_RULES=['challenge-v20','challenge-v21'];
+const TIME_RULES=['challenge-v20','challenge-v21','challenge-v22'];
 function rulesOf(value,{legacyDefault=false}={}){if(value===undefined&&legacyDefault)return LEGACY_RULES[0];if(LEGACY_RULES.includes(value)||TIME_RULES.includes(value))return value;fail(400,'지원하지 않는 순위 규칙입니다.');}
 const seasonOf=rules=>Number(rules.slice('challenge-v'.length));
 const stagesOf=rules=>rules===LEGACY_RULES[0]?4:BOSSES.length;
 function seasonEntry(input,rules){
   if(input.version!==seasonOf(rules)||input.rulesVersion!==rules)throw new TypeError('기록 시즌이 올바르지 않습니다.');
   if(input.bosses>stagesOf(rules))throw new TypeError('통과한 오디션 수를 확인해 주세요.');
-  if(TIME_RULES.includes(rules))return {...createEntry({...input,version:21,rulesVersion:RANKING_RULES_VERSION}),version:seasonOf(rules),rulesVersion:rules};
+  if(TIME_RULES.includes(rules))return {...createEntry({...input,version:RANKING_SEASON,rulesVersion:RANKING_RULES_VERSION}),version:seasonOf(rules),rulesVersion:rules};
   // Validate old statistics through the current schema, without adding a time
   // rank to those historical seasons or changing their returned record shape.
   const {lastClearTime,stageClearTimes,...old}=input;
-  const {lastClearTime:ignored,stageClearTimes:ignoredTimes,...entry}=createEntry({...old,version:21,rulesVersion:RANKING_RULES_VERSION,lastClearTime:old.bosses>0?old.runTime:null});
+  const {lastClearTime:ignored,stageClearTimes:ignoredTimes,...entry}=createEntry({...old,version:RANKING_SEASON,rulesVersion:RANKING_RULES_VERSION,lastClearTime:old.bosses>0?old.runTime:null});
   return{...entry,version:seasonOf(rules),rulesVersion:rules};
 }
 function legacyCompare(a,b){return b.bosses-a.bosses||b.score-a.score||b.maxCombo-a.maxCombo||a.createdAt.localeCompare(b.createdAt)||a.runId.localeCompare(b.runId);}

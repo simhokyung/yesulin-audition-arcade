@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGame,step,getDomainGuide} from './engine.js';
 import {getFinalPatternGuide,finalWallParts} from './final-patterns.js';
-import {finalPatternGuide,drawFinalFloor,drawFinalWarnings,drawFinalProjectile,drawFinalPresence,finalPoseState,drawFinalTakeoverFloor,drawFinalTakeoverGuides,finalTakeoverInstruction,drawFinalTakeoverMap} from './final-vfx.js';
+import {finalPatternGuide,drawFinalFloor,drawFinalWarnings,drawFinalProjectile,drawFinalPresence,finalPoseState,finalSequenceStatus,drawFinalStatus,drawFinalTakeoverFloor,drawFinalTakeoverGuides,finalTakeoverInstruction,drawFinalTakeoverMap} from './final-vfx.js';
 import {GameAudio} from './audio.js';
 function canvas(){const calls=[],texts=[],state={globalAlpha:1},stack=[];return{calls,texts,c:new Proxy(state,{set(o,k,v){if(typeof v==='number')assert(Number.isFinite(v),`${String(k)} finite`);o[k]=v;return true;},get(o,k){if(k in o)return o[k];if(k==='measureText')return s=>({width:String(s).length*8});if(k==='createLinearGradient'||k==='createRadialGradient')return()=>({addColorStop(){}});return(...args)=>{args.forEach(a=>{if(typeof a==='number')assert(Number.isFinite(a),`${String(k)} finite`)});calls.push([k,...args]);if(k==='fillText')texts.push(args[0]);if(k==='save')stack.push(o.globalAlpha);if(k==='restore')o.globalAlpha=stack.pop()??1;};}})}}
 for(const index of [7,8,9])test(`final ordinary ${index} reads actual geometry, holds locked aim, and emits real audio once`,()=>{
@@ -27,5 +27,18 @@ test('last-cut read-only guide and floor show only actual danger plus distinct p
   for(const reduced of [false,true]){const v=canvas();drawFinalTakeoverFloor(v.c,s,h,s.time,reduced);drawFinalTakeoverGuides(v.c,s,h,s.time,reduced);drawFinalTakeoverMap(v.c,s,h);assert(v.texts.includes('벽을 피하며 조준 고정 때 방향 전환'));}
   assert.equal(JSON.stringify(s),before);frames++;
  }
- assert(frames>100&&locked&&active&&warning);assert.equal(heard.filter(e=>e.kind==='phase').length,[...events.values()].filter(e=>e.kind==='phase').length);assert.equal(heard.filter(e=>e.kind==='phase').length,3);assert.equal(heard.filter(e=>e.kind==='launch'&&e.type==='finalShot').length,6);audio.destroy();
+ assert(frames>100&&locked&&active&&warning);assert.equal(heard.filter(e=>e.kind==='phase').length,[...events.values()].filter(e=>e.kind==='phase').length);assert.equal(heard.filter(e=>e.kind==='phase').length,3);assert.equal(heard.filter(e=>e.kind==='launch'&&e.type==='finalShot').length,9);audio.destroy();
+});
+
+
+test('precise W feedback reports one removed cast and real remaining casts; domain W reports delay',()=>{
+ for(const index of [7,8,9,3]){const s=createGame({stage:4,character:'director',skipIntro:true});s.boss.patternIndex=index;s.boss.patternCooldown=0;s.player.x=620;s.player.y=482;s.boss.x=800;s.boss.y=482;step(s);while(s.cinematic)step(s);while(s.boss.telegraph.remaining>.25)step(s);step(s,{skill:true});const event=s.effects.find(e=>e.type==='finalShot'&&e.kind==='interrupt');assert(event);const before=JSON.stringify(s),notice=finalSequenceStatus(s),v=canvas();assert(drawFinalStatus(v.c,s));if(index===3){assert.equal(notice.title,'무대 장악 지연');assert(!notice.title.includes('차단'));}else{assert.equal(notice.title,`1회 차단 · ${event.remainingAttacks}회 남음`);assert.equal(event.remainingAttacks,s.finalPattern.shots.filter(q=>q.phase!=='done').length);}assert.equal(JSON.stringify(s),before);}
+});
+
+test('ultimate cutscene keeps continuation guidance and exact current count after real resume',()=>{
+ const s=createGame({stage:4,character:'actor',skipIntro:true});s.boss.patternIndex=9;s.boss.patternCooldown=0;step(s);const id=s.finalPattern.attackId,total=s.finalPattern.total;s.player.hype=100;step(s,{ultimate:true});assert.equal(s.cinematic.kind,'playerUltimate');const frozen=s.finalPattern.elapsed;while(s.cinematic){step(s);assert.equal(s.finalPattern.elapsed,frozen);}const g=finalPatternGuide(s),notice=finalSequenceStatus(s);assert.equal(g.attackId,id);assert.equal(g.total,total);assert(g.sequencePersists);assert(notice.title.includes('이어집니다'));const v=canvas();assert(drawFinalStatus(v.c,s));assert(v.texts.includes('다음 예고를 확인하세요'));
+});
+
+test('new R continuation notice takes precedence over the older W notice held during its cutscene',()=>{
+ const s=createGame({stage:4,character:'director',skipIntro:true});s.boss.patternIndex=9;s.boss.patternCooldown=0;s.player.x=620;s.player.y=482;s.boss.x=800;s.boss.y=482;step(s);while(s.boss.telegraph.remaining>.25)step(s);step(s,{skill:true});assert(finalSequenceStatus(s).title.includes('1회 차단'));for(let n=0;n<15;n++)step(s);s.player.hype=100;step(s,{ultimate:true});assert.equal(s.cinematic.kind,'playerUltimate');while(s.cinematic)step(s);assert.equal(finalSequenceStatus(s).title,'공격이 다시 이어집니다');
 });

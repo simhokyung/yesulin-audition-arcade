@@ -1,6 +1,6 @@
 /** Server-confirmed leaderboard. Local records are never imported into it. */
 import {createEntry,getIndividualBoard,getPersonalStanding,normalizeIdentity,RANKING_RULES_VERSION} from './ranking.js';
-export const PENDING_KEY='yesulin-ranking-pending-v21';
+export const PENDING_KEY='yesulin-ranking-pending-v22';
 const eligible=e=>e.mode==='challenge'&&e.difficulty==='standard'&&e.duration===0&&['clear','defeat','domain'].includes(e.endReason);
 const storageOrNull=()=>{try{return globalThis.localStorage||null}catch{return null}};
 const validNonce=n=>typeof n==='string'&&/^[A-Za-z0-9-]{32,128}$/.test(n);

@@ -18,9 +18,9 @@ function run(s,{dt=1/60,policy='walk',reaction=.35,observe=()=>{}}={}){
 
 test('personal skills extend all previous pattern lists with distinct ordinary audition techniques',()=>{
  assert.deepEqual(LEGACY.map(b=>b.patterns[6]),['빨뚜 통째로, 액션!','끝까지 캐스팅','자리해야지~','원테이크, 따라와']);
- assert.deepEqual(LEGACY.map(b=>b.patterns.length),[7,7,7,10]);assert.deepEqual(LEGACY.map(b=>[b.hp,b.damage]),[[4100,18],[5800,26],[8800,38],[10100,50]]);
+ assert.deepEqual(LEGACY.map(b=>b.patterns.length),[7,7,7,10]);assert.deepEqual(LEGACY.map(b=>[b.hp,b.damage]),[[4100,18],[5800,26],[8800,38],[13300,50]]);
  for(const c of Object.values(CHARACTERS))assert.equal(c.hp,260);
- for(const id of ids){assert.equal(rankedPatternAt(id,0),id==='sukuna'?7:6);const seen=new Set(Array.from({length:11},(_,turn)=>rankedPatternAt(id,turn)));assert.deepEqual([...seen].sort(),id==='sukuna'?[0,1,2,3,4,5,6,7,8,9]:[0,1,2,3,4,5,6]);assert.equal(patternTurnFor(id,3),['ignis','mime'].includes(id)?4:1);}
+ for(const id of ids){assert.equal(rankedPatternAt(id,0),id==='sukuna'?7:6);const seen=new Set(Array.from({length:14},(_,turn)=>rankedPatternAt(id,turn)));assert.deepEqual([...seen].sort(),id==='sukuna'?[0,1,2,3,4,5,6,7,8,9]:[0,1,2,3,4,5,6]);assert.equal(patternTurnFor(id,3),['ignis','mime'].includes(id)?4:1);}
 });
 
 test('ignoring each personal attack takes ordinary damage at 30 and 60 Hz, never domain instant death',()=>{
@@ -92,8 +92,8 @@ test('remaining caps, reservations, dashes and aftercuts prevent any next skill 
 
 test('ultimate, precise director CUT, stage change and defeat clean up the complete personal sequence',()=>{
  for(let stage=0;stage<4;stage++){
-  const ultimate=fixture(stage);ultimate.player.hype=100;step(ultimate,{ultimate:true});assert.equal(ultimate.personality,null);assert.equal(ultimate.boss.personalityMotion,null);assert.equal(ultimate.hazards.length,0);assert.equal(ultimate.projectiles.length,0);
-  const cut=fixture(stage);while(cut.boss.telegraph.remaining>.25)step(cut,walk(cut,getPersonalityGuide(cut).target));cut.player.x=cut.boss.x-60;cut.player.y=cut.boss.y;step(cut,{skill:true});assert.equal(cut.personality,null);assert.equal(cut.boss.telegraph,null);assert.equal(cut.player.timingGrade,'CUT!');
+  const ultimate=fixture(stage);ultimate.player.hype=100;step(ultimate,{ultimate:true});if(stage===3){assert(ultimate.personality);assert.equal(ultimate.cinematic.kind,'playerUltimate');}else{assert.equal(ultimate.personality,null);assert.equal(ultimate.boss.personalityMotion,null);assert.equal(ultimate.hazards.length,0);assert.equal(ultimate.projectiles.length,0);}
+  const cut=fixture(stage);while(cut.boss.telegraph.remaining>.25)step(cut,walk(cut,getPersonalityGuide(cut).target));cut.player.x=cut.boss.x-60;cut.player.y=cut.boss.y;step(cut,{skill:true});if(stage===3){assert(cut.personality);assert.equal(cut.personality.shots.filter(q=>q.cancelled).length,1);}else assert.equal(cut.personality,null);assert.equal(cut.boss.telegraph,null);assert.equal(cut.player.timingGrade,'CUT!');
   const fresh=fixture(stage);startStage(fresh,BOSSES.findIndex(b=>b.id===ids[stage]),{retry:true});assert.equal(fresh.personality,null);assert.equal(fresh.hazards.length,0);assert.equal(fresh.projectiles.length,0);
   const dead=fixture(stage);dead.boss.hp=0;step(dead);assert.equal(dead.personality,null);assert.equal(dead.projectiles.length,0);assert.equal(dead.hazards.length,0);
  }
@@ -124,13 +124,13 @@ test('seat guide uses active hazard state on the exact activation frame',()=>{
 });
 
 test('cancelling a charge at an arena edge preserves a smooth return instead of snapping into the old boss box',()=>{
- for(const stage of [1,3]){const s=fixture(stage);while(s.personality.shots[0].phase!=='active')step(s);const q=s.personality.shots[0];q.path[1]={x:76,y:340};q.dashDuration=q.dashElapsed+.0001;s.player.x=1204;s.player.y=624;step(s);assert.equal(s.boss.x,76);assert.equal(s.boss.y,340);s.player.hype=100;step(s,{ultimate:true});assert.equal(s.personality,null);assert.equal(s.boss.personalReturn,true);s.cinematic=null;s.pendingUltimate=false;s.player.attackSequence=null;s.hitStop=0;const origin={x:s.boss.x,y:s.boss.y};step(s);assert(Math.hypot(s.boss.x-origin.x,s.boss.y-origin.y)<20);}
+ for(const stage of [1]){const s=fixture(stage);while(s.personality.shots[0].phase!=='active')step(s);const q=s.personality.shots[0];q.path[1]={x:76,y:340};q.dashDuration=q.dashElapsed+.0001;s.player.x=1204;s.player.y=624;step(s);assert.equal(s.boss.x,76);assert.equal(s.boss.y,340);s.player.hype=100;step(s,{ultimate:true});assert.equal(s.personality,null);assert.equal(s.boss.personalReturn,true);s.cinematic=null;s.pendingUltimate=false;s.player.attackSequence=null;s.hitStop=0;const origin={x:s.boss.x,y:s.boss.y};step(s);assert(Math.hypot(s.boss.x-origin.x,s.boss.y-origin.y)<20);}
 });
 
 test('an actual fatal personal hit and a late ultimate remove every pending shot and cannot relaunch afterward',()=>{
  for(let stage=0;stage<4;stage++){
   const fatal=fixture(stage);fatal.player.hp=1;run(fatal,{policy:'still'});assert.equal(fatal.status,'gameover');assert.equal(fatal.stats.personalityHits[ids[stage]],1);assert(fatal.effects.some(e=>e.type==='personalityShot'&&e.kind==='hit'));assert.equal(fatal.personality,null);assert.equal(fatal.hazards.length,0);assert.equal(fatal.projectiles.length,0);const launches=fatal.stats.personalityShots[ids[stage]],time=fatal.time;for(let i=0;i<120;i++)step(fatal);assert.equal(fatal.time,time);assert.equal(fatal.stats.personalityShots[ids[stage]],launches);
-  const late=fixture(stage);while(late.personality.shots[0].phase!=='active')step(late,walk(late,getPersonalityGuide(late).target));late.player.hype=100;step(late,{ultimate:true});assert.equal(late.personality,null);assert.equal(late.hazards.length,0);assert.equal(late.projectiles.length,0);assert.equal(late.boss.personalityMotion,null);
+  const late=fixture(stage);while(late.personality.shots[0].phase!=='active')step(late,walk(late,getPersonalityGuide(late).target));late.player.hype=100;step(late,{ultimate:true});if(stage===3){assert(late.personality);assert.equal(late.cinematic.kind,'playerUltimate');}else{assert.equal(late.personality,null);assert.equal(late.hazards.length,0);assert.equal(late.projectiles.length,0);assert.equal(late.boss.personalityMotion,null);}
  }
 });
 

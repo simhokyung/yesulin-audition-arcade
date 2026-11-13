@@ -11,7 +11,7 @@ import { pursuitVolleyLabel } from './pursuit-vfx.js';
 import { isNormalPattern, normalPatternGuide, drawNormalPatternFloor, drawNormalPatternWarnings, drawEnemyProjectile } from './normal-pattern-vfx.js';
 import { isPersonalityPattern, personalityPatternGuide, personalityPoseState, drawPersonalityFloor, drawPersonalityWarnings, drawPersonalityProjectile, drawPersonalityPresence, drawPersonalitySpeech } from './personality-vfx.js';
 import { isMaxHazard, maxPatternGuide, maxPoseState, drawMaxFloor, drawMaxWarnings, drawMaxProjectile } from './max-vfx.js';
-import { finalPatternGuide, finalPoseState, drawFinalFloor, drawFinalWarnings, drawFinalProjectile, drawFinalPresence, drawFinalSpeech } from './final-vfx.js';
+import { finalPatternGuide, finalPoseState, drawFinalFloor, drawFinalWarnings, drawFinalProjectile, drawFinalPresence, drawFinalSpeech, drawFinalStatus } from './final-vfx.js';
 import {formatRunTime} from './ranking.js';
 const TAU=Math.PI*2;
 const SAFE_MINT='#79ffe0';
@@ -100,7 +100,7 @@ function drawDomainInstruction(c,s,h){
   if(s.cinematic&&s.cinematic.kind!=='playerUltimate')return;
   const v=takeoverInstruction(s,h),safe=typeof v.targetReached==='boolean'?v.targetReached:v.insideSafe,remaining=v.remaining,progress=Number.isFinite(v.progress)?v.progress:clamp(1-remaining/v.duration,0,1),color=v.statusColor||(safe?SAFE_MINT:'#ffd39a');
   rect(c,276,121,728,113,'#071e27fa',7);rect(c,276,121,5,113,color,2);
-  textWithin(c,`${h.name||'무대 장악'}${h.variantName&&!['chasing-slashes','memory-archive','last-cut'].includes(h.domainType)?` · ${h.variantName}`:''}${h.domainType==='chasing-slashes'?` · ${pursuitVolleyLabel(h,v)}`:v.count>1?` · ${v.phase}/${v.count}`:''}`,298,142,540,12,'#d2e4e1',700);
+  textWithin(c,`${h.name||'무대 장악'}${h.variantName&&!['chasing-slashes','memory-archive','last-cut'].includes(h.domainType)?` · ${h.variantName}`:''}${h.domainType==='chasing-slashes'?` · ${pursuitVolleyLabel(h,v)}`:v.count>1?` · ${v.phase}/${v.count}${h.domainType==='last-cut'?'단계':''}`:''}`,298,142,540,12,'#d2e4e1',700);
   textWithin(c,v.title,298,174,540,24,color,900);
   textWithin(c,v.tip,298,201,540,14,'#d7eee8',700);
   text(c,v.timerLabel,982,145,13,color,800,'right');
@@ -141,7 +141,7 @@ function drawHUD(c,s,reduced=false){
   if(hp<=.3)text(c,'회피 우선',344,70,14,'#ffc4b9',900,'right');
   rect(c,43,85,301,12,'#3d4c4b',3);rect(c,43,85,301*hp,12,healthColor,3);
   rect(c,380,18,876,94,'#10232aee',7);rect(c,380,18,4,94,b.color,2);
-  text(c,'현재 상대',400,40,11,'#bfcdc9',700);text(c,BOSS_VISUALS[b.id]?.name||b.name,480,43,25,'#fff0da',900);
+  text(c,'현재 상대',400,40,11,'#bfcdc9',700);if(b.id==='sukuna'&&b.phase>=2){rect(c,630,26,100,24,'#733344b0',4);text(c,'후반 압박',680,43,13,'#ffe1ae',900,'center');}text(c,BOSS_VISUALS[b.id]?.name||b.name,480,43,25,'#fff0da',900);
   text(c,b.active?`남은 체력 ${Math.ceil(bossHp*100)}%`:'심사 대기',1236,43,21,b.color,900,'right');
   rect(c,400,58,836,17,'#494449',4);rect(c,400,58,836*bossHp,17,b.color,4);
   text(c,s.mode==='practice'?`최대 콤보 ${s.maxCombo||0}회`:`진행 ${formatRunTime(s.runTime)} · ${s.stats.bossKills||0}/5 통과`,400,99,11,'#a8bcb5',700);
@@ -247,7 +247,7 @@ export class Renderer {
    drawJudgePatternGuides(c,s,t,reduced);
    drawNormalPatternWarnings(c,s,t,reduced);
    drawPersonalityWarnings(c,s,t,reduced);drawMaxWarnings(c,s,t,reduced);drawFinalWarnings(c,s,t,reduced);
-   if(!domainHazard(s))drawPrecision(c,s,reduced);drawHUD(c,s,reduced);
+   if(!domainHazard(s))drawPrecision(c,s,reduced);drawHUD(c,s,reduced);drawFinalStatus(c,s);
    const bossSpeaking=drawFinalSpeech(c,s)||drawPersonalitySpeech(c,s);
    if(!bossSpeaking&&!s.cinematic&&!domainHazard(s)&&!s.projectiles.some(q=>q.owner==='enemy')){const speech=s.effects.filter(e=>e.type==='dialogue').at(-1);if(speech){const layout=dialogueLayout(c,s,speech);if(layout)drawDialogueBox(c,speech,{state:s,layout});}}
   }

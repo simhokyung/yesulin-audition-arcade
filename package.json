@@ -1,6 +1,6 @@
 {
   "name": "yesulin-directors-cut",
-  "version": "21.0.0",
+  "version": "22.0.0",
   "type": "module",
   "private": true,
   "scripts": {
@@ -14,7 +14,8 @@
     "balance:max": "node max-balance.mjs",
     "balance:v20": "node v20-balance.mjs --seeds=30",
     "balance:final": "node final-balance.mjs",
-    "balance:v21": "node v21-balance.mjs --seeds=30"
+    "balance:v21": "node v21-balance.mjs --seeds=30",
+    "balance:v22": "node v22-balance.mjs --seeds=30"
   },
   "dependencies": {
     "@neondatabase/serverless": "1.1.0"

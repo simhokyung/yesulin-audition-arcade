@@ -393,6 +393,15 @@ export class GameAudio {
     } else if (name === 'final-dash') {
       noise(t,.16,.06,3500,'highpass');note(1046.5,0,.15,.03,'sine',261.63);
       note(98,.008,.12,.035,'triangle',49);
+    } else if (name === 'final-interrupt') {
+      // One real cast is cut; a restrained rising answer warns that the sequence continues.
+      noise(t,.032,.045,3100,'highpass');note(1174.66,0,.07,.034,'sine',880);
+      note(659.25,.07,.14,.025,'triangle',783.99);this._duck(.28);
+    } else if (name === 'final-resume') {
+      note(440,0,.14,.027,'triangle',523.25);note(659.25,.09,.18,.027,'sine',783.99);this._duck(.38);
+    } else if (name === 'final-pressure') {
+      swell(98,0,.38,.052,'triangle',146.83);note(392,.05,.22,.032,'sine',466.16);
+      noise(t,.12,.023,1300,'bandpass');this._duck(.45);
     } else if (name === 'final-finish') {
       noise(t,.13,.025,1800,'bandpass');note(130.81,0,.2,.035,'triangle',65.41);
       note(523.25,.035,.16,.022,'sine',392);
@@ -528,7 +537,7 @@ export class GameAudio {
       if(newState)this.lastEffectId=0;
       const now={skills:stats.skills||0,buffs:stats.buffs||0,dodges:stats.dodges||0,ultimates:stats.ultimates||0,
         damage:stats.damageTaken||0,justHits:stats.justHits||0,justDodges:stats.justDodges||0,kills:stats.kills||0,
-        active:!!b?.active,cueMarks:b?.cueMarks||0,status:state.status,character:p.character,fever:Number(state.fever)>0||state.fever===true,
+        active:!!b?.active,bossPhase:b?.phase||1,cueMarks:b?.cueMarks||0,status:state.status,character:p.character,fever:Number(state.fever)>0||state.fever===true,
         cinematic:cinematic?.id||0,activeHazard:Math.max(0,...(state.hazards||[]).filter(h=>h.active).map(h=>h.id)),
         activeKind:[...(state.hazards||[])].filter(h=>h.active).sort((a,b)=>b.id-a.id)[0]?.kind};
       const incoming=effects.filter(e=>e.id>this.lastEffectId).sort((a,b)=>a.id-b.id);
@@ -604,8 +613,8 @@ export class GameAudio {
           this.cue(name,{...e,eventId:e.id,pan:Math.max(-.62,Math.min(.62,(origin-640)/800)),audioDelay:Math.min(.06,i*.008)});
         }
         for(const [i,e] of incoming.filter(e=>e.type==='finalShot').slice(0,16).entries()){
-          const name=e.kind==='tracking'?(e.patternKind==='retake'?'final-record':'final-track'):e.kind==='lock'?'final-lock':e.kind==='finish'?'final-finish':e.kind==='phase'?'final-cross':e.kind==='launch'?(e.shotKind==='final-dash'?'final-dash':e.shotKind==='final-projectile'?'final-release':e.shotKind==='final-trail'||e.patternKind==='retake'?'final-replay':e.patternKind==='cross-edit'?'final-cross':'final-release'):null;
-          if(!name)continue;const key=`${state.stage}:${e.attackId}:${e.shotId??e.index}:${e.index}:${e.kind}`;if(this.finalCueKeys.has(key))continue;
+          const name=e.kind==='resume-warning'?'final-resume':e.kind==='interrupt'?'final-interrupt':e.kind==='tracking'?(e.patternKind==='retake'?'final-record':'final-track'):e.kind==='lock'?'final-lock':e.kind==='finish'?'final-finish':e.kind==='phase'?'final-cross':e.kind==='launch'?(e.shotKind==='final-dash'?'final-dash':e.shotKind==='final-projectile'?'final-release':e.shotKind==='final-trail'||e.patternKind==='retake'?'final-replay':e.patternKind==='cross-edit'?'final-cross':'final-release'):null;
+          if(!name)continue;const key=`${state.stage}:${e.attackId}:${e.shotId??e.index??e.id}:${e.index}:${e.kind}`;if(this.finalCueKeys.has(key))continue;
           this.finalCueKeys.add(key);if(this.finalCueKeys.size>384)this.finalCueKeys.delete(this.finalCueKeys.values().next().value);
           const x=e.origin?.x??e.originX??e.x??640;this.cue(name,{...e,eventId:e.id,pan:Math.max(-.62,Math.min(.62,(x-640)/800)),audioDelay:Math.min(.07,i*.009)});
         }
@@ -637,6 +646,7 @@ export class GameAudio {
         const domain=incoming.find(e=>e.type==='domaincut'&&!e.fatal&&(state.hazards||[]).some(h=>h.kind==='domain'));
         if(domain)this.cue(b?.id==='gojo'?'void':b?.id==='sukuna'?'shrine':'domain',{bossId:b?.id,eventId:domain.id});
         if(now.activeHazard>old.activeHazard){const cue={blue:'blue',red:'red',purple:'purple',slash:'slash',cleave:'slash','fire-arrow':'fire','fire-burst':'fire',footlight:'ignite','light-sweep':'light-sweep','spark-spot':'spark','ribbon-thrust':'ribbon','ribbon-cross':'ribbon','mask-feint':'feint','mask-slam':'mask','replay':'pattern-replay','encore-slash':'slash','encore-finisher':'pursuit-release'}[now.activeKind];if(cue)this.cue(cue);}
+        if(b?.id==='sukuna'&&now.bossPhase>old.bossPhase)this.cue('final-pressure',{phase:now.bossPhase});
         if(now.fever&&!old.fever)this.cue('fever');
         if(now.justHits>old.justHits||now.justDodges>old.justDodges)this.cue('perfect');
         if(now.kills>old.kills)this.cue('cheer');
