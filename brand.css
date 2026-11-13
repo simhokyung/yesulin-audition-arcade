@@ -1,0 +1,21 @@
+/* Preserve the official full-color wordmark on a light, readable surface. */
+.brand-logo-surface{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;padding:7px 11px;border-radius:9px;background:#f0f1e6;border:1px solid #f9faef30;line-height:0}
+.yesulin-wordmark{display:block;width:114px;height:auto;max-width:100%;object-fit:contain;aspect-ratio:707/320}
+.site-header .brand-official{gap:12px;text-decoration:none;flex-shrink:0}
+.site-header .brand-official .arcade-label{display:block;margin:0;color:#b8c2a9;font:600 8px/1.7 var(--font);letter-spacing:2px}
+.brand-official:focus-visible{outline:2px solid var(--lime);outline-offset:6px;border-radius:8px}
+.footer-brand.brand-official{display:flex;align-items:center;gap:10px}
+.footer-brand .brand-logo-surface{padding:4px 8px;border-radius:6px}
+.footer-brand .yesulin-wordmark{width:78px}
+.footer-brand.brand-official b{margin:0}
+#result-overlay .result-service .brand-logo-surface{padding:4px 8px;border-radius:6px}
+#result-overlay .result-service .yesulin-wordmark{width:76px}
+@media(max-width:650px){
+ .site-header .brand-official{gap:8px}
+ .site-header .brand-logo-surface{padding:5px 8px;border-radius:7px}
+ .site-header .yesulin-wordmark{width:88px}
+ .site-header .brand-official .arcade-label{font-size:6px;letter-spacing:1.4px}
+ .footer-brand.brand-official{gap:7px}
+ .footer-brand .yesulin-wordmark{width:62px}
+ #result-overlay .result-service .yesulin-wordmark{width:68px}
+}

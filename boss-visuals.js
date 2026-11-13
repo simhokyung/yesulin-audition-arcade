@@ -1,10 +1,10 @@
 import { getPatternGuide } from './engine.js';
 /** Original audition judges and their practical stage effects. Internal IDs preserve combat compatibility. */
 export const BOSS_VISUALS={
- ignis:{audition:'1차 오디션',name:'이그니스',title:'첫 무대의 점화자',role:'조명감독',stage:'앰버 조명실',asset:'ignis',color:'#ffc979',deep:'#261c28',wall:'#52464c',cloth:'#613d32',takeover:'골든 아워',quote:'박자는 늦어도 좋아. 조명은 놓치지 마.'},
- mime:{audition:'2차 오디션',name:'미메',title:'배역을 뒤트는 심사위원',role:'가면연출가',stage:'가면 의상실',asset:'mime',color:'#8be9c6',deep:'#1e2030',wall:'#494253',cloth:'#503147',takeover:'페르소나 극장',quote:'가면을 보지 말고, 진짜 동작을 읽어.'},
- gojo:{audition:'3차 오디션',name:'프리즘',title:'오디션의 최강 문지기',role:'경계심사관',stage:'프레임 심사실',asset:'prism',color:'#a5dce5',deep:'#152333',wall:'#344b60',cloth:'#253d59',takeover:'무한 시사회',quote:'이 프레임 안에서, 너만의 거리를 증명해.'},
- sukuna:{audition:'최종 오디션',name:'카덴',title:'최종 심사의 지배자',role:'종막집행관',stage:'종막 대극장',asset:'caden',color:'#efb3bf',deep:'#261d2c',wall:'#593e4c',cloth:'#5a2d3e',takeover:'종막 집행',quote:'마지막 한 박자까지. 네 무대는 아직 끝나지 않았다.'},
+ ignis:{audition:'1차 오디션',name:'이그니스',title:'첫 무대의 긴장을 넘어서',role:'조명감독',stage:'앰버 조명실',asset:'ignis',color:'#ffc979',deep:'#261c28',wall:'#52464c',cloth:'#613d32',takeover:'골든 아워',quote:'조명 켰다. 긴장해도 좋아. 네 장면을 시작해.',quoteLines:['조명 켰다. 긴장해도 좋아.','네 장면을 시작해.']},
+ mime:{audition:'2차 오디션',name:'미메',title:'나만의 배역을 찾아서',role:'가면연출가',stage:'가면 의상실',asset:'mime',color:'#8be9c6',deep:'#1e2030',wall:'#494253',cloth:'#503147',takeover:'페르소나 극장',quote:'가면은 수없이 많지. 너는 어떤 장면을 보여줄 거야?',quoteLines:['가면은 수없이 많지.','너는 어떤 장면을 보여줄 거야?']},
+ gojo:{audition:'3차 오디션',name:'프리즘',title:'달라진 흐름에 응답하기',role:'경계심사관',stage:'프레임 심사실',asset:'prism',color:'#a5dce5',deep:'#152333',wall:'#344b60',cloth:'#253d59',takeover:'무한 시사회',quote:'아까 통했던 동선이, 이번에도 통할까?',quoteLines:['아까 통했던 동선이,','이번에도 통할까?']},
+ sukuna:{audition:'최종 오디션',name:'카덴',title:'마지막까지 집중을 지키기',role:'종막집행관',stage:'종막 대극장',asset:'caden',color:'#efb3bf',deep:'#261d2c',wall:'#593e4c',cloth:'#5a2d3e',takeover:'종막 집행',quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',quoteLines:['마지막 장면이다.','끝까지 네 박자를 지켜라.']},
 };
 const TAU=Math.PI*2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 function line(c,points,color,width=2){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.strokeStyle=color;c.lineWidth=width;c.lineCap='round';c.stroke()}

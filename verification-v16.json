@@ -1,0 +1,263 @@
+{
+  "release": "16.0.0",
+  "presentationRevision": 16,
+  "combatRulesVersion": 15,
+  "engineSha256": "c8fc0109b6f178129bb3809defac55a1fae445b4a4409d9d123f0c1cd711aff2",
+  "automatedTests": {
+    "command": "npm test",
+    "tests": 229,
+    "passed": 229,
+    "failed": 0
+  },
+  "ui": {
+    "version": 16,
+    "roleResults": [
+      {
+        "role": "actor",
+        "finalTitle": "최종 오디션 합격!",
+        "message": "당신의 다음 배역을 만나보세요.",
+        "nonfinalAndFailedNeverClaimFinalWin": true,
+        "practiceUnranked": true
+      },
+      {
+        "role": "director",
+        "finalTitle": "마지막 장면, 완성!",
+        "message": "다음 무대의 배우를 만나보세요.",
+        "nonfinalAndFailedNeverClaimFinalWin": true,
+        "practiceUnranked": true
+      }
+    ],
+    "nicknamePlaceholderOnly": true,
+    "rankingSeasonUnchanged": 15,
+    "officialWordmarks": 3,
+    "roleCopy": "engine skill names + director/staff and actor/role labels; numeric cooldowns retained",
+    "dialogue": "no duplicate DOM dialogue block",
+    "patternGuide": "shared actual engine guidance connected to live text",
+    "home": "roles first; challenge and boss-card practice immediate",
+    "exit": "toolbar/fullscreen share confirmation; pause/ESC/prior pause/profile/no-save teardown passed",
+    "result": "3 essentials; practice 2; one failure tip; retry/home; no removed prose blocks",
+    "ranking": "actual LocalRanking/BoothUI: two clears at 100 outranks one clear at 90,000; live gap uses clears first",
+    "labels": "1차/2차/3차/최종 오디션",
+    "staticReadyDialogRemoved": true
+  },
+  "uiSourceValidation": {
+    "release": 16,
+    "rankingSeason": 15,
+    "dom": {
+      "ids": 82,
+      "directReferences": 69,
+      "missing": [],
+      "duplicates": []
+    },
+    "localHtmlReferencesPresent": [
+      "styles.css",
+      "audition.css",
+      "encore.css",
+      "rehearsal.css",
+      "brand.css",
+      "./",
+      "assets/yesulin-wordmark.png",
+      "assets/yesulin-wordmark.png",
+      "assets/yesulin-wordmark.png",
+      "main.js"
+    ],
+    "nickname": "placeholder only; initially empty in fresh storage",
+    "home": "exact two purpose sentences, four gate meanings, short role goals",
+    "results": "both full-challenge roles, failed/partial/practice/cancel exclusions tested; three stats challenge/two practice retained",
+    "officialLogo": "three original-asset wordmarks; root-owned brand.css linked last; footer horizontal class present",
+    "browserVisualQA": false,
+    "ownedHashes": {
+      "index.html": "569b7cefa49891fa09b8d2622dcc04f44c3a08ff611fe35f58ab7327b9a812f5",
+      "main.js": "506baf4e56d87a2d9bdef98763b46b0f75846aa60e5e5b2615b7a08fcf546182",
+      "rehearsal.css": "eec49a89029a9adec0ae6822982738386958a80d296eb806f234e4b9a554ff6d"
+    },
+    "dependencies": {
+      "brandCssExists": true,
+      "logoAssetExists": true,
+      "engineSha256": "c8fc0109b6f178129bb3809defac55a1fae445b4a4409d9d123f0c1cd711aff2"
+    }
+  },
+  "canvasValidation": {
+    "frames": 3472,
+    "introFrames": 3232,
+    "introRuns": 16,
+    "reviewRuns": 16,
+    "guideSnapshots": 16,
+    "finiteCanvasCalls": 1504537,
+    "maxFrameCalls": 1169,
+    "hashes": {
+      "engine.js": "c8fc0109b6f178129bb3809defac55a1fae445b4a4409d9d123f0c1cd711aff2",
+      "boss-visuals.js": "81679571ffc797f2db2acd323e6ece396516993c0a8ff5bfb2736f4a995a350d",
+      "combat-cinematic.js": "5d615da1c1c2cc5c662847ad55b6394c3354ad7b449d7688bcbff4b772e7f7ad"
+    }
+  },
+  "combatRegression": {
+    "passed": true,
+    "presentationRevision": 16,
+    "combatRulesVersion": 15,
+    "baselineEngineSha256": "a04256306709cec54f17f54aa16d33b3b572a5b8cc507abe81d3a905c9a56f95",
+    "currentEngineSha256": "c8fc0109b6f178129bb3809defac55a1fae445b4a4409d9d123f0c1cd711aff2",
+    "allowedChangedFields": [
+      "ignis.subtitle",
+      "ignis.quote",
+      "ignis.review",
+      "mime.subtitle",
+      "mime.quote",
+      "mime.review",
+      "gojo.subtitle",
+      "gojo.quote",
+      "gojo.review",
+      "sukuna.subtitle",
+      "sukuna.quote",
+      "sukuna.review"
+    ],
+    "executableSourceOutsideBossMetadataByteIdentical": true,
+    "unchangedFiles": {
+      "simulate.mjs": "3cd0c010fe0f7068dea27de4399fe213d837a52d60e5adff781503d0edab1b89",
+      "practice.js": "d65684a1639354912565ae91d7b754404d3180e3e5718ad264cf735467b19e95",
+      "ranking.js": "1d5d7779f83cb719876fae95d5a9b202c69fe13116363141131abfd6511bae1a",
+      "challenge-balance-report.json": "3efe92c0ddacfff9416e78cdadab2af7e4bca805360219095770fc8bf7cae295"
+    },
+    "ranking": {
+      "storageKey": "yesulin-ranking-v15",
+      "rulesVersion": "challenge-v15",
+      "newSeasonCreated": false
+    },
+    "checks": {
+      "scenarios": 184,
+      "comparedFrames": 128900,
+      "guideChecks": 128170,
+      "colliderChecks": 640850,
+      "eventsCompared": 9598,
+      "impactsCompared": 964,
+      "movingBladeLaunchesCompared": 518,
+      "normalPatternScenarios": 64,
+      "domainRouteScenarios": 100,
+      "fatalOverrideScenarios": 10,
+      "fullChallengeRuns": 2,
+      "introScenarios": 8
+    },
+    "introDurations": [
+      3,
+      3.2,
+      3.4,
+      3.8
+    ],
+    "domainRoutesAllSurvived": true,
+    "fatalOverridesAllKilled": true,
+    "completedRuns": [
+      {
+        "character": "director",
+        "status": "victory",
+        "score": 30341,
+        "hp": 280,
+        "damageDealt": 14740,
+        "damageTaken": 0,
+        "runTime": 138.43333333333564,
+        "clears": 4,
+        "cooldowns": {
+          "skill": 0,
+          "buff": 0.1199999999998278,
+          "dodge": 0,
+          "role": 0,
+          "ultimate": 40.58400000000009
+        },
+        "takeovers": {
+          "lens-corridors": 2,
+          "blade-waves": 1,
+          "chasing-slashes": 1
+        }
+      },
+      {
+        "character": "actor",
+        "status": "victory",
+        "score": 33983,
+        "hp": 277,
+        "damageDealt": 14740,
+        "damageTaken": 68,
+        "runTime": 136.10000000000045,
+        "clears": 4,
+        "cooldowns": {
+          "skill": 4.8,
+          "buff": 12,
+          "dodge": 0,
+          "role": 0,
+          "ultimate": 40.3960000000001
+        },
+        "takeovers": {
+          "lens-corridors": 2,
+          "blade-waves": 1,
+          "chasing-slashes": 1
+        }
+      }
+    ],
+    "inputStreamSha256": "0251f573b644b5a79e3a3c46a1f3e657527a091290224207a211d81bc7b85a15",
+    "canonicalStateStreamSha256": "0b1a90be1329fb5746e378f1301e0cadd950c10302115ea2883b193764f02165",
+    "eventTimelineSha256": "f6e76c2a26e07a99520fa6c212592f6f7323268c70947dd4135358296b16a691",
+    "elapsedSeconds": 16.85,
+    "method": "Both engines receive exactly the same real inputs at1/60 seconds. Entire state is compared every frame; only the12 approved subtitle/quote/review strings are canonicalized, including their occurrences in intro/review text. Guide geometry, nearby colliders, launch times, events, damage, HP, cooldowns, scores and outcomes remain exact. The two expert-policy runs demonstrate preserved complete progression, not human difficulty or a replacement180-run balance study."
+  },
+  "build": {
+    "command": "npm run build",
+    "files": 38,
+    "allFilesByteIdenticalToSource": true
+  },
+  "localArtifactChecks": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "sha256": "569b7cefa49891fa09b8d2622dcc04f44c3a08ff611fe35f58ab7327b9a812f5"
+    },
+    {
+      "file": "engine.js",
+      "status": 200,
+      "sha256": "c8fc0109b6f178129bb3809defac55a1fae445b4a4409d9d123f0c1cd711aff2"
+    },
+    {
+      "file": "main.js",
+      "status": 200,
+      "sha256": "506baf4e56d87a2d9bdef98763b46b0f75846aa60e5e5b2615b7a08fcf546182"
+    },
+    {
+      "file": "brand.css",
+      "status": 200,
+      "sha256": "d3b734e079787d26fd339cd81f50baa4a843db48585b3e215830082959bfab7b"
+    },
+    {
+      "file": "rehearsal.css",
+      "status": 200,
+      "sha256": "eec49a89029a9adec0ae6822982738386958a80d296eb806f234e4b9a554ff6d"
+    },
+    {
+      "file": "assets/yesulin-wordmark.png",
+      "status": 200,
+      "sha256": "53651b4f5b8895a4c4bf6620aac785f5ba70faa30654a4367dbd179ab58e4ec5"
+    }
+  ],
+  "officialLogo": {
+    "file": "yesulin-wordmark.png",
+    "kind": "official-service-wordmark",
+    "sourcePage": "https://yesulin.art/",
+    "sourceAsset": "https://yesulin.art/images/yesulin-wordmark.png",
+    "width": 707,
+    "height": 320,
+    "sha256": "53651b4f5b8895a4c4bf6620aac785f5ba70faa30654a4367dbd179ab58e4ec5",
+    "treatment": "Original image unchanged; rendered with object-fit contain on a light CSS surface in the header, footer and results."
+  },
+  "previousBalanceReport": {
+    "file": "challenge-balance-report.json",
+    "revision": 15,
+    "runs": 180,
+    "unchanged": true,
+    "note": "Preserved baseline simulation, not rerun for v16. Exact-input regression verifies unchanged combat; simulation success is not a human win rate."
+  },
+  "browserVisualQA": false,
+  "limitations": [
+    "Source, mocked DOM and Canvas validation completed; actual browser layout and mobile touch play were not visually tested for v16."
+  ],
+  "deployment": {
+    "method": "Existing Vercel Git integration: main -> Production",
+    "publicUrl": "https://yesulin-arcade.vercel.app/",
+    "status": "Prepared for automatic deployment; final commit and production artifact verification recorded separately."
+  }
+}

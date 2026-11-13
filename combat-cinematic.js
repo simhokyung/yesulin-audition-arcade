@@ -60,9 +60,10 @@ export function drawCombatCinematic(c,s,t,reduced=false){
   else{const curtain=(1-opening)*653;for(const side of [0,1]){c.save();if(side){c.translate(1280,0);c.scale(-1,1)}c.beginPath();c.rect(0,0,curtain,720);c.clip();box(c,0,0,curtain,720,'#361c32');for(let i=0;i<15;i++)line(c,[[i*47,0],[i*47+8,720]],i%2?'#6e354d':'#1c1428',9);c.restore();}line(c,[[90,442],[1190,442]],'#d7c1c644',1);}
   const shade=c.createLinearGradient(0,400,0,720);shade.addColorStop(0,'#070f1b00');shade.addColorStop(.4,'#070f1bbd');shade.addColorStop(1,'#070f1bf5');box(c,0,400,1280,320,shade);
   box(c,0,0,1280,39,'#07101b');box(c,0,681,1280,39,'#07101b');
-  text(c,`${v.audition} · ${{ignis:'무대 점등',mime:'진짜를 읽어라',gojo:'경계를 넘어라',sukuna:'종막의 시작'}[id]||'새로운 심사'}`,640,477,13,color,900);
+  text(c,`오디션의 네 관문 · ${v.audition}`,640,477,13,color,900);
   text(c,`${v.role} ${v.name}`,640,547,54,'#fff4dd',900);text(c,v.title,640,586,21,color,800);
-  text(c,v.quote,640,632,16,'#d8e3e4',600);corners(c,640,350,1186,588,color+'83');
+  const quoteLines=(v.quoteLines||[v.quote]).slice(0,2);
+  quoteLines.forEach((quote,i)=>text(c,quote,640,quoteLines.length===1?632:620+i*25,18,'#d8e3e4',600));corners(c,640,350,1186,588,color+'83');
  }
  // Single soft reveal, never repeated screen-filling flashes.
  if(!reduced&&p>.92){c.globalAlpha=clamp((p-.92)/.08)*.22;box(c,0,0,1280,720,'#07101b');}

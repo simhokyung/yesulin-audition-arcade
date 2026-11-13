@@ -64,3 +64,11 @@
 .game-shell:fullscreen{padding-bottom:60px}
 .game-shell:fullscreen canvas{max-height:calc(100vh - 60px);max-width:calc(177.7778vh - 106.667px);width:100%;height:auto}
 .game-shell:fullscreen .fullscreen-exit:not(.hidden):not(:disabled){display:inline-flex;position:absolute;right:16px;bottom:8px;z-index:4;margin:0;min-height:44px}
+
+/* v16: a short purpose statement and two-line role goals; logo styling lives separately. */
+.entry-poster .entry-value{margin:14px 0 18px;letter-spacing:-.3px;word-break:keep-all}
+.entry-value>strong{display:block;color:#eaf1df;font-size:clamp(17px,1.6vw,21px);line-height:1.55;text-wrap:balance}
+.entry-value>span{display:block;margin-top:7px;color:#b9c7b0;font-size:clamp(12px,1vw,14px);line-height:1.65}
+.judge-art span{letter-spacing:0;line-height:1.4;word-break:keep-all}
+#cast .cast-info .cast-goal{font-size:12px;line-height:1.7;letter-spacing:-.2px;word-break:keep-all}
+@media(max-width:650px){.entry-poster .entry-value{margin:10px 0 14px}.entry-value>strong{font-size:18px}.entry-value>span{font-size:12px}#cast .cast-info .cast-goal{font-size:11px;letter-spacing:-.25px}}

@@ -1,0 +1,15 @@
+{
+  "version": 16,
+  "assets": [
+    {
+      "file": "yesulin-wordmark.png",
+      "kind": "official-service-wordmark",
+      "sourcePage": "https://yesulin.art/",
+      "sourceAsset": "https://yesulin.art/images/yesulin-wordmark.png",
+      "width": 707,
+      "height": 320,
+      "sha256": "53651b4f5b8895a4c4bf6620aac785f5ba70faa30654a4367dbd179ab58e4ec5",
+      "treatment": "Original image unchanged; rendered with object-fit contain on a light CSS surface in the header, footer and results."
+    }
+  ]
+}
