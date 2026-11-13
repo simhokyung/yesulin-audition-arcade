@@ -11,6 +11,7 @@ import { pursuitVolleyLabel } from './pursuit-vfx.js';
 import { isNormalPattern, normalPatternGuide, drawNormalPatternFloor, drawNormalPatternWarnings, drawEnemyProjectile } from './normal-pattern-vfx.js';
 import { isPersonalityPattern, personalityPatternGuide, personalityPoseState, drawPersonalityFloor, drawPersonalityWarnings, drawPersonalityProjectile, drawPersonalityPresence, drawPersonalitySpeech } from './personality-vfx.js';
 import { isMaxHazard, maxPatternGuide, maxPoseState, drawMaxFloor, drawMaxWarnings, drawMaxProjectile } from './max-vfx.js';
+import {formatRunTime} from './ranking.js';
 const TAU=Math.PI*2;
 const SAFE_MINT='#79ffe0';
 const domainHazard=s=>s.hazards.find(h=>h.kind==='domain'&&h.type==='safezone');
@@ -104,10 +105,14 @@ function drawDomainInstruction(c,s,h){
   text(c,v.timerLabel,982,145,13,color,800,'right');
   text(c,`${(Math.ceil(remaining*10-1e-9)/10).toFixed(1)}초`,984,192,39,'#f3fff5',900,'right');
   rect(c,298,216,683,7,'#345052',3);rect(c,298,216,683*progress,7,color,3);
+  const recovering=(s.domainHitCooldown||0)>0;
+  rect(c,276,239,728,31,recovering?'#51252aef':'#1c2832eb',5);
+  text(c,recovering?'피격! 지금 위험 구역을 벗어나세요':'무대 장악에 맞으면 최대 체력 40% 감소',298,260,15,recovering?'#ffe4d9':'#f6c9a6',800);
+  if(recovering)text(c,`재피격까지 ${s.domainHitCooldown.toFixed(1)}초`,984,260,14,'#ffd3c8',800,'right');
 }
 function drawPatternInstruction(c,guide){
  if(!guide)return;const color=guide.color,remaining=Math.max(0,Number(guide.remaining)||0),duration=Math.max(.01,Number(guide.duration)||1);
- if(guide.personalityPattern||guide.maxPattern){rect(c,276,121,728,90,'#10232af8',6);rect(c,276,121,4,90,color,2);const who=BOSS_VISUALS[guide.bossId]?.name||'';textWithin(c,who+' · '+guide.name,298,150,500,21,color,900);textWithin(c,guide.title,298,181,670,17,'#eef6e8',800);text(c,`${guide.timerLabel} ${remaining.toFixed(1)}초`,984,145,12,color,800,'right');rect(c,298,199,683,4,'#3a4e51',2);rect(c,298,199,683*clamp(remaining/duration,0,1),4,color,2);return;}
+ if(guide.personalityPattern||guide.maxPattern){rect(c,276,121,728,90,'#10232af8',6);rect(c,276,121,4,90,color,2);const who=BOSS_VISUALS[guide.bossId]?.name||'';textWithin(c,who+' · '+guide.name,298,150,440,21,color,900);if(guide.total>1&&Number.isFinite(guide.index))text(c,`${guide.index}/${guide.total}`,824,150,16,'#f3fff5',900,'right');textWithin(c,guide.title,298,181,670,17,'#eef6e8',800);text(c,`${guide.timerLabel} ${remaining.toFixed(1)}초`,984,145,12,color,800,'right');rect(c,298,199,683,4,'#3a4e51',2);rect(c,298,199,683*clamp(remaining/duration,0,1),4,color,2);return;}
 
  rect(c,276,121,728,77,'#10232af5',6);rect(c,276,121,4,77,color,2);
  textWithin(c,guide.title,298,149,420,17,color,900);textWithin(c,guide.tip,298,174,670,12,'#c8ddd5',600);
@@ -138,7 +143,7 @@ function drawHUD(c,s,reduced=false){
   text(c,'현재 상대',400,40,11,'#bfcdc9',700);text(c,BOSS_VISUALS[b.id]?.name||b.name,480,43,25,'#fff0da',900);
   text(c,b.active?`남은 체력 ${Math.ceil(bossHp*100)}%`:'심사 대기',1236,43,21,b.color,900,'right');
   rect(c,400,58,836,17,'#494449',4);rect(c,400,58,836*bossHp,17,b.color,4);
-  text(c,s.mode==='practice'?`최대 콤보 ${s.maxCombo||0}회`:`이번 점수 ${Math.floor(s.score).toLocaleString('ko-KR')}`,400,99,11,'#a8bcb5',700);
+  text(c,s.mode==='practice'?`최대 콤보 ${s.maxCombo||0}회`:`진행 ${formatRunTime(s.runTime)} · ${s.stats.bossKills||0}/5 통과`,400,99,11,'#a8bcb5',700);
   text(c,b.active?`${Math.ceil(b.hp).toLocaleString('ko-KR')} / ${b.maxHp.toLocaleString('ko-KR')}`:`엑스트라 ${s.enemies.length}명 남음`,818,99,11,'#c0ceca',600,'center');
   text(c,`${s.mode==='practice'?'1:1 연습 · ':''}${BOSS_VISUALS[b.id]?.audition||'오디션'}`,1236,99,11,'#adbfba',700,'right');
   const domain=domainHazard(s),special=maxPatternGuide(s)||personalityPatternGuide(s)||normalPatternGuide(s)||judgePatternGuide(s),counter=b.counterRemaining>0?{title:'반격! 지금 공격하세요',tip:'피해 +20% · Q / W / R로 공격!',remaining:b.counterRemaining,duration:b.counterDuration||1.8,color:'#ffda84',timerLabel:'반격 시간'}:null;if(domain)drawDomainInstruction(c,s,domain);else if(!s.cinematic&&(counter||special))drawPatternInstruction(c,counter||special);

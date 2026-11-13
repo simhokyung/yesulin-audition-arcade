@@ -436,8 +436,8 @@ test('wave cues use finite original envelopes with bounded voices and release al
 
 test('live Caden waves synchronize with emitted events and fatal sound requires a real collision', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
-  for(const walk of [true,false]){
-    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;
+  for(const {walk,lowHealth} of [{walk:true},{walk:false},{walk:false,lowHealth:true}]){
+    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;if(lowHealth)s.player.hp=100;
     audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);
     audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};let sawDomain=false;
     for(let i=0;i<3000&&s.status==='playing';i++){
@@ -453,7 +453,7 @@ test('live Caden waves synchronize with emitted events and fatal sound requires 
     for(const [kind,name] of Object.entries(names))assert.equal(heard.filter(e=>e.name===name).length,[...events.values()].filter(e=>e.kind===kind).length,kind);
     assert(heard.some(e=>e.name==='blade-release'));assert(heard.some(e=>e.name==='blade-pass'));
     const fatalities=heard.filter(e=>e.name==='fatal');assert.equal(fatalities.length,s.endReason==='domain'?1:0);
-    if(!walk){assert.equal(s.endReason,'domain');assert(s.stats.damageTaken>0);}
+    if(!walk){assert(s.stats.damageTaken>0);assert.equal(heard.filter(e=>e.name==='domain-hit').length,s.stats.domainHits);if(lowHealth)assert.equal(s.endReason,'domain');else assert(s.player.hp>0,'40% hit leaves room to recover instead of instant death');}
     audio.cue=cue;
   }
 });
@@ -530,8 +530,8 @@ test('late Caden decoding cannot revive a cancelled chasing takeover or an aband
 
 test('live chasing slashes play actual tracking, lock, seven-shot bursts and finale without phantom collisions', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
-  for(const walk of [true,false]){
-    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.takeoverCount=1;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;
+  for(const {walk,lowHealth} of [{walk:true},{walk:false},{walk:false,lowHealth:true}]){
+    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.takeoverCount=1;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;if(lowHealth)s.player.hp=100;
     audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);let sawDomain=false;
     audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};
     for(let i=0;i<2400&&s.status==='playing';i++){

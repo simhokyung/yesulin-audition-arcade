@@ -79,16 +79,16 @@ export function takeoverInstruction(s,h){
  if(type==='memory-archive'){
   const final=h.archivePhase==='final',rewind=h.archivePhase==='rewind',moving=!h.active||h.phaseWarning;
   title=final?(g.tracking?'카메라 추적 중 · 계속 이동':g.targetReached?'촬영선 밖에서 대기':'조준 고정! 옆으로!'):moving?(rewind?'되감기! 이전 민트 칸으로':'민트 필름 칸으로 이동'):g.targetReached?'민트 칸 안에서 대기':'위험! 민트 칸 안으로!';
-  tip=final?'촬영 부채꼴에 닿으면 즉사 · 고정된 선 밖으로':moving?'화살표 끝 ‘여기’로 · 셔터가 닫히면 다른 칸은 즉사':'금색 ‘다음’은 예고 · 이동 신호가 뜨면 움직이세요';
+  tip=final?'촬영 부채꼴에 닿으면 체력 −40% · 고정된 선 밖으로':moving?'화살표 끝 ‘여기’로 · 셔터가 닫힌 칸은 체력 −40%':'금색 ‘다음’은 예고 · 이동 신호가 뜨면 움직이세요';
   timerLabel=final?(g.tracking?'조준 고정까지':h.phaseWarning?'촬영까지':'촬영 종료'):moving?'이동 마감':phase<count?'다음 이동':'장악 종료';
-  if(final&&g.tracking){remaining=Math.max(0,remaining-1.1);duration=Math.max(.01,duration-1.1);progress=clamp(1-remaining/duration);}
+  if(final&&g.tracking){remaining=Math.max(0,remaining-(h.lockWindow??1.1));duration=Math.max(.01,duration-(h.lockWindow??1.1));progress=clamp(1-remaining/duration);}
  }
  else if(type==='chasing-slashes'){blade=pursuitInstruction(h,v,g);title=blade.title;tip=blade.tip;}
  else if(type==='blade-waves'){blade=bladeWaveInstruction(h,v,g);title=blade.title;tip=blade.tip;}
  else
- if(type==='moving-light'){const back=h.variantId==='return-light',reversing=back&&h.active&&h.elapsed>=2.4&&h.elapsed<3.1;title=!g.insideSafe?'민트 조명 안으로 이동':reversing?'방향 반전! 조명을 따라가세요':'조명 안에서 계속 따라가기';tip=!h.active?'조명 밖은 즉사 · 화살표 끝 ‘여기’로':back&&h.elapsed<2.4?'곧 반대로 이동 · 금색 점선은 다음 위치':'조명 밖은 즉사 · 멈추지 말고 빛을 따라가세요';timerLabel=!h.active?'이동 마감':'장악 종료';}
- else if(type==='mask-panels'){const m=mimePresentation(s,h);title=m.reached?`${m.symbol} 여기서 대기`:`${m.symbol} 민트 발판으로 이동!`;tip=m.changing?'민트 연결 통로를 따라 이동 · 통로 밖은 즉사':m.preview?'금색 ‘다음’은 예고 · 이동 신호가 뜰 때 움직이세요':'민트 발판 밖은 즉사 · 장악이 끝날 때까지 대기';timerLabel=!h.active||m.changing?'이동 마감':m.preview?'다음 이동':'장악 종료';}
- else if(type==='lens-corridors'){const horizontal=(v.safeRegions||[])[0]?.width>1000,orientation=horizontal?'가로':'세로';title=g.warning?`지금 이동! 민트 ${orientation} 통로로`:g.insideSafe?`${orientation} 통로 안에서 대기`:`위험! 민트 ${orientation} 통로 안으로`;tip=g.warning?'빔이 꺼진 지금 이동 · 시간 안에 ‘여기’로':'빔에 닿으면 즉사 · 금색 ‘다음’은 아직 위험';timerLabel=g.warning?'이동 마감':phase<count?'다음 이동':'장악 종료';}
+ if(type==='moving-light'){const back=h.variantId==='return-light',reversing=back&&h.active&&h.elapsed>=2.4&&h.elapsed<3.1;title=!g.insideSafe?'민트 조명 안으로 이동':reversing?'방향 반전! 조명을 따라가세요':'조명 안에서 계속 따라가기';tip=!h.active?'조명 밖은 체력 −40% · 화살표 끝 ‘여기’로':back&&h.elapsed<2.4?'곧 반대로 이동 · 금색 점선은 다음 위치':'조명 밖은 체력 −40% · 멈추지 말고 빛을 따라가세요';timerLabel=!h.active?'이동 마감':'장악 종료';}
+ else if(type==='mask-panels'){const m=mimePresentation(s,h);title=m.reached?`${m.symbol} 여기서 대기`:`${m.symbol} 민트 발판으로 이동!`;tip=m.changing?'민트 연결 통로를 따라 이동 · 통로 밖은 체력 −40%':m.preview?'금색 ‘다음’은 예고 · 이동 신호가 뜰 때 움직이세요':'민트 발판 밖은 체력 −40% · 장악이 끝날 때까지 대기';timerLabel=!h.active||m.changing?'이동 마감':m.preview?'다음 이동':'장악 종료';}
+ else if(type==='lens-corridors'){const horizontal=(v.safeRegions||[])[0]?.width>1000,orientation=horizontal?'가로':'세로';title=g.warning?`지금 이동! 민트 ${orientation} 통로로`:g.insideSafe?`${orientation} 통로 안에서 대기`:`위험! 민트 ${orientation} 통로 안으로`;tip=g.warning?'빔이 꺼진 지금 이동 · 시간 안에 ‘여기’로':'빔에 닿으면 체력 −40% · 금색 ‘다음’은 아직 위험';timerLabel=g.warning?'이동 마감':phase<count?'다음 이동':'장악 종료';}
  else{title=g.warning?`${phase}/${count} 새 예고선! 옆으로 이동하세요`:g.dangerousNow?'위험! 공격선 밖으로!':`${phase}/${count} 회피 성공 · 다음 선을 기다리세요`;tip=g.warning?'선이 나타나면 선을 가로질러 옆으로 · 방향키 / Space':'매 박자 새 위치를 겨눕니다 · 다음 예고선이 뜨면 다시 이동';}
  if(Number.isFinite(blade?.remaining)){remaining=blade.remaining;duration=Math.max(.01,blade.duration||duration);progress=clamp(1-remaining/duration);}
  return{...v,...g,type,title,tip,phase,count,statusColor:blade?.statusColor,targetReached:type==='mask-panels'?mimePresentation(s,h).reached:g.targetReached,timerLabel:timerLabel||blade?.timerLabel||g.timerLabel||'발사까지',progress,remaining:Math.max(0,remaining),duration,warning:!!g.warning};

@@ -3,12 +3,27 @@ import {createEntry,getIndividualBoard,normalizeIdentity,RANKING_RULES_VERSION} 
 import {BOSSES} from '../engine.js';
 
 const MAX_BODY=8192,SESSION_SECONDS=6*60*60;
-const LEGACY_RULES='challenge-v18';
-function rulesOf(value,{legacyDefault=false}={}){if(value===undefined&&legacyDefault)return LEGACY_RULES;if(value===LEGACY_RULES||value===RANKING_RULES_VERSION)return value;fail(400,'지원하지 않는 순위 규칙입니다.');}
-const seasonOf=rules=>rules===LEGACY_RULES?18:19;
-const stagesOf=rules=>rules===LEGACY_RULES?4:BOSSES.length;
-function seasonEntry(input,rules){if(input.version!==seasonOf(rules)||input.rulesVersion!==rules)throw new TypeError('기록 시즌이 올바르지 않습니다.');if(input.bosses>stagesOf(rules))throw new TypeError('통과한 오디션 수를 확인해 주세요.');const entry=createEntry({...input,version:19,rulesVersion:RANKING_RULES_VERSION});return{...entry,version:seasonOf(rules),rulesVersion:rules};}
-function seasonBoard(rows,rules){const current=[];for(const row of rows){try{current.push({...seasonEntry(row,rules),version:19,rulesVersion:RANKING_RULES_VERSION});}catch{}}return getIndividualBoard(current).map(row=>({...row,version:seasonOf(rules),rulesVersion:rules}));}
+const LEGACY_RULES=['challenge-v18','challenge-v19'];
+function rulesOf(value,{legacyDefault=false}={}){if(value===undefined&&legacyDefault)return LEGACY_RULES[0];if(LEGACY_RULES.includes(value)||value===RANKING_RULES_VERSION)return value;fail(400,'지원하지 않는 순위 규칙입니다.');}
+const seasonOf=rules=>Number(rules.slice('challenge-v'.length));
+const stagesOf=rules=>rules===LEGACY_RULES[0]?4:BOSSES.length;
+function seasonEntry(input,rules){
+  if(input.version!==seasonOf(rules)||input.rulesVersion!==rules)throw new TypeError('기록 시즌이 올바르지 않습니다.');
+  if(input.bosses>stagesOf(rules))throw new TypeError('통과한 오디션 수를 확인해 주세요.');
+  if(rules===RANKING_RULES_VERSION)return createEntry(input);
+  // Validate old statistics through the current schema, without adding a time
+  // rank to those historical seasons or changing their returned record shape.
+  const {lastClearTime,stageClearTimes,...old}=input;
+  const {lastClearTime:ignored,stageClearTimes:ignoredTimes,...entry}=createEntry({...old,version:20,rulesVersion:RANKING_RULES_VERSION,lastClearTime:old.bosses>0?old.runTime:null});
+  return{...entry,version:seasonOf(rules),rulesVersion:rules};
+}
+function legacyCompare(a,b){return b.bosses-a.bosses||b.score-a.score||b.maxCombo-a.maxCombo||a.createdAt.localeCompare(b.createdAt)||a.runId.localeCompare(b.runId);}
+function seasonBoard(rows,rules){
+  const normalized=[];for(const row of rows){try{normalized.push(seasonEntry(row,rules));}catch{}}
+  if(rules===RANKING_RULES_VERSION)return getIndividualBoard(normalized);
+  const best=new Map();for(const row of normalized){if(row.duration!==0||row.difficulty!=='standard')continue;const key=JSON.stringify([row.name,row.crew]);if(!best.has(key)||legacyCompare(row,best.get(key))<0)best.set(key,row);}
+  return [...best.values()].sort(legacyCompare);
+}
 const digest=value=>createHash('sha256').update(String(value)).digest('hex');
 const record=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
 class RequestError extends Error {constructor(status,message){super(message);this.status=status;}}
@@ -47,10 +62,11 @@ function canonicalFinish(input,session,now,rulesVersion){
   if(input.runId!==session.runId||normalizeIdentity({name:input.name}).name!==session.name||input.character!==session.character)fail(409,'시작한 참가 정보와 결과가 일치하지 않습니다.');
   if((entry.endReason==='clear')!==(entry.bosses===stagesOf(rulesVersion)))fail(400,'통과한 오디션 수를 확인해 주세요.');
   if(!Number.isSafeInteger(entry.score)||entry.score>2_000_000||entry.maxCombo>20_000||entry.runTime>SESSION_SECONDS||entry.runTime<.25)fail(400,'게임 기록이 허용 범위를 벗어났습니다.');
+  if(rulesVersion===RANKING_RULES_VERSION&&entry.bosses>0&&entry.lastClearTime<entry.bosses*2)fail(400,'통과 시간이 게임의 허용 범위를 벗어났습니다.');
   const wallSeconds=(now-new Date(session.startedAt).getTime())/1000;
   if(!Number.isFinite(wallSeconds)||wallSeconds<0||wallSeconds>SESSION_SECONDS+300)fail(400,'참가 기록이 만료되었습니다. 다시 시작해 주세요.');
   if(entry.runTime>wallSeconds+5||entry.runTime<entry.bosses*2)fail(400,'게임 시작 때 서버에 연결되지 않아 이번 기록을 등록하지 못했어요. 연결 후 다시 도전해 주세요.');
-  const totalHP=BOSSES.filter(b=>rulesVersion!==LEGACY_RULES||b.id!=='max').reduce((sum,b)=>sum+Math.round(b.hp*.55),0);
+  const totalHP=BOSSES.filter(b=>rulesVersion!==LEGACY_RULES[0]||b.id!=='max').reduce((sum,b)=>sum+Math.round(b.hp*.55),0);
   if(entry.score>totalHP*3+entry.runTime*450+2000||entry.maxCombo>entry.runTime*70+30)fail(400,'게임 기록의 점수 또는 콤보를 확인해 주세요.');
   return entry;
 }

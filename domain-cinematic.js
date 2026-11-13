@@ -40,10 +40,10 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   c.fillStyle='#ffffffbb';c.font='500 10px sans-serif';c.fillText('무대 장악',64,84);
   c.textAlign='center';
   const rise=reduceMotion?0:14*(1-ease(p*2));
-  const rules={ignis:['움직이는 조명','민트 조명 안에서 계속 따라가세요!','조명 밖은 즉사 · 화살표 끝 ‘여기’로'],mime:['발판 교대','민트 발판으로! 신호가 바뀌면 이동!','민트 = 지금 · 금색 = 다음 · 연결 통로를 따라가기'],gojo:['가로 ↔ 세로 전환','빔이 꺼지면 새 민트 통로로!','민트 = 지금 · 금색은 다음 통로라 아직 위험'],max:['필름 칸 이동 → 되감기 → 마지막 촬영','민트 칸으로! 되감기엔 반대로 이동!','닫히면 민트 칸 밖 즉사 · 마지막 촬영은 옆으로!'],sukuna:['날아오는 칼날 벽','민트 빈틈에 맞추고 통과할 때까지 대기!','칼날에 닿으면 즉사 · Space로 뚫을 수 없어요']};
+  const rules={ignis:['움직이는 조명','민트 조명 안에서 계속 따라가세요!','조명 밖은 체력 −40% · 화살표 끝 ‘여기’로'],mime:['발판 교대','민트 발판으로! 신호가 바뀌면 이동!','민트 = 지금 · 금색 = 다음 · 연결 통로를 따라가기'],gojo:['가로 ↔ 세로 전환','빔이 꺼지면 새 민트 통로로!','민트 = 지금 · 금색은 다음 통로라 아직 위험'],max:['필름 칸 이동 → 되감기 → 마지막 촬영','민트 칸으로! 되감기엔 반대로 이동!','닫힌 셔터는 체력 −40% · 마지막 촬영은 옆으로!'],sukuna:['날아오는 칼날 벽','민트 빈틈에 맞추고 통과할 때까지 대기!','칼날에 닿으면 체력 −40% · Space로 뚫을 수 없어요']};
   const takeoverTitle=zone?.name?.replace(/^무대 장악\s*[·:]\s*/, '')||visual.takeover;
-  let rule=chasing?['가로 7연사 → 세로 7연사 → 3방향','계속 이동! 반전 신호에 방향을 바꾸세요!','가로 칼날은 위아래 · 세로 칼날은 좌우 · 접촉 즉사']:rules[id]||rules.ignis;if(id==='mime'&&zone){const m=mimePresentation(s,zone);rule=['발판 교대',`${m.symbol} 민트 발판으로 이동!`,'금색 ‘다음’은 예고 · 이동 신호에 연결 통로 따라가기'];}
-  if(zone?.variantId==='return-light')rule=['중간에 방향이 바뀌는 조명','민트 조명을 따라가다 반대로 이동!','조명 밖은 즉사 · 금색 점선은 곧 이동할 위치'];
+  let rule=chasing?['가로 7연사 → 세로 7연사 → 3방향','계속 이동! 반전 신호에 방향을 바꾸세요!','가로 칼날은 위아래 · 세로 칼날은 좌우 · 접촉 시 체력 −40%']:rules[id]||rules.ignis;if(id==='mime'&&zone){const m=mimePresentation(s,zone);rule=['발판 교대',`${m.symbol} 민트 발판으로 이동!`,'금색 ‘다음’은 예고 · 이동 신호에 연결 통로 따라가기'];}
+  if(zone?.variantId==='return-light')rule=['중간에 방향이 바뀌는 조명','민트 조명을 따라가다 반대로 이동!','조명 밖은 체력 −40% · 금색 점선은 곧 이동할 위치'];
   if(zone?.variantId==='double-swap')rule=[`두 번의 배역 교대 · ${mimePresentation(s,zone).symbol}부터`,rule[1],'두 번 이동합니다 · 통로가 열리면 새 민트 발판으로'];
   if(zone?.variantId==='reverse-frames')rule=['위치가 반전되는 통로','빔이 꺼지면 새 민트 통로로!','민트 = 지금 · 금색은 다음 통로라 아직 위험'];
   c.fillStyle=color;c.font='700 12px "Noto Sans KR",sans-serif';c.fillText('무 대 장 악',640,529+rise);

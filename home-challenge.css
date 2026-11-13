@@ -1,0 +1,127 @@
+/* A crew challenge poster. Existing entry, casting and ranking controls stay in place. */
+body[data-screen="entry"] .entry-screen{
+  grid-template-columns:minmax(0,1fr) minmax(285px,340px);
+  grid-template-rows:auto auto auto auto;
+  align-items:start;column-gap:32px;row-gap:0;
+  min-height:650px;padding:42px 0 34px;max-width:none;
+}
+.entry-poster{display:contents}
+.entry-poster>.eyebrow{
+  grid-column:1;grid-row:1;align-self:end;display:flex;align-items:center;
+  flex-wrap:wrap;gap:9px;font-size:9px;letter-spacing:1.4px;
+}
+.entry-poster>.eyebrow b{font:800 12px var(--font);color:#edf4dc;letter-spacing:-.2px}
+.home-live-dot{width:5px;height:5px;border-radius:50%;background:var(--lime);box-shadow:0 0 13px #caff6b88}
+.entry-poster h1{
+  grid-column:1;grid-row:2;width:auto;min-width:0;
+  margin:18px 0;font-size:clamp(40px,4.4vw,69px);
+  line-height:1.15;letter-spacing:-3.5px;word-break:keep-all;
+}
+.entry-poster h1 em{display:inline-block;position:relative;color:var(--lime)}
+.entry-poster h1 br{display:block}
+.entry-poster .entry-value{grid-column:1;grid-row:3;margin:0;align-self:start;line-height:1.65;letter-spacing:-.4px}
+.entry-poster .entry-value>strong{display:block;font-size:15px;font-weight:500;color:#aab5a1}
+.entry-poster .entry-value>span{display:block;margin-top:4px;font-size:19px;font-weight:700;color:#e5eadb}
+.entry-card{grid-column:2;grid-row:1 / 4;align-self:center;margin:0;padding:27px 25px}
+.entry-card h2{font-size:26px;margin-top:23px;letter-spacing:-1.3px}
+.entry-card .ticket-label{font-size:10px;padding-bottom:17px}
+.entry-card .local-caption{font-size:10px;color:#5e6d51}
+.entry-card input::placeholder{font-size:14px;color:#657258;opacity:1}
+.entry-card .primary-button{font-size:14px;min-height:52px}
+.entry-card .button-key{font-size:9px;white-space:nowrap}
+.entry-poster .judge-lineup{
+  grid-column:1 / -1;grid-row:4;display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;max-width:none;margin:30px 0 0;min-width:0;
+}
+.entry-poster .judge-art{
+  position:relative;isolation:isolate;height:auto;max-height:none;min-width:0;
+  border:1px solid #465047;border-bottom:2px solid var(--judge);
+  border-radius:9px;background:#1b211e;
+  transition:border-color .22s,box-shadow .22s;
+}
+.judge-photo{position:relative;isolation:isolate;min-width:0;height:160px;padding-top:23px;overflow:hidden;background:#131a17}
+.entry-poster .judge-art img{
+  display:block;width:100%;height:100%;min-height:0;max-height:none;
+  object-fit:contain;object-position:center;filter:none;transform:none;
+}
+.judge-round{
+  position:absolute;inset:0 0 auto;height:23px;display:flex;align-items:center;justify-content:center;
+  font:800 10px var(--font);font-style:normal;letter-spacing:.3px;color:var(--judge);
+  background:#171f1b;border-bottom:1px solid #3a453b;
+}
+.entry-poster .judge-art>span{
+  display:flex;position:relative;flex:0 0 auto;min-height:61px;flex-direction:column;
+  align-items:center;justify-content:center;gap:5px;padding:10px 5px;
+  background:#18201b;text-align:center;letter-spacing:0;
+}
+.entry-poster .judge-art>span b{font-size:18px;line-height:1.1;color:#f3f5ec}
+.entry-poster .judge-art>span small{font-size:11px;line-height:1.5;word-break:keep-all;color:var(--judge)}
+.entry-poster .judge-art::after{
+  content:"";position:absolute;z-index:2;pointer-events:none;inset:23px auto 61px -75%;width:38%;
+  background:linear-gradient(100deg,transparent,#f4ffcc16,transparent);
+  transform:skewX(-19deg);animation:judge-light-pass 9s ease-in-out infinite;
+}
+.entry-poster .judge-art.mime::after{animation-delay:1.1s}
+.entry-poster .judge-art.prism::after{animation-delay:2.2s}
+.entry-poster .judge-art.max::after{animation-delay:3.3s}
+.entry-poster .judge-art.caden::after{animation-delay:4.4s}
+.entry-poster .judge-art.caden{box-shadow:4px 0 #ef85870b,8px 0 #ef858706}
+.entry-screen .stage-glow{inset:0 -25px;background:radial-gradient(ellipse at 24% 27%,#b7e95116,transparent 60%)}
+.entry-screen .stage-glow::before{left:5%;animation:home-light-drift 12s ease-in-out infinite alternate}
+.entry-screen .stage-glow::after{left:41%;animation:home-light-drift 15s ease-in-out -5s infinite alternate-reverse}
+@keyframes judge-light-pass{0%,77%{left:-75%;opacity:0}79%{opacity:1}94%{left:130%;opacity:1}95%,100%{left:130%;opacity:0}}
+@keyframes home-light-drift{from{transform:translateX(-20px) rotate(24deg)}to{transform:translateX(20px) rotate(34deg)}}
+@media(hover:hover){.entry-poster .judge-art:hover{border-color:var(--judge);box-shadow:0 0 20px #d2f96014}}
+@media(max-width:1150px){
+ body[data-screen="entry"] .entry-screen{grid-template-columns:minmax(0,1fr) 285px;column-gap:23px;padding-top:35px;min-height:625px}
+ .entry-poster h1{font-size:clamp(35px,4.3vw,52px);letter-spacing:-2.6px}
+ .entry-poster .entry-value>strong{font-size:13px}.entry-poster .entry-value>span{font-size:17px}
+ .entry-card{padding:24px 21px}.entry-card h2{font-size:23px}
+ .entry-poster .judge-lineup{gap:8px}.judge-photo{height:145px}
+ .entry-poster .judge-art>span small{font-size:10px}.entry-poster .judge-art>span b{font-size:16px}
+}
+@media(max-width:960px){
+ body[data-screen="entry"] .entry-screen{grid-template-columns:minmax(0,1fr) 320px;min-height:0;padding:35px 0 20px;column-gap:26px}
+ .entry-poster h1{font-size:clamp(40px,5.6vw,56px)}
+ .entry-poster .entry-value>span{font-size:18px}.judge-photo{height:163px}
+}
+@media(max-width:760px){
+ body[data-screen="entry"] .entry-screen{display:grid;grid-template-columns:minmax(0,1fr);max-width:600px;min-height:0;padding:25px 0 15px}
+ .entry-poster>.eyebrow{font-size:9px;gap:8px}.entry-poster>.eyebrow b{font-size:11px}
+ .entry-poster h1{font-size:clamp(37px,7.8vw,53px);letter-spacing:-2.2px;line-height:1.14;margin:14px 0}
+ .entry-poster .entry-value>strong{font-size:13px}.entry-poster .entry-value>span{font-size:16px;line-height:1.6;margin-top:2px}
+ .entry-poster .entry-value>span br{display:none}
+ .entry-poster .judge-lineup{grid-column:1;grid-row:4;margin-top:20px;gap:6px}
+ .judge-photo{height:clamp(108px,25vw,155px);padding-top:21px}.judge-round{font-size:9px;height:21px}
+ .entry-poster .judge-art{border-radius:6px}.entry-poster .judge-art>span{min-height:65px;padding:8px 3px;gap:4px}
+ .entry-poster .judge-art>span b{font-size:14px}.entry-poster .judge-art>span small{font-size:10px;line-height:1.4}
+ .entry-card{grid-column:1;grid-row:5;width:100%;max-width:none;margin-top:22px;padding:22px;border-radius:12px}
+ .entry-card h2{font-size:24px;margin:17px 0 0}.entry-card form{margin-top:14px}
+ .entry-card .ticket-label{padding-bottom:12px}.entry-card .entry-links{margin-top:17px}.entry-card .local-caption{margin-top:12px}
+ .entry-screen .stage-glow{inset:0}
+}
+@media(max-width:380px){.entry-poster h1{font-size:35px;letter-spacing:-1.8px}.entry-poster .judge-lineup{gap:4px}.entry-poster .judge-art>span small{font-size:9px}.entry-poster .judge-art>span b{font-size:13px}.entry-card{padding:20px}}
+/* Narrow scoreboards use two rows: nickname above score and clear time. */
+@media(max-width:480px){
+ #ranking-dialog .ranking-head,#ranking-dialog .rank-row{
+   grid-template-columns:26px minmax(0,1fr) 88px;gap:5px 8px;padding:11px 8px;min-width:0;
+ }
+ #ranking-dialog .ranking-head>span:first-child{font-size:7px;letter-spacing:.2px}
+ #ranking-dialog .ranking-head>span:nth-child(2){grid-column:2}
+ #ranking-dialog .ranking-head>span:nth-child(3){position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ #ranking-dialog .ranking-head>span:nth-child(4){grid-column:3}
+ #ranking-dialog .rank-position{grid-column:1;grid-row:1 / 3;align-self:center;font-size:16px}
+ #ranking-dialog .rank-person{grid-column:2 / 4;grid-row:1;display:flex;flex-direction:row;align-items:baseline;gap:7px;min-width:0}
+ #ranking-dialog .rank-person>strong{font-size:13px;line-height:1.4;overflow-wrap:anywhere;min-width:0}
+ #ranking-dialog .rank-person>span{white-space:nowrap;flex-shrink:0;font-size:9px}
+ #ranking-dialog .rank-score{grid-column:2;grid-row:2;text-align:left;align-self:center;font-size:14px;overflow-wrap:anywhere}
+ #ranking-dialog .rank-score::after{content:"점";font:500 9px var(--font);margin-left:3px;color:#a8b999}
+ #ranking-dialog .rank-detail{grid-column:3;grid-row:2;text-align:right;font-size:10px;line-height:1.4;white-space:nowrap}
+ #ranking-dialog .rank-detail b{font-size:11px;margin-bottom:2px}
+}
+@media(prefers-reduced-motion:reduce){
+ .entry-poster .judge-art::after{animation:none;display:none}
+ .entry-screen .stage-glow::before,.entry-screen .stage-glow::after{animation:none}
+ .entry-poster .judge-art{transition:none}
+}

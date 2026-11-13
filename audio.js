@@ -417,6 +417,11 @@ export class GameAudio {
     } else if (name === 'shrine') {
       [73.42,147,211,388,603].forEach((f,i)=>note(f,i*.025,1.05-i*.08,i===0?.17:.055,'sine',f*.997));
       noise(t+.06,.35,.1,850);note(43.65,.1,.85,.13);
+    } else if (name === 'domain-hit') {
+      // One heavy impact per real 40% hit; no extra hit sounds from overlapping blades.
+      note(73.42,0,.38,.14,'sine',36.7);noise(t,.09,.12,1450);
+      note(220,.025,.23,.055,'triangle',92);noise(t+.055,.13,.045,3400,'highpass');
+      this._duck(.24);
     } else if (name === 'fatal') {
       note(82.41,0,.6,.18,'sine',28);note(146.83,.02,.65,.09,'triangle',65.41);
       noise(t,.32,.14,900);note(493.88,.2,.75,.04,'sine',246.94);
@@ -631,7 +636,7 @@ export class GameAudio {
         if(now.justHits>old.justHits||now.justDodges>old.justDodges)this.cue('perfect');
         if(now.kills>old.kills)this.cue('cheer');
         if(now.dodges>old.dodges)this.cue('dodge');
-        if(now.damage>old.damage)this.cue('hit');
+        if(now.damage>old.damage){const hit=incoming.find(e=>e.type==='domainHit');this.cue(hit?'domain-hit':'hit',hit?{eventId:hit.id}:{});}
         if(now.active&&!old.active&&!cinematic)this.cue('boss');
         if(now.status!==old.status){
           if(now.status==='gameover')this.cue(state.endReason==='domain'?'fatal':'dead');

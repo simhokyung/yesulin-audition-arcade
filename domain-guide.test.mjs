@@ -17,6 +17,7 @@ test('all takeover action guides preserve real destinations and distinguish move
    assert(Number.isFinite(ui.remaining)&&ui.remaining>=0);assert(Number.isFinite(ui.progress));
    assert(ui.title.length<=38,`${h.domainType}: ${ui.title}`);assert(ui.tip.length<=72,ui.tip);
    assert(!ui.tip.includes('안전 조명 밖'),'no shared misleading spotlight rule');
+   assert(!/즉사|INSTANT KO/.test(ui.tip+ui.title),'v20 never promises instant death');
    if(h.domainType==='mask-panels'){const m=mimePresentation(s,h);assert(ui.title.includes(m.symbol));assert.equal(ui.timerLabel,!h.active||m.changing?'이동 마감':m.preview?'다음 이동':'장악 종료');if(m.changing)assert(ui.tip.includes('연결 통로'));}
    if(h.domainType==='lens-corridors'){assert.equal(ui.timerLabel,actual.warning?'이동 마감':h.domainPhase<3?'다음 이동':'장악 종료');if(!actual.warning)assert(ui.tip.includes('아직 위험'));}
    if(h.domainType==='memory-archive'&&h.archivePhase==='final'){assert.equal(ui.timerLabel,actual.tracking?'조준 고정까지':h.phaseWarning?'촬영까지':'촬영 종료');assert(ui.tip.includes('부채꼴'));}

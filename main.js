@@ -3,7 +3,7 @@ import { BOSS_VISUALS } from './boss-visuals.js';
 import { Renderer, drawPortrait } from './renderer.js';
 import { GameAudio } from './audio.js';
 import { BoothUI } from './booth-ui.js';
-import { normalizeIdentity } from './ranking.js';
+import { normalizeIdentity, formatRunTime } from './ranking.js';
 import { createPractice, stepPractice } from './practice.js';
 const $=id=>document.getElementById(id);
 const canvas=$('arena'),renderer=new Renderer(canvas),audio=new GameAudio();
@@ -51,7 +51,7 @@ function renderLaunchOptions(){
 function prepareLaunch(){if(mode!=='lobby'||document.body.dataset.screen!=='casting')return;clearInput();launch();}
 function openPracticePicker(){
  if(mode!=='lobby'||document.body.dataset.screen!=='casting')return;
- practicePickerOpen=true;renderLaunchOptions();document.querySelector('[data-practice-stage="'+practiceStage+'"]').focus({preventScroll:true});$('practice-picker').scrollIntoView({behavior:'smooth',block:'nearest'});
+ practicePickerOpen=true;renderLaunchOptions();document.querySelector('[data-practice-stage="'+practiceStage+'"]').focus({preventScroll:true});$('practice-picker').scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches?'auto':'smooth',block:'nearest'});
 }
 function startPractice(stage){if(mode!=='lobby'||document.body.dataset.screen!=='casting')return;practiceStage=stage;launch({stage,isPractice:true});}
 function lockCast(locked){document.querySelectorAll('.cast-card').forEach(card=>{card.disabled=locked;card.classList.toggle('cast-locked',locked)});}
@@ -67,7 +67,7 @@ function launch({stage=0,isPractice=false}={}){
   $('game-status').textContent=state.mode==='challenge'?'피노 → 대길 → 이프 → 맥스 → 무빙 · 시간 제한 없는 5연전 · Q/W 공격 · E 강화 · R 궁극기':isPractice?auditionLabel(stage)+' · '+BOSSES[stage].name+' 실전 연습':'엑스트라를 정리하고 보스를 만나세요. 조명 안에서는 공격력이 올라갑니다.';
   $('live-status').textContent=CHARACTERS[selected].name+(selected==='actor'?'로 ':'으로 ')+auditionLabel(stage)+' '+BOSSES[stage].name+' 시작';
   $('pause-toggle').textContent='Ⅱ';$('pause-toggle').setAttribute('aria-label','일시정지');
-  accumulator=0;canvas.focus({preventScroll:true});$('game').scrollIntoView({behavior:'smooth',block:'start'});
+  accumulator=0;canvas.focus({preventScroll:true});$('game').scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches?'auto':'smooth',block:'start'});
 }
 function lobby({showPractice=false}={}){
  booth.abandonRun();booth.refresh();
@@ -83,7 +83,7 @@ function lobby({showPractice=false}={}){
  if(document.fullscreenElement)void document.exitFullscreen().catch(()=>{});
  if(document.body.dataset.screen==='entry')$('player-name').focus({preventScroll:true});
  else if(showPractice)openPracticePicker();else $('start-game').focus({preventScroll:true});
- if(!showPractice)window.scrollTo({top:0,behavior:'smooth'});
+ if(!showPractice)window.scrollTo({top:0,behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches?'auto':'smooth'});
 }
 function requestExit(){
  if(mode!=='playing'||state?.status!=='playing'||$('exit-dialog').open)return;
@@ -122,7 +122,7 @@ function showResult(){
  const card=$('result-overlay').querySelector('.result-card');card.classList.toggle('practice-result',!challenge);
  $('result-kicker').textContent=auditionLabel(state.stage)+' · '+state.boss.name+(challenge?'':' · 연습');
  $('result-title').textContent=completed?(role==='actor'?'최종 오디션 합격!':'마지막 장면, 완성!'):won?(challenge?'오디션 통과!':'연습 완료!'):'도전 종료';
- const values=[stat('통과 관문',passed+' / '+(challenge?BOSSES.length:1)),stat('점수',Math.round(state.score).toLocaleString())];
+ const values=[stat('통과 관문',passed+' / '+(challenge?BOSSES.length:1)),stat(challenge&&passed>0?'통과 시간':'도전 점수',challenge&&passed>0?formatRunTime(state.lastClearTime):Math.round(state.score).toLocaleString())];
  if(challenge)values.push(stat('전체 순위',result.ok&&Number.isInteger(result.rank)?result.rank+'위':'—'));
  $('result-stats').replaceChildren(...values);$('result-copy').textContent=completed?(role==='actor'?'당신의 다음 배역을 만나보세요.':'다음 무대의 배우를 만나보세요.'):won?'':failureTip(state);setHidden('result-copy',won&&!completed);
  $('result-save-status').style.color='';$('result-save-status').textContent=challenge?result.copy:'';setHidden('result-save-status',!challenge);
@@ -131,7 +131,7 @@ function showResult(){
  if(completed)updateScenes(state.stage,true);
  setHidden('result-overlay',false);$('result-action').focus({preventScroll:true});
  $('game-status').textContent=challenge?(result.ok?'오디션 기록을 저장했습니다.':result.copy):'연습 기록은 순위에 등록되지 않습니다.';
- $('live-status').textContent=$('result-title').textContent+' · '+passed+'개 관문 통과 · '+Math.round(state.score)+'점';
+ $('live-status').textContent=$('result-title').textContent+' · '+passed+'개 관문 통과 · '+(challenge&&passed>0?'통과 시간 '+formatRunTime(state.lastClearTime)+' · ':'')+Math.round(state.score)+'점';
  if(challenge)void booth.finish(finishedState,finishedRun).then(saved=>{if(state===finishedState&&runMeta?.runId===finishedRun?.runId&&mode==='playing')applySavedResult(saved);});
 }
 function applySavedResult(result){
@@ -144,9 +144,9 @@ function closeGuide(){$('guide-dialog').close();if(returnFromModal)togglePause(f
 const patternDetails={
  ignis:['발밑에 조명이 켜지면 밝은 타원 밖으로 한 걸음 이동하세요.','긴 빛의 길이 나타납니다. 길의 진행 방향이 아닌 옆으로 피하세요.','세 개의 바닥 조명이 순서대로 터집니다. 켜진 조명 밖을 유지하세요.','직진·왕복하는 민트색 조명을 따라가세요. 되돌아오는 방향도 확인하세요.','1 → 2 → 3 순서로 조명 안에 들어가면 1.8초 반격 기회가 열립니다.','조명이 나를 따라오다가 고정됩니다. 고정 신호에 빛의 선 옆으로 이동하세요.','빨간 뚜껑의 참이슬 병을 통째로 던집니다. 고정된 발사선을 보고 세 병을 모두 피하세요.'],
  mime:['리본이 뻗는 긴 선의 옆으로 피하세요.','점선 FAKE는 가짜입니다. HIT가 쓰인 진한 범위 밖으로 이동하세요.','두 리본이 교차합니다. 두 예고선을 모두 벗어난 빈 공간으로 움직이세요.','큰 번호·모양과 같은 민트색 발판으로 이동하세요. 두 번 교대할 수 있으니 다음 표지도 확인하세요.','★ 표시가 있는 진짜를 공격하세요. ○ 대역을 때리면 피해를 받고 실패합니다.','점선 FAKE에 속지 말고, 번호가 붙은 실제 공격을 차례로 피하세요. 세 번째 타격까지 확인하세요.','캐스팅 표식이 붙으면 추격이 시작됩니다. 돌진 방향이 고정되면 옆으로 꺾으세요. 두 번 피하면 반격 기회!'],
- gojo:['푸른 구체가 끌어당깁니다. 파란 범위 중심에서 멀어지세요.','이프 주변으로 붉은 충격파가 터집니다. 발사 전에 거리를 벌리세요.','공격 예고선이 처음에는 나를 따라옵니다. 조준 고정 신호가 뜨면 진행 방향의 옆으로 빠르게 이동하세요. 고정 후 0.5초 뒤 발사합니다.','전환 예고가 끝나기 전에 다음 민트색 통로로 이동하세요. 통로 위치가 반대로 바뀔 수 있습니다.','직전 이동 경로의 기억 지점이 차례로 공격되니 다른 방향으로 벗어나세요.','이동 방향을 예측해 프레임 탄을 날립니다. 조준이 고정되면 진행 방향을 꺾고 시간차 5발을 끝까지 피하세요.','내가 있던 자리 5곳이 차례로 예약됩니다. 표시가 고정되면 벗어나고, 붉은 프레임이 사라질 때까지 돌아가지 마세요.'],
+ gojo:['푸른 구체가 끌어당깁니다. 파란 범위 중심에서 멀어지세요.','이프 주변으로 붉은 충격파가 터집니다. 발사 전에 거리를 벌리세요.','두 번 연속 조준합니다. 흰색 고정 신호에 선 옆으로 피하고, 두 번째 빔까지 확인하세요.','전환 예고가 끝나기 전에 다음 민트색 통로로 이동하세요. 통로 위치가 반대로 바뀔 수 있습니다.','직전 이동 경로의 기억 지점이 차례로 공격되니 다른 방향으로 벗어나세요.','이동 방향을 예측해 프레임 탄을 날립니다. 조준이 고정되면 진행 방향을 꺾고 시간차 5발을 끝까지 피하세요.','내 위치를 읽어 7번 연속 자리를 봉쇄합니다. 표시가 고정되면 벗어나고, 붉은 프레임이 사라질 때까지 돌아가지 마세요.'],
  max:['두 번 연속 촬영합니다. 조준이 고정되면 부채꼴 옆으로 피하세요.','사진 7장이 빠르게 이어집니다. 고정된 발사선 옆으로 계속 이동하세요.','다가오는 사진틀의 민트색 빈틈에 맞추고 틀이 통과할 때까지 유지하세요.','셔터가 닫히기 전에 다음 민트색 필름 칸으로 이동하세요. 역재생에는 방향을 바꾸고, 마지막 촬영은 고정된 부채꼴 밖으로 피하세요.','세 번 연속 앵글을 잡습니다. 매번 고정된 부채꼴 옆으로 피하세요.','사진틀이 세 번 방향을 바꿔 옵니다. 새 민트색 빈틈을 확인하고 이동하세요.','사진 6장이 두 묶음으로 날아갔다 돌아옵니다. 나가는 사진을 피하고 금색 예고가 뜨는 귀환 경로도 비우세요.'],
- sukuna:['참격이 겹치는 궤적을 확인하고 선 사이로 빠져나오세요.','가까운 거리를 강하게 베어냅니다. 칼날 예고 범위를 벗어나세요.','불꽃이 직선을 태우고 폭발합니다. 공격이 끝날 때까지 범위 밖을 유지하세요.','칼날 파도는 민트색 빈틈으로 이동하세요. 추격 난무의 가로 7연사는 위아래로 피하다 반전 신호에 방향을 바꾸세요. 다음 세로 7연사는 좌우로, 마지막은 세 공격선 밖으로 피하세요.','빠른 3타 뒤 긴 예고의 4타가 남아 있으니 마지막 참격까지 피하세요.','빠른 5발 뒤 늦은 2발이 더 날아옵니다. 고정된 조준선을 벗어나 마지막 칼날까지 피하세요.','방향을 바꾸며 다섯 번 연속 돌진합니다. 예고선 밖으로 피하고, 지나간 길의 늦은 참격까지 확인하세요.']
+ sukuna:['나를 따라오는 참격을 두 번 피하세요. 조준이 고정되면 방향을 바꾸고, 다음 선도 확인하세요.','가까운 거리를 강하게 베어냅니다. 칼날 예고 범위를 벗어나세요.','불꽃이 직선을 태우고 폭발합니다. 공격이 끝날 때까지 범위 밖을 유지하세요.','칼날 파도는 민트색 빈틈으로 이동하세요. 추격 난무의 가로 7연사는 위아래로 피하다 반전 신호에 방향을 바꾸세요. 다음 세로 7연사는 좌우로, 마지막은 세 공격선 밖으로 피하세요.','빠른 3타 뒤 긴 예고의 4타가 남아 있으니 마지막 참격까지 피하세요.','빠른 5발 뒤 늦은 2발이 더 날아옵니다. 고정된 조준선을 벗어나 마지막 칼날까지 피하세요.','방향을 바꾸며 일곱 번 연속 돌진합니다. 예고선 밖으로 피하고, 지나간 길의 늦은 참격까지 확인하세요.']
 };
 let noteStage=0,noteWasPlaying=false;
 function openBoss(index){noteStage=index;const b=BOSSES[index];noteWasPlaying=mode==='playing'&&!paused&&state?.status==='playing';if(noteWasPlaying)togglePause(true);$('boss-note-kicker').textContent=auditionLabel(index)+' · 보스 노트';$('boss-note-title').textContent=b.name+' · '+b.title;$('boss-note-quote').textContent='“'+(BOSS_VISUALS[b.id]?.featureQuote||b.quote)+'”';$('boss-patterns').replaceChildren(...b.patterns.map((name,i)=>{const div=document.createElement('div'),num=document.createElement('span'),title=document.createElement('b'),p=document.createElement('p');if(i===6)div.className='featured-technique';num.textContent=i===6?'특징기':'0'+(i+1);title.textContent=name;p.textContent=patternDetails[b.id]?.[i]||b.tip;div.append(num,title,p);return div}));$('boss-note-tip').textContent=b.tip;$('boss-dialog').showModal();}
@@ -155,7 +155,7 @@ function closeBoss(){$('boss-dialog').close();if(noteWasPlaying)togglePause(fals
 function enterAudition(e){
  e?.preventDefault();const raw=$('player-name').value.normalize('NFKC').replace(/[\u200b-\u200f\u202a-\u202e\u2060-\u206f\ufeff]/g,'').trim();
  if([...raw].length<2||[...raw].length>12||!/[\p{L}\p{N}]/u.test(raw)||/[<>\u0000-\u001f\u007f]/u.test(raw)){$('entry-error').textContent='닉네임을 2–12자로 입력해 주세요. 글자 또는 숫자를 포함해 주세요.';$('player-name').setAttribute('aria-invalid','true');$('player-name').focus();return;}
- const identity=normalizeIdentity({name:raw});if([...identity.name].length<2){$('entry-error').textContent='표시할 수 있는 닉네임을 2자 이상 입력해 주세요.';$('player-name').setAttribute('aria-invalid','true');$('player-name').focus();return;}$('player-name').value=identity.name;$('participant-name').textContent=identity.name;$('entry-error').textContent='';$('player-name').removeAttribute('aria-invalid');document.body.dataset.screen='casting';try{localStorage.setItem('yesulin-audition-profile-v6',JSON.stringify(identity));}catch{}booth.render();$('start-game').focus({preventScroll:true});window.scrollTo({top:0,behavior:'smooth'});
+ const identity=normalizeIdentity({name:raw});if([...identity.name].length<2){$('entry-error').textContent='표시할 수 있는 닉네임을 2자 이상 입력해 주세요.';$('player-name').setAttribute('aria-invalid','true');$('player-name').focus();return;}$('player-name').value=identity.name;$('participant-name').textContent=identity.name;$('entry-error').textContent='';$('player-name').removeAttribute('aria-invalid');document.body.dataset.screen='casting';try{localStorage.setItem('yesulin-audition-profile-v6',JSON.stringify(identity));}catch{}booth.render();$('start-game').focus({preventScroll:true});window.scrollTo({top:0,behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches?'auto':'smooth'});
 }
 $('entry-form').addEventListener('submit',enterAudition);
 $('change-name').onclick=()=>{document.body.dataset.screen='entry';$('player-name').focus();};
@@ -229,7 +229,7 @@ function frame(now){
   audio.update(state,dt);renderer.render(state,renderTime);updateCombatGuide(state);updatePracticeUI(state);
   if(state.stage!==observedStage||state.round!==observedRound){observedStage=state.stage;observedRound=state.round;updateScenes(state.stage);}
   if(state.status!==previousStatus){previousStatus=state.status;if(state.status!=='playing')showResult()}
-  ariaTick+=dt;if(ariaTick>.25){ariaTick=0;booth.setLiveRun(state.status==='playing'&&state.mode==='challenge'?{score:Math.round(state.score),bosses:state.stats.bossKills??state.stats.stagesCleared??0,name:runMeta?.name}:null);canvas.setAttribute('aria-label',(practice?'연습모드':state.mode==='challenge'?'무제한 보스 도전':'본 게임')+' · '+auditionLabel(state.stage)+' '+state.boss.name+' · '+CHARACTERS[state.player.character].name+' 고정 캐릭터'+' · Q/W 공격 E 강화 R 궁극기 · 버프 '+(state.player.buffTimer>0?'활성':'없음')+' · 체력 '+Math.ceil(state.player.hp)+' · 보스 체력 '+Math.ceil(state.boss.hp)+' · '+(state.mode==='challenge'?'시간 제한 없음 · 점수 '+Math.round(state.score)+' · 콤보 '+state.combo+' · JUST '+(state.stats.justHits||0)+' · ':'')+(paused?'일시정지':state.cinematic?.remaining>0?'컷신 '+state.cinematic.name:state.status));}
+  ariaTick+=dt;if(ariaTick>.25){ariaTick=0;booth.setLiveRun(state.status==='playing'&&state.mode==='challenge'?{score:Math.round(state.score),bosses:state.stats.bossKills??state.stats.stagesCleared??0,lastClearTime:state.lastClearTime,runTime:state.runTime,name:runMeta?.name}:null);canvas.setAttribute('aria-label',(practice?'연습모드':state.mode==='challenge'?'무제한 보스 도전':'본 게임')+' · '+auditionLabel(state.stage)+' '+state.boss.name+' · '+CHARACTERS[state.player.character].name+' 고정 캐릭터'+' · Q/W 공격 E 강화 R 궁극기 · 버프 '+(state.player.buffTimer>0?'활성':'없음')+' · 체력 '+Math.ceil(state.player.hp)+' · 보스 체력 '+Math.ceil(state.boss.hp)+' · '+(state.mode==='challenge'?'시간 제한 없음 · 점수 '+Math.round(state.score)+' · 콤보 '+state.combo+' · JUST '+(state.stats.justHits||0)+' · ':'')+(paused?'일시정지':state.cinematic?.remaining>0?'컷신 '+state.cinematic.name:state.status));}
  }else renderer.render(null,renderTime,{lobby:true,selected});
  canvas.dataset.audioEnabled=String(audio.enabled);canvas.dataset.domainMusic=JSON.stringify(audio.getDomainMusicStatus());
  requestAnimationFrame(frame);

@@ -52,5 +52,5 @@ export function bladeWaveInstruction(h,v,g){
  const phase=(v.phaseIndex??h.domainPhase??0)+1,count=v.phaseCount||5,reached=!!(g.targetReached??g.destinationReached),focus=(v.waves||[])[v.bladeCheckpoint||0],direction=focus?directionName(focus):'',turn=phase===5&&(v.bladeCheckpoint||0)>0,cleared=!!focus?.cleared;
  const title=cleared?'통과! 다음 칼날 준비':turn&&!reached?'방향 전환! 새 빈틈으로':reached?'빈틈에 맞춘 채 대기':'민트 빈틈에 몸을 맞추세요';
  const arrival=Number.isFinite(g.arrivalSeconds)&&!cleared?` · 도착 ${Math.max(0,g.arrivalSeconds).toFixed(1)}초`:'';
- return{title,tip:cleared?'다음 벽은 다른 방향 · 새 민트 표식을 확인하세요':`${direction}${arrival} · 칼날 접촉 즉사`,timerLabel:!h.active?'출발까지':g.warning?'다음 칼날':'통과까지',targetReached:reached};
+ return{title,tip:cleared?'다음 벽은 다른 방향 · 새 민트 표식을 확인하세요':`${direction}${arrival} · 접촉 시 체력 −40%`,timerLabel:!h.active?'출발까지':g.warning?'다음 칼날':'통과까지',targetReached:reached};
 }

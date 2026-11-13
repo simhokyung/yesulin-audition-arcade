@@ -13,6 +13,9 @@ export {getMaxPatternGuide} from './max-patterns.js';
  * Difficulty and character stats below are the same values used by simulations.
  */
 
+export const DOMAIN_DAMAGE_RATIO=.4;
+export const DOMAIN_HIT_GRACE=1;
+
 export const CHARACTERS = {
   director: {id:'director',name:'감독',title:'현장을 지배하는 자',color:'#dfff70',hp:260,speed:285,attack:25,attackCooldown:.34,range:125,skillCost:0,skillCooldown:4.8,skillName:'레디, 액션!',roleName:'현장 통제 — 전 스태프 대기!'},
   actor: {id:'actor',name:'배우',title:'장르를 넘나드는 자',color:'#b7acff',hp:260,speed:300,attack:24,attackCooldown:.30,range:125,skillCost:0,skillCooldown:4.8,skillName:'궁수 연기 — 애드리브',roleName:'메소드 몰입'},
@@ -45,7 +48,7 @@ export const BOSSES = [
   {id:'mime',name:'대길',title:'가면연출가',subtitle:'나만의 배역을 찾아서',location:'가면 소극장',color:'#dfb0fa',hp:5800,damage:26,quote:'가면은 수없이 많지. 너는 어떤 장면을 보여줄 거야?',tip:'점선 FAKE는 가짜, 진한 HIT만 실제 타격입니다. 무대 장악에서는 진짜 번호·모양을 찾고 연결 통로가 열리면 다음 패널로 옮기세요.',review:'네 장면을 찾았군. 다음 무대로.',patterns:['리본 피어스','거짓 커튼','더블 캐스팅','무대 장악 · 페르소나 극장','대역 오디션','가면 동선','끝까지 캐스팅']},
   {id:'gojo',name:'이프',title:'경계심사관',subtitle:'달라진 흐름에 응답하기',location:'프레임 스튜디오',color:'#a7c9ff',hp:8800,damage:38,quote:'아까 통했던 동선이, 이번에도 통할까?',tip:'프레임 관통은 마지막 0.5초에 고정됩니다. 무대 장악은 가로·세로 안전 통로가 바뀌므로 빔이 꺼진 예고 때 이동하세요.',review:'흐름이 달라도 네 장면은 살아 있어.',patterns:['초점 견인','경계 반발','프레임 관통','무대 장악 · 무한 시사회','리플레이','선행 프레임','자리해야지~']},
   {id:'max',name:'맥스',title:'기록심사관',subtitle:'기억에 남을 장면 만들기',location:'추억 스튜디오',color:'#ffc979',hp:9455,damage:41,quote:'추억이 중요하다~ 남는 건 추억이다~',tip:'카메라 앞에서 옆으로 피하고, 사진은 돌아오는 길까지 확인하세요. 필름 셔터가 닫히기 전에 민트색 칸으로 이동하세요.',review:'좋았다. 이런 장면이 오래 남는 거야.',transition:'기억에 남을 장면을 만들었습니다. 이제 마지막 무대로.',patterns:['잠깐, 추억 남기자!','연속 촬영','베스트 테이크','무대 장악 · 추억 보관소','연속 포즈','다시, 프레임','남는 건 추억이다~']},
-  {id:'sukuna',name:'무빙',title:'종막집행관',subtitle:'마지막까지 집중을 지키기',location:'종막 심사장',color:'#ff8491',hp:10100,damage:45,quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',tip:'박자 절단의 연속 예고선을 피하세요. 종막 집행은 방향이 바뀌는 칼날 벽입니다. 이동하는 틈에 맞춰 통과하고, 마지막 두 대각선에서는 방향을 꺾으세요.',review:'끝까지 지켰군. 이 무대는 네 것이다.',patterns:['박자 절단','단두 큐','종막 투창','무대 장악 · 종막 집행','앙코르 참격','엇박자 연사','원테이크, 따라와']},
+  {id:'sukuna',name:'무빙',title:'종막집행관',subtitle:'마지막까지 집중을 지키기',location:'종막 심사장',color:'#ff8491',hp:10100,damage:50,quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',tip:'박자 절단의 연속 예고선을 피하세요. 종막 집행은 방향이 바뀌는 칼날 벽입니다. 이동하는 틈에 맞춰 통과하고, 마지막 두 대각선에서는 방향을 꺾으세요.',review:'끝까지 지켰군. 이 무대는 네 것이다.',patterns:['박자 절단','단두 큐','종막 투창','무대 장악 · 종막 집행','앙코르 참격','엇박자 연사','원테이크, 따라와']},
 ];
 
 // Keep the established five-cast takeover cadence. Each cycle opener rotates
@@ -161,17 +164,17 @@ export function getDomainGuide(s,h){
 export function createGame({character='director',difficulty='standard',seed=42,stage=0,skipIntro=false,mode='story',duration=90}={}){
   if(!CHARACTERS[character])character='director';if(!DIFFICULTIES[difficulty])difficulty='standard';
   mode=mode==='challenge'?'challenge':mode==='booth'?'booth':'story';if(isRankedRun({mode})){seed=424242;difficulty='standard';stage=0;skipIntro=true;}duration=[60,90,120].includes(duration)?duration:90;
-  const s={version:19,runCharacter:character,dialogue:null,dialogueCooldown:0,dialogueHistory:{},lastDamage:null,followups:[],maxPattern:null,personality:null,rehearsal:null,audition:null,playerHistory:[],introducedBosses:[],cinematic:null,pendingUltimate:false,mode,duration:mode==='booth'?duration:0,timeLeft:mode==='challenge'?null:mode==='booth'?duration:0,runTime:0,round:0,transitionTimer:0,endReason:null,domainDeath:null,inputBuffer:{},scoreExact:0,multiplier:1,fever:0,lastJustAttack:0,rng:seed>>>0,seed:seed>>>0,uid:0,status:'playing',difficulty,stage:0,time:0,stageTime:0,score:0,combo:0,maxCombo:0,comboTimer:0,
+  const s={version:20,domainHitCooldown:0,domainHits:0,lastDomainHit:null,lastClearTime:null,stageClearTimes:[],runCharacter:character,dialogue:null,dialogueCooldown:0,dialogueHistory:{},lastDamage:null,followups:[],maxPattern:null,personality:null,rehearsal:null,audition:null,playerHistory:[],introducedBosses:[],cinematic:null,pendingUltimate:false,mode,duration:mode==='booth'?duration:0,timeLeft:mode==='challenge'?null:mode==='booth'?duration:0,runTime:0,round:0,transitionTimer:0,endReason:null,domainDeath:null,inputBuffer:{},scoreExact:0,multiplier:1,fever:0,lastJustAttack:0,rng:seed>>>0,seed:seed>>>0,uid:0,status:'playing',difficulty,stage:0,time:0,stageTime:0,score:0,combo:0,maxCombo:0,comboTimer:0,
     player:{...recoilDefaults(),x:270,y:500,hp:260,maxHp:260,energy:100,maxEnergy:100,hype:0,character,role:'sword',facing:1,invuln:0,attackAnim:0,attackKind:'',dodgeTimer:0,dodgeElapsed:0,dodgeId:0,lastJustDodge:-1,dodgeX:0,dodgeY:0,attackCooldown:0,attackId:0,comboIndex:0,chainTimer:0,precisionWindow:false,precisionQueued:false,precisionAttempted:false,queuedAttack:false,timingGrade:'',timingTimer:0,swapCooldown:0,hitFlash:0,slow:0,buff:false,combo:0,cooldowns:{skill:0,buff:0,dodge:0,role:0,ultimate:0}},
     boss:null,enemies:[],hazards:[],projectiles:[],effects:[],spotlight:{x:480,y:490,radius:105,radiusY:62,active:true,timer:0},
-    stats:{maxPatternCasts:{},maxShots:0,maxReturns:0,maxHits:0,personalityCasts:{},personalityShots:{},personalityHits:{},personalityCompletions:{},personalityAvoided:{},takeoverVariantCasts:{},takeoverVariantActivations:{},takeoverVariantSurvived:{},conceptCasts:{},conceptShots:{},extraActivations:{},extraCompletions:{},extraSuccesses:{},counterWindows:0,counterDamage:0,rehearsals:0,auditionSuccesses:0,auditionMistakes:0,patternCasts:{},takeoverCasts:{},takeoverActivations:{},takeoverSurvived:{},damageDealt:0,damageTaken:0,hits:0,dodges:0,perfectDodges:0,justDodges:0,justHits:0,finishers:0,maxMultiplier:1,bossKills:0,skills:0,buffs:0,adlibs:0,methodFinishers:0,cueDetonations:0,crewBursts:0,blocks:0,swaps:0,ultimates:0,kills:0,stagesCleared:0,spotlightSeconds:0},
+    stats:{domainHits:0,maxPatternCasts:{},maxShots:0,maxReturns:0,maxHits:0,personalityCasts:{},personalityShots:{},personalityHits:{},personalityCompletions:{},personalityAvoided:{},takeoverVariantCasts:{},takeoverVariantActivations:{},takeoverVariantSurvived:{},conceptCasts:{},conceptShots:{},extraActivations:{},extraCompletions:{},extraSuccesses:{},counterWindows:0,counterDamage:0,rehearsals:0,auditionSuccesses:0,auditionMistakes:0,patternCasts:{},takeoverCasts:{},takeoverActivations:{},takeoverSurvived:{},damageDealt:0,damageTaken:0,hits:0,dodges:0,perfectDodges:0,justDodges:0,justHits:0,finishers:0,maxMultiplier:1,bossKills:0,skills:0,buffs:0,adlibs:0,methodFinishers:0,cueDetonations:0,crewBursts:0,blocks:0,swaps:0,ultimates:0,kills:0,stagesCleared:0,spotlightSeconds:0},
     announcedPhase:false,shake:0,hitStop:0,skipIntro};
   startStage(s,clamp(stage|0,0,BOSSES.length-1),{retry:true,entrance:mode==='challenge'});return s;
 }
 
 export function startStage(s,index,{retry=false,entrance=false}={}){
   index=clamp(index|0,0,BOSSES.length-1);const d=DIFFICULTIES[s.difficulty],config=BOSSES[index],p=s.player,ranked=isRankedRun(s),ultimateRemaining=retry?0:p.cooldowns.ultimate;
-  s.stage=index;s.stageTime=0;s.status='playing';s.cinematic=null;s.pendingUltimate=false;s.endReason=null;s.domainDeath=null;s.transitionTimer=0;s.hazards=[];s.projectiles=[];s.followups=[];s.rehearsal=null;s.audition=null;s.maxPattern=null;s.personality=null;s.playerHistory=[];s.effects=[];s.lastDamage=null;s.combo=0;s.comboTimer=0;s.announcedPhase=false;s.hitStop=0;s.shake=0;multiplier(s);
+  s.stage=index;s.stageTime=0;s.domainHitCooldown=0;s.lastDomainHit=null;s.status='playing';s.cinematic=null;s.pendingUltimate=false;s.endReason=null;s.domainDeath=null;s.transitionTimer=0;s.hazards=[];s.projectiles=[];s.followups=[];s.rehearsal=null;s.audition=null;s.maxPattern=null;s.personality=null;s.playerHistory=[];s.effects=[];s.lastDamage=null;s.combo=0;s.comboTimer=0;s.announcedPhase=false;s.hitStop=0;s.shake=0;multiplier(s);
   p.x=ranked?430:270;p.y=500;p.facing=1;p.hp=retry?p.maxHp:Math.min(p.maxHp,p.hp+(ranked?65:100));p.energy=retry?100:Math.min(100,p.energy+45);p.hype=retry?0:Math.min(100,p.hype+20);
   p.character=s.runCharacter;p.role='sword';p.castRole='sword';p.castTimer=0;p.buffTimer=0;p.buffName='';p.shieldCharges=0;p.invuln=1;p.attackAnim=0;p.dodgeTimer=0;p.attackCooldown=0;p.swapCooldown=0;p.hitFlash=0;p.slow=0;p.buff=false;p.combo=0;p.cooldowns={skill:0,buff:0,dodge:0,role:0,ultimate:ultimateRemaining};p.attackSequence=null;p.adlibReady=false;p.nextFinisherReady=false;p.methodRewardSpent=false;p.crewReady=false;p.retreatTimer=0;p.retreatDirection=0;
   Object.assign(p,recoilDefaults(),{comboIndex:0,chainTimer:0,precisionWindow:false,precisionQueued:false,precisionAttempted:false,queuedAttack:false,attackBuffer:0,actionQueue:{},attackDuration:0,attackProgress:1,timingGrade:'',timingTimer:0});
@@ -209,7 +212,7 @@ function hitTarget(s,target,amount,{kind='basic',knockback=0,perfect=false,attac
   event(s,'impact',target.x,target.y,{color:CHARACTERS[s.player.character].color,life:finisher?.30:.24,maxLife:finisher?.30:.24,power:target.hitPower,comboIndex:s.player.comboIndex,perfect,kind,attackId,direction,character:s.player.character,targetId:target.id,damage,time:s.time,hitIndex,strikeIndex:hitIndex,hitCount,totalHits:hitCount,finisher,source,signature:signatureId,staffType,cueIndex,cueCount,originX,originY,performanceRole});
   event(s,'spark',target.x,target.y-45,{color:CHARACTERS[s.player.character].color,life:.22,maxLife:.22});s.shake=Math.max(s.shake,kind==='ultimate'?(finisher?22:4):kind==='skill'?11:finisher?10:4);
   s.hitStop=Math.max(s.hitStop,kind==='ultimate'?(finisher?.10:.012):finisher?.075:kind==='skill'?.065:.018);
-  if(target.hp<=0){s.stats.kills++;if(boss)s.stats.bossKills++;event(s,'confetti',target.x,target.y,{radius:boss?190:80,power:boss?2:1,color:target.color||'#dfff70',life:1.1,maxLife:1.1});event(s,'burst',target.x,target.y-35,{radius:boss?140:55,color:target.color||'#dfff70',life:.8,maxLife:.8});}
+  if(target.hp<=0){s.stats.kills++;if(boss){s.stats.bossKills++;recordStageClear(s);}event(s,'confetti',target.x,target.y,{radius:boss?190:80,power:boss?2:1,color:target.color||'#dfff70',life:1.1,maxLife:1.1});event(s,'burst',target.x,target.y-35,{radius:boss?140:55,color:target.color||'#dfff70',life:.8,maxLife:.8});}
   if(s.player.character==='actor'&&kind==='finisher'&&!s.player.adlibReady){s.player.adlibReady=true;signature(s,'adlib-ready','애드리브 준비 · 다음 W 강화');}
   if(s.player.character==='director'&&(kind==='finisher'||source==='director-wave'))crewFollowup(s,target);
   return damage;
@@ -229,10 +232,19 @@ function checkActiveDomains(s){
   if(s.status!=='playing'||s.player.hp<=0)return false;
   const h=s.hazards.find(h=>h.kind==='domain'&&h.active&&h.life>0&&(h.domainType==='memory-archive'?memoryArchiveHit(s,h):h.domainType==='blade-waves'?(s._movementStart&&!s._bladeSweepReady?projectedBladeHit(s,h):h.sweptHit||isInsideHazard(s.player.x,s.player.y,h)):h.domainType==='chasing-slashes'?(s._movementStart&&!s._bladeSweepReady?projectedPursuitHit(s,h):h.sweptHit||isInsideHazard(s.player.x,s.player.y,h)):isInsideHazard(s.player.x,s.player.y,h)));
   if(!h)return false;
-  const p=s.player;s.stats.damageTaken+=p.hp;p.hp=0;p.invuln=0;p.hitFlash=.45;p.hitStun=1;s.status='gameover';s.endReason='domain';s.combo=0;s.comboTimer=0;s.shake=24;
-  cancelPersonality(s);s.domainDeath={bossId:s.boss.id,name:h.name,x:p.x,y:p.y,instruction:getDomainGuide(s,h).instruction,tip:getDomainGuide(s,h).instruction,domainType:h.domainType,phase:h.domainPhase,hazard:JSON.parse(JSON.stringify(h))};speak(s,'defeat',3);s.followups=[];s.hazards=[];s.projectiles=[];s.inputBuffer={};
-  event(s,'domaincut',p.x,p.y,{fatal:true,bossId:s.boss.id,text:'무대에 압도당했다',subtitle:h.name+' · 즉사',color:s.boss.color,power:4,life:2.5,maxLife:2.5});
-  words(s,'무대 장악 · 즉사',640,300,'#ff8f9e',3);return true;
+  if(s.domainHitCooldown>1e-9)return false;
+  const p=s.player,damage=Math.min(p.hp,Math.round(p.maxHp*DOMAIN_DAMAGE_RATIO));
+  s.domainHitCooldown=DOMAIN_HIT_GRACE;s.domainHits++;s.stats.domainHits++;p.hp-=damage;s.stats.damageTaken+=damage;
+  p.hitFlash=.35;p.hitStun=.10;p.attackSequence=null;p.attackBuffer=0;p.queuedAttack=false;p.precisionQueued=false;p.chainTimer=0;p.comboIndex=0;
+  s.combo=0;s.comboTimer=0;s.shake=Math.max(s.shake,16);s.hitStop=Math.max(s.hitStop,.035);multiplier(s);
+  const hit={bossId:s.boss.id,name:h.name,x:p.x,y:p.y,instruction:getDomainGuide(s,h).instruction,tip:getDomainGuide(s,h).instruction,domainType:h.domainType,phase:h.domainPhase,hazard:JSON.parse(JSON.stringify(h))};
+  s.lastDomainHit=hit;s.lastDamage={x:p.x,y:p.y,damage,sourceId:h.id,hazard:hit.hazard};
+  event(s,'domainHit',p.x,p.y,{damage,maxHp:p.maxHp,ratio:DOMAIN_DAMAGE_RATIO,cooldown:DOMAIN_HIT_GRACE,bossId:s.boss.id,domainType:h.domainType,fatal:p.hp<=0,color:s.boss.color,life:.65,maxLife:.65});
+  words(s,`무대 장악 −${damage}`,p.x,p.y-105,'#ff8f9e',.85);
+  if(p.hp>0){speak(s,'hurt');return false;}
+  p.invuln=0;s.status='gameover';s.endReason='domain';cancelPersonality(s);s.domainDeath=hit;speak(s,'defeat',3);s.followups=[];s.hazards=[];s.projectiles=[];s.inputBuffer={};
+  event(s,'domaincut',p.x,p.y,{fatal:true,bossId:s.boss.id,text:'무대에 압도당했다',subtitle:h.name+' · 체력 소진',color:s.boss.color,power:4,life:2.5,maxLife:2.5});
+  return true;
 }
 function targets(s){return [...(s.audition?.active&&!s.audition.selected?s.audition.figures.filter(f=>f.hp>0).sort((a,b)=>groundDistance(a,s.player)-groundDistance(b,s.player)):[]),...s.enemies.filter(e=>e.hp>0),...(s.boss.active&&s.boss.hp>0?[s.boss]:[])];}
 function aimedTarget(s){const p=s.player;return targets(s).filter(t=>(t.x-p.x)*p.facing>=-20).sort((a,b)=>groundDistance(a,p)-groundDistance(b,p))[0];}
@@ -379,8 +391,8 @@ function beginConceptPattern(s,b,name,warning){
   points.forEach((point,n)=>addHazard(s,b,'circle',name,warning+n*.46,{...point,radius:78,radiusY:48,life:.30,kind:'mask-route',damage:b.damage*.8,locked:true,tracking:false,cue:'HIT '+(n+1),index:n+1,total:3,path:points,blocksBoss:true,conceptPattern:true,patternBossId:b.id}));
   for(let n=0;n<2;n++)addHazard(s,b,'circle',name,warning+n*.46,{x:clamp(p.x+dir*(n?245:85),110,1170),y:clamp(p.y+(n?65:-65),370,594),radius:78,radiusY:48,life:.3,kind:'mask-route-fake',decoy:true,damage:0,locked:true,cue:'FAKE',index:n+1,total:2,conceptPattern:true,patternBossId:b.id});
  }else{
-  const frames=b.id==='gojo',offsets=frames?[0,.18,.38,.92,1.12]:[0,.14,.28,.42,.56,1.15,1.37];
-  offsets.forEach((offset,n)=>addHazard(s,b,'lane',name,warning+offset,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,width:1450,height:frames?64:58,angle:Math.atan2(p.y-b.y,p.x-b.x),originX:origin.x,originY:origin.y,aimPoint:{x:p.x,y:p.y},life:2.5,kind:'projectile-cue',projectileKind:frames?'frame-shard':'rhythm-blade',damage:b.damage*(frames?.75:.6),speed:frames?560:640,projectileRadius:frames?27:24,projectileRadiusY:frames?19:17,tracking:true,locked:false,lockWindow:frames?.65:.6,prediction:frames?.35:0,index:n+1,total:offsets.length,late:!frames&&n>=5,warningOnly:true,blocksBoss:true,conceptPattern:true,patternBossId:b.id}));
+  const frames=b.id==='gojo',offsets=frames?[0,.16,.32,.70,.86]:[0,.14,.28,.42,.56,1.15,1.37];
+  offsets.forEach((offset,n)=>addHazard(s,b,'lane',name,warning+offset,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,width:1450,height:frames?64:58,angle:Math.atan2(p.y-b.y,p.x-b.x),originX:origin.x,originY:origin.y,aimPoint:{x:p.x,y:p.y},life:2.5,kind:'projectile-cue',projectileKind:frames?'frame-shard':'rhythm-blade',damage:b.damage*(frames?.75:.6),speed:frames?660:820,projectileRadius:frames?27:24,projectileRadiusY:frames?19:17,tracking:true,locked:false,lockWindow:frames?.55:.5,prediction:frames?.48:n%3===1?.45:0,index:n+1,total:offsets.length,late:!frames&&n>=5,warningOnly:true,blocksBoss:true,conceptPattern:true,patternBossId:b.id}));
  }
  for(const h of s.hazards)if(h.attackId===b.telegraph.attackId&&h.conceptPattern)bossShotEvent(s,h,'tracking');
 }
@@ -426,19 +438,19 @@ function personalHazard(s,a,shot,kind,type,warning,life,geometry){
  const h={id:++s.uid,attackId:a.attackId,name:a.name,type,kind,personalityPattern:true,patternBossId:a.bossId,index:shot.index,total:a.total,remaining:warning,duration:warning,life,totalLife:life,active:false,color:s.boss.color,damage:s.boss.damage*(kind==='seat-reservation'?.75:.65),blocksBoss:true,...geometry};s.hazards.push(h);return h;
 }
 function beginPersonalityPattern(s,b,name,warning){
- const total=b.id==='mime'?2:b.id==='ignis'?3:5,id=b.telegraph.attackId,interval=b.id==='ignis'?.42:b.id==='mime'?2.16:.78;
+ const total=b.id==='mime'?2:b.id==='ignis'?3:7,id=b.telegraph.attackId,interval=b.id==='ignis'?.42:b.id==='mime'?2.16:.66;
  const a=s.personality={attackId:id,bossId:b.id,name,kind:PERSONALITY_KINDS[b.id],elapsed:0,index:1,total,hitCount:0,shots:[],startDamage:s.stats.damageTaken};
  s.stats.personalityCasts[b.id]=(s.stats.personalityCasts[b.id]||0)+1;
  for(let n=0;n<total;n++){
-  const startAt=b.id==='ignis'?0:b.id==='sukuna'?[0,1.82,3.75,5.5,7.5][n]:n*interval,localWarning=b.id==='ignis'?warning+n*interval:n===0?warning:b.id==='mime'?1.35:b.id==='gojo'?1.0:1.2;
+  const startAt=b.id==='ignis'?0:b.id==='sukuna'?[0,1.5,3.12,4.58,6.18,7.62,9.24][n]:n*interval,localWarning=b.id==='ignis'?warning+n*interval:n===0?warning:b.id==='mime'?1.35:b.id==='gojo'?.95:1.05;
   a.shots.push({id:++s.uid,attackId:id,patternBossId:b.id,index:n+1,total,kind:a.kind,phase:'waiting',startAt,lockAt:startAt+Math.max(0,localWarning-(b.id==='mime'?.75:b.id==='sukuna'?.70:b.id==='ignis'?.85:localWarning)),launchAt:startAt+localWarning,duration:localWarning,warningOnly:true,width:b.id==='ignis'?42:b.id==='mime'?50:46,radius:b.id==='mime'?25:23,radiusY:b.id==='mime'?18:17,phaseRemaining:localWarning,tracking:false,locked:false});
  }
 }
 function setupPersonalShot(s,a,shot){
  const b=s.boss,p=s.player;shot.phase='tracking';shot.tracking=true;shot.origin={x:b.x,y:b.y};shot.target={x:p.x,y:p.y};
  if(a.bossId==='gojo'){
-  shot.phase='locked';shot.locked=true;shot.tracking=false;shot.lockAt=a.elapsed;shot.launchAt=a.elapsed+shot.duration;
-  const h=personalHazard(s,a,shot,'seat-reservation','circle',shot.duration,1.45,{x:p.x,y:p.y,radius:67,radiusY:43});shot.hazardId=h.id;shot.path=[{x:p.x,y:p.y},{x:p.x,y:p.y}];
+  shot.phase='tracking';shot.locked=false;shot.tracking=true;shot.lockAt=a.elapsed+.25;shot.launchAt=a.elapsed+shot.duration;
+  const h=personalHazard(s,a,shot,'seat-reservation','circle',shot.duration,1.25,{x:p.x,y:p.y,radius:72,radiusY:46,tracking:true,locked:false});shot.hazardId=h.id;shot.path=[{x:p.x,y:p.y},{x:p.x,y:p.y}];
  }else{
   const ray=personalRay(shot.origin,shot.target,a.bossId==='sukuna'?150:85,a.bossId==='ignis'?1300:760);
   shot.angle=ray.angle+(a.bossId==='ignis'?[0,-.24,.24][shot.index-1]:0);
@@ -453,9 +465,9 @@ function launchPersonalShot(s,a,shot){
  if(a.bossId==='ignis'){
   projectile(s,'enemy','red-cap',shot.origin.x,shot.origin.y,Math.cos(shot.angle)*440,Math.sin(shot.angle)*440,{radius:21,radiusY:15,damage:b.damage*.9,life:3.2,color:'#ff4d50',attackId:a.attackId,shotId:shot.id,bossId:b.id,index:shot.index,total:a.total,personalityPattern:true,originX:shot.origin.x,originY:shot.origin.y,angle:shot.angle,locked:true,tracking:false});shot.projectileId=s.projectiles.at(-1).id;
  }else if(a.bossId==='mime'||a.bossId==='sukuna'){
-  shot.dashDuration=a.bossId==='mime'?.44:.30;shot.dashElapsed=0;shot.body={x:shot.origin.x,y:shot.origin.y,previousX:shot.origin.x,previousY:shot.origin.y,radius:shot.radius,radiusY:shot.radiusY};b.knockX=b.knockY=0;
+  shot.dashDuration=a.bossId==='mime'?.44:.26;shot.dashElapsed=0;shot.body={x:shot.origin.x,y:shot.origin.y,previousX:shot.origin.x,previousY:shot.origin.y,radius:shot.radius,radiusY:shot.radiusY};b.knockX=b.knockY=0;
   if(a.bossId==='sukuna'){
-   const lane=personalLane(shot),h=personalHazard(s,a,shot,'moving-aftercut','lane',.78,.24,{...lane,height:42,origin:{...shot.origin},target:{...shot.path[1]},angle:shot.angle});shot.followupId=h.id;
+   const lane=personalLane(shot),h=personalHazard(s,a,shot,'moving-aftercut','lane',.62,.24,{...lane,height:42,origin:{...shot.origin},target:{...shot.path[1]},angle:shot.angle});shot.followupId=h.id;
   }
  }
  personalityEvent(s,shot,'launch');
@@ -468,15 +480,16 @@ function updatePersonality(s,dt){
   if(shot.phase==='waiting'||shot.phase==='done')continue;
   a.index=shot.index;
   if(shot.phase==='tracking'){
-   if(a.bossId!=='ignis'){
+   if(a.bossId==='gojo'){const h=s.hazards.find(h=>h.id===shot.hazardId);shot.target={x:s.player.x,y:s.player.y};shot.path=[{...shot.target},{...shot.target}];if(h){h.x=shot.target.x;h.y=shot.target.y;}}
+   else if(a.bossId!=='ignis'){
     // Small visible flank steps establish diagonal approaches; the final locked path never retargets.
     if(a.bossId==='sukuna'){
-     const side=shot.index%2===1?1:-1,desired=clamp(s.player.y+side*(shot.index>=4?120:100),365,599),delta=clamp(desired-b.y,-150*dt,150*dt);b.y+=delta;
-     if(shot.index===2||shot.index===4){const flank=clamp(s.player.x+(b.x<s.player.x?-175:175),155,1125);b.x+=clamp(flank-b.x,-150*dt,150*dt);}
+     const side=shot.index>=6?(shot.index===6?1:-1):shot.index%2===1?1:-1,desired=clamp(s.player.y+side*(shot.index>=4?120:100),365,599),delta=clamp(desired-b.y,-185*dt,185*dt);b.y+=delta;
+     if(shot.index===2||shot.index===4||shot.index>=6){const flank=clamp(s.player.x+(shot.index>=6?(shot.index===6?-200:200):(b.x<s.player.x?-175:175)),155,1125);b.x+=clamp(flank-b.x,-185*dt,185*dt);}
     }
     shot.origin={x:b.x,y:b.y};shot.target={x:s.player.x,y:s.player.y};const ray=personalRay(shot.origin,shot.target,a.bossId==='sukuna'?150:85,760);shot.angle=ray.angle;shot.path=[{...shot.origin},ray.end];
    }
-   if(a.elapsed+1e-9>=shot.lockAt){shot.phase='locked';shot.tracking=false;shot.locked=true;shot.lockedAt=a.elapsed;personalityEvent(s,shot,'lock');}
+   if(a.elapsed+1e-9>=shot.lockAt){shot.phase='locked';shot.tracking=false;shot.locked=true;shot.lockedAt=a.elapsed;if(a.bossId==='gojo'){const h=s.hazards.find(h=>h.id===shot.hazardId);if(h){h.locked=true;h.tracking=false;}}personalityEvent(s,shot,'lock');}
   }
   if(shot.phase==='locked'){
    if(a.bossId==='mime'||a.bossId==='sukuna'){b.x=shot.origin.x;b.y=shot.origin.y;b.knockX=b.knockY=0;}
@@ -520,7 +533,7 @@ export function getPersonalityGuide(s){
  const followup=shot.followupId?hazards.find(h=>h.id===shot.followupId):null,projectile=shot.projectileId?s.projectiles.find(q=>q.id===shot.projectileId):null,afterDash=shot.phase==='active'&&shot.dashElapsed>=shot.dashDuration;
  const tracking=shot.phase==='tracking',waiting=shot.phase==='waiting',active=shot.phase==='active',locked=shot.phase==='locked',remaining=Math.max(0,waiting?shot.startAt-a.elapsed:active?(afterDash&&followup?(followup.active?followup.life:followup.remaining):projectile?projectile.life:shot.phaseRemaining??0):shot.launchAt-a.elapsed),duration=active?(afterDash&&followup?(followup.active?followup.totalLife:followup.duration):projectile?3.2:hazards.find(h=>h.id===shot.hazardId)?.totalLife||shot.dashDuration||1.65):waiting?Math.max(.1,shot.startAt-(a.shots[shot.index-2]?.launchAt||0)):shot.duration;
  const title={ignis:'빨간 뚜껑의 초록 병을 피하세요!',mime:tracking?'추격 중 · 방향을 보고 준비!':'돌진 방향 고정! 옆으로 피하세요!',gojo:'예약된 자리에서 벗어나세요!',sukuna:tracking?'다음 돌진선을 확인하세요!':'돌진선 밖으로! 지난 궤적도 조심!'}[a.bossId];
- const instruction={ignis:'빨간 뚜껑의 초록 병 3개 · 예고선 사이의 빈틈으로!',mime:'직진으로 도망치기보다 옆으로 꺾으세요 · 두 번 피하면 반격!',gojo:'다섯 번 연속 자리 예약! 새 방향으로 이동하고 이전 자리도 피하세요.',sukuna:'다섯 번 연속 돌진! 방향이 고정되면 옆으로! 지난 선의 늦은 참격도 조심하세요.'}[a.bossId];
+ const instruction={ignis:'빨간 뚜껑의 초록 병 3개 · 예고선 사이의 빈틈으로!',mime:'직진으로 도망치기보다 옆으로 꺾으세요 · 두 번 피하면 반격!',gojo:`${a.total}번 연속 자리 예약! 새 방향으로 이동하고 이전 자리도 피하세요.`,sukuna:`${a.total}번 연속 돌진! 방향이 고정되면 옆으로! 지난 선의 늦은 참격도 조심하세요.`}[a.bossId];
  return {kind:a.kind,personalityPattern:true,name:a.name,title,instruction,tip:instruction,color:s.boss.color,bossId:a.bossId,attackId:a.attackId,index:shot.index,total:a.total,phase:shot.phase,tracking,locked,remaining,duration,timerLabel:waiting?'다음 예고':tracking?'조준 중':locked?'공격까지':a.bossId==='gojo'?'자리 봉쇄':a.bossId==='sukuna'&&shot.dashElapsed>=shot.dashDuration?'후속 참격':'공격 통과',target,targetReached:!unsafe,shots:visible,hazards,dangerRegions:regions,elapsed:a.elapsed,body:shot.body||null};
 }
 
@@ -536,12 +549,12 @@ function beginPattern(s,forcedIndex=null){
   if(i===3)warning=Math.max(1.65,warning);
   if(i===4)warning=({ignis:1.1,mime:1.1,gojo:1.0,sukuna:.85}[b.id])*d.warning;
   if(i===5)warning=({ignis:1.5,mime:1.45,gojo:1.45,sukuna:1.35}[b.id])*d.warning;
-  if(i===6)warning=({ignis:1.4,mime:1.5,gojo:1.2,sukuna:1.4}[b.id])*d.warning;
+  if(i===6)warning=({ignis:1.4,mime:1.5,gojo:1.05,sukuna:1.25}[b.id])*d.warning;
   if(b.id==='max')warning=([1.55,1.4,1.6,2.2,1.55,1.6,1.4][i])*d.warning;
   const name=b.patterns[i],angle=Math.atan2(p.y-b.y,p.x-b.x),aim={x:p.x,y:p.y};
   b.telegraph={name,type:'cast',x:p.x,y:p.y,radius:90,width:600,height:60,remaining:warning,duration:warning,dir:p.x>b.x?1:-1,color:b.color,index:i,attackId:++s.uid,angle,aim};b.attackKind=name;
-  if(b.id==='max'){if(i===3){beginMemoryArchive(s,b,warning);event(s,'domaincut',b.x,b.y,{bossId:'max',text:name,subtitle:'닫힌 필름 칸 = 즉사 · 민트 칸으로 이동',color:b.color,power:3,life:.75,maxLife:.75});startCinematic(s,'domain','max',name,.95,b.x,b.y);}else beginMaxPattern(s,b,i,warning);return;}
-  if(i===3||i===2&&b.id==='gojo')event(s,'domaincut',b.x,b.y,{bossId:b.id,text:name,subtitle:i===3?({ignis:'조명 밖 = 즉사 · 움직이는 조명 따라가기',mime:'민트 발판으로 · 신호가 바뀌면 이동',gojo:'빔에 닿으면 즉사 · 새 민트 통로로 이동',sukuna:'칼날에 닿으면 즉사 · 빈틈으로 이동'}[b.id]):'위험 예고 · 지금 방향을 정하세요',color:b.color,power:i===3?3:2,life:.75,maxLife:.75});
+  if(b.id==='max'){if(i===3){beginMemoryArchive(s,b,warning);event(s,'domaincut',b.x,b.y,{bossId:'max',text:name,subtitle:'닫힌 필름 칸 = 체력 40% 피해 · 민트 칸으로 이동',color:b.color,power:3,life:.75,maxLife:.75});startCinematic(s,'domain','max',name,.95,b.x,b.y);}else beginMaxPattern(s,b,i,warning);return;}
+  if(i===3||i===2&&b.id==='gojo')event(s,'domaincut',b.x,b.y,{bossId:b.id,text:name,subtitle:i===3?({ignis:'조명 밖 = 체력 40% 피해 · 움직이는 조명 따라가기',mime:'민트 발판으로 · 신호가 바뀌면 이동',gojo:'빔 접촉 = 체력 40% 피해 · 새 민트 통로로 이동',sukuna:'칼날 접촉 = 체력 40% 피해 · 빈틈으로 이동'}[b.id]):'위험 예고 · 지금 방향을 정하세요',color:b.color,power:i===3?3:2,life:.75,maxLife:.75});
   if(b.id==='ignis'){
     if(i===0)addHazard(s,b,'circle',name,warning,{x:p.x,y:p.y,radius:80,radiusY:48,life:.75,kind:'footlight'});
     if(i===1)addHazard(s,b,'lane',name,warning,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,width:1100,height:68,angle,life:.6,kind:'light-sweep',damage:b.damage*.95});
@@ -555,12 +568,12 @@ function beginPattern(s,forcedIndex=null){
   }else if(b.id==='gojo'){
     if(i===0)addHazard(s,b,'circle',name,warning,{x:p.x,y:p.y,radius:130,radiusY:75,life:1.35,color:'#6cbcff',kind:'blue',damage:b.damage*.9});
     if(i===1)addHazard(s,b,'circle',name,warning,{x:b.x,y:b.y,radius:b.phase===2?250:235,radiusY:b.phase===2?145:135,life:.5,color:'#ff718e',kind:'red',damage:b.damage*1.2});
-    if(i===2){addHazard(s,b,'lane',name,warning,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,width:1500,height:b.phase===2?118:106,angle,life:.7,color:'#c49cff',kind:'purple',damage:b.damage*1.7,tracking:true,locked:false,lockWindow:.5});Object.assign(b.telegraph,{tracking:true,locked:false,lockWindow:.5});}
+    if(i===2){for(let n=0;n<2;n++)addHazard(s,b,'lane',name,warning+n*.82,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,width:1500,height:b.phase===2?118:106,angle,life:.55,color:'#c49cff',kind:'purple',damage:b.damage*1.7,tracking:true,locked:false,lockWindow:.5,index:n+1,total:2,blocksBoss:true});Object.assign(b.telegraph,{tracking:true,locked:false,lockWindow:.5});}
     if(i===3)domain(s,b,name,warning,2.6,1.1);
   }else if(b.id==='sukuna'){
     if(i===0)for(let n=0;n<(b.phase===2?4:3);n++)addHazard(s,b,'lane',name,warning+n*.22,{x:p.x,y:p.y+(n-1)*48,width:1450,height:39,angle:n%2?.23:-.23,life:.27,kind:'slash'});
-    if(i===1)addHazard(s,b,'circle',name,warning,{x:p.x,y:p.y,radius:130,radiusY:76,life:.5,damage:b.damage*1.35,kind:'cleave'});
-    if(i===2){addHazard(s,b,'lane',name,warning,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,width:1450,height:86,angle,life:.7,color:'#ffb46d',kind:'fire-arrow',damage:b.damage*1.5});addHazard(s,b,'circle',name,warning+.35,{x:p.x,y:p.y,radius:160,radiusY:90,life:1.2,color:'#ffb46d',kind:'fire-burst',damage:b.damage*.85});}
+    if(i===1)for(let n=0;n<2;n++)addHazard(s,b,'circle',name,warning+n*.72,{x:p.x,y:p.y,radius:115,radiusY:68,life:.35,damage:b.damage*1.35,kind:'cleave',tracking:true,locked:false,lockWindow:.55,index:n+1,total:2,blocksBoss:true});
+    if(i===2){addHazard(s,b,'lane',name,warning,{x:(b.x+p.x)/2,y:(b.y+p.y)/2,width:1450,height:86,angle,life:.7,color:'#ffb46d',kind:'fire-arrow',damage:b.damage*1.5,tracking:true,locked:false,lockWindow:.55});addHazard(s,b,'circle',name,warning+.35,{x:p.x,y:p.y,radius:160,radiusY:90,life:1.2,color:'#ffb46d',kind:'fire-burst',damage:b.damage*.85});}
     if(i===3)domain(s,b,name,warning,3.0,1.2);
   }
   if(i===4)beginExtraPattern(s,b,name,warning);
@@ -572,11 +585,11 @@ function domain(s,b,name,warning,life,mult,customRadius){
   const p=s.player,safeX=clamp(p.x+(p.x<640?150:-150),170,1110),safeY=clamp(p.y+(p.y>485?-65:65),400,570);
   const safeRadius=customRadius??((b.id==='sukuna'?100:108)-(b.phase===2?10:0));
   const count=b.takeoverCount++;const type=b.id==='sukuna'&&count%2===1?'chasing-slashes':{ignis:'moving-light',mime:'mask-panels',gojo:'lens-corridors',sukuna:'blade-waves'}[b.id];
-  if(type==='chasing-slashes'){name='무대 장악 · 종막 집행 · 추격 난무';b.telegraph.name=name;b.attackKind=name;const cut=s.effects.findLast(e=>e.type==='domaincut'&&e.bossId===b.id);if(cut){cut.text=name;cut.subtitle='조준이 고정되면 방향 전환 · 실제 칼날 접촉 즉사';}}
+  if(type==='chasing-slashes'){name='무대 장악 · 종막 집행 · 추격 난무';b.telegraph.name=name;b.attackKind=name;const cut=s.effects.findLast(e=>e.type==='domaincut'&&e.bossId===b.id);if(cut){cut.text=name;cut.subtitle='조준이 고정되면 방향 전환 · 칼날 접촉 = 체력 40% 피해';}}
   const alternate=(count+(b.phase===2?1:0))%2===1,variantId=b.id==='ignis'?(alternate?'return-light':'straight-light'):b.id==='mime'?(alternate?'double-swap':'single-swap'):b.id==='gojo'?(alternate?'reverse-frames':'normal-frames'):type,variantName={"return-light":'되돌아오는 조명',"straight-light":'순회 조명',"double-swap":'두 번의 배역 교대',"single-swap":'배역 교대',"reverse-frames":'반전 프레임',"normal-frames":'교차 프레임',"blade-waves":'칼날 파도',"chasing-slashes":'추격 난무'}[variantId];
   s.stats.takeoverVariantCasts[variantId]=(s.stats.takeoverVariantCasts[variantId]||0)+1;
   s.stats.takeoverCasts[type]=(s.stats.takeoverCasts[type]||0)+1;
-  const total=type==='chasing-slashes'?8.05:{ignis:4.8,mime:variantId==='double-swap'?10.8:6.8,gojo:8.95,sukuna:21.35}[b.id];
+  const total=type==='chasing-slashes'?8.05:{ignis:4.8,mime:variantId==='double-swap'?10.8:6.8,gojo:8.15,sukuna:18.45}[b.id];
   const h=addHazard(s,b,'safezone',name,warning,{x:640,y:480,radius:1000,radiusY:500,safeX,safeY,safeRadius,safeRadiusY:safeRadius*.6,life:total,damage:b.damage*mult,kind:'domain',domainType:type,variantId,variantName,domainPhase:0,elapsed:0,phaseElapsed:0,phaseWarning:false,lethalActive:true,phaseCount:b.id==='sukuna'?5:b.id==='gojo'?4:b.id==='mime'?(variantId==='double-swap'?3:2):1,baseSafeX:safeX,baseSafeY:safeY});
   configureDomainPhase(s,h,0,false);
   s.spotlight.x=h.safeX;s.spotlight.y=h.safeY;s.spotlight.radius=h.safeRadius;s.spotlight.radiusY=h.safeRadiusY;s.spotlight.timer=-warning-total;s.spotlight.locked=warning+total;
@@ -632,14 +645,14 @@ function configureBlades(s,h,index,warning){
  if(h._configuredPhase!==index){
   h._configuredPhase=index;h.bladeVariant??=s.boss.attacks%3;h.bladeMirror??=s.boss.phase===2;
   const layout=BLADE_LAYOUTS[h.bladeVariant],mx=x=>h.bladeMirror?1280-x:x,my=y=>h.bladeMirror?964-y:y;
-  if(index<2){const a=layout.vertical[index].map(my),angle=index===0?0:Math.PI,sign=index===0?1:-1;h.waves=[bladeWave(s,h,0,angle,a[0]*sign,a[1]*sign,index?96:100,2.7)];}
-  else if(index<4){const a=layout.horizontal[index-2].map(mx),angle=index===2?Math.PI/2:-Math.PI/2,sign=index===2?-1:1;h.waves=[bladeWave(s,h,0,angle,a[0]*sign,a[1]*sign,index===2?150:144,2.35)];}
-  else{const [a,b]=layout.turn.map(([x,y])=>({x:mx(x),y:my(y)})),sx=Math.sign(b.x-a.x),sy=Math.sign(b.y-a.y),angles=[Math.atan2(sy,sx),Math.atan2(sy,-sx)];h.waves=[a,b].map((point,n)=>{const angle=angles[n],g=dot(point.x,point.y,-Math.sin(angle),Math.cos(angle));return bladeWave(s,h,n,angle,g,g,160,3,n?1.65:0,point);});}
+  if(index<2){const a=layout.vertical[index].map(my),angle=index===0?0:Math.PI,sign=index===0?1:-1;h.waves=[bladeWave(s,h,0,angle,a[0]*sign,a[1]*sign,index?80:84,2.3)];}
+  else if(index<4){const a=layout.horizontal[index-2].map(mx),angle=index===2?Math.PI/2:-Math.PI/2,sign=index===2?-1:1;h.waves=[bladeWave(s,h,0,angle,a[0]*sign,a[1]*sign,index===2?128:124,2.0)];}
+  else{const [a,b]=layout.turn.map(([x,y])=>({x:mx(x),y:my(y)})),sx=Math.sign(b.x-a.x),sy=Math.sign(b.y-a.y),angles=[Math.atan2(sy,sx),Math.atan2(sy,-sx)];h.waves=[a,b].map((point,n)=>{const angle=angles[n],g=dot(point.x,point.y,-Math.sin(angle),Math.cos(angle));return bladeWave(s,h,n,angle,g,g,140,2.6,n?1.45:0,point);});}
   const first=h.waves[0];event(s,'bladeWave',first.originX,first.originY,{kind:'warning',waveId:first.id,phase:index,waveIndex:0,direction:first.direction,normalX:first.normalX,normalY:first.normalY,life:.6,maxLife:.6});
  }
  const nav=bladeNavigation(s.player,h);h.safeX=nav.target.x;h.safeY=nav.target.y;h.safeRadius=22;h.safeRadiusY=16;
- if(warning){const time=Math.hypot((nav.target.x-s.player.x)/285,(nav.target.y-s.player.y)/(285*.72));h.phaseDuration=Math.max(1.65,time+.65);const extra=h.phaseDuration-1.65;h.life+=extra;h.totalLife+=extra;}
- else h.phaseDuration=index<2?2.7:index<4?2.35:4.65;
+ if(warning){const time=Math.hypot((nav.target.x-s.player.x)/285,(nav.target.y-s.player.y)/(285*.72));h.phaseDuration=Math.max(1.45,time+.5);const extra=h.phaseDuration-1.45;h.life+=extra;h.totalLife+=extra;}
+ else h.phaseDuration=index<2?2.3:index<4?2:4.05;
  h.phaseRemaining=h.phaseDuration;h.phaseName=['왼쪽에서 오는 벽','오른쪽에서 오는 벽','위에서 내려오는 벽','아래에서 올라오는 벽','두 대각선 · 방향 전환'][index];h.instruction=warning?'표시된 틈 위치로 이동하세요.':'칼날 벽의 틈을 통과하세요.';
  h.nextSafeRegions=[safeEllipse(nav.target.x,nav.target.y,22,16)];for(const w of h.waves)bladeRegions(w);
 }
@@ -690,7 +703,7 @@ function pursuitAim(s,h){
 function positionPursuitSlash(q,angle,p,phase){
  const nx=Math.cos(angle),ny=Math.sin(angle),tx=-ny,ty=nx,coordinates=[[76,340],[76,624],[1204,340],[1204,624]].map(([x,y])=>dot(x,y,nx,ny));
  q.angle=angle;q.normalX=nx;q.normalY=ny;q.tangentX=tx;q.tangentY=ty;q.normalStart=Math.min(...coordinates)-100;q.normalEnd=Math.max(...coordinates)+100;q.tangentPosition=dot(p.x,p.y,tx,ty);
- q.normalPosition=q.previousNormalPosition=q.normalStart;q.width=phase===9?128:104;q.height=phase===9?60:54;
+ q.normalPosition=q.previousNormalPosition=q.normalStart;q.width=phase===9?136:112;q.height=phase===9?68:60;
  q.delay=0;q.duration=phase===9?.85:phase>=6?.55:.25;q.speed=(q.normalEnd-q.normalStart)/q.duration;
  q.originX=nx*q.normalStart+tx*q.tangentPosition;q.originY=ny*q.normalStart+ty*q.tangentPosition;q.x=q.originX;q.y=q.originY;
 }
@@ -711,7 +724,7 @@ function configureBurst(s,h,index){
 }
 function aimBurstSlash(s,h,q){
  const positive=(q.index%2===0)!==h.burstMirror,angle=h.domainPhase===0?(positive?0:Math.PI):(positive?Math.PI/2:-Math.PI/2),aim=q.aimMode==='memory'&&h.burstMemory?{...h.burstMemory,y:h.domainPhase===0?h.burstMemory.y+(h.burstMirror?-70:70):h.burstMemory.y}:s.player;
- positionPursuitSlash(q,angle,aim,0);q.duration=.45;q.speed=(q.normalEnd-q.normalStart)/q.duration;q.aimPoint={x:aim.x,y:aim.y};q.warningRemaining=Math.max(0,q.fireAt-h.phaseElapsed);
+ positionPursuitSlash(q,angle,aim,0);q.duration=.38;q.speed=(q.normalEnd-q.normalStart)/q.duration;q.aimPoint={x:aim.x,y:aim.y};q.warningRemaining=Math.max(0,q.fireAt-h.phaseElapsed);
  q.preview={type:'lane',x:aim.x,y:aim.y,width:3200,height:q.height,angle,slashId:q.id,shotIndex:q.index+1,shotCount:7,tracking:!q.locked,locked:q.locked,warningRemaining:q.warningRemaining};
 }
 function burstNavigation(p,h){
@@ -802,19 +815,19 @@ function configureDomainPhase(s,h,index,warning){
   if(h.domainType==='chasing-slashes'){configurePursuit(s,h,index);return;}
   h.domainPhase=index;h.phaseWarning=warning;h.phaseElapsed=0;h.nextSafeRegions=[];h.dangerRegions=[];h.safeRegions=[];h.lethalActive=!warning;
   if(h.domainType==='moving-light'){
-    h.safeRadius=145;h.safeRadiusY=87;h.safeRegions=[safeEllipse(h.safeX,h.safeY,145,87)];h.phaseDuration=4.8;h.phaseName=h.variantName||'움직이는 조명';h.instruction=h.variantId==='return-light'?'조명이 중간에 되돌아옵니다. 이동 방향을 바꾸며 빛 안을 따라가세요.':'민트색 조명이 이동합니다. 빛 안에서 계속 따라가세요.';
+    h.safeRadius=138;h.safeRadiusY=83;h.safeRegions=[safeEllipse(h.safeX,h.safeY,138,83)];h.phaseDuration=4.8;h.phaseName=h.variantName||'움직이는 조명';h.instruction=h.variantId==='return-light'?'조명이 중간에 되돌아옵니다. 이동 방향을 바꾸며 빛 안을 따라가세요.':'민트색 조명이 이동합니다. 빛 안에서 계속 따라가세요.';
   }else if(h.domainType==='mask-panels'){
-    h.panels=[300,640,980].map((x,n)=>({...safeEllipse(x,480,135,81),index:n,label:String(n+1),shape:['circle','diamond','triangle'][n]}));
+    h.panels=[300,640,980].map((x,n)=>({...safeEllipse(x,480,128,77),index:n,label:String(n+1),shape:['circle','diamond','triangle'][n]}));
     if(!h.panelRoute){const first=h.panels.reduce((a,c)=>groundDistance(c,s.player)<groundDistance(a,s.player)?c:a).index,next=first===1?(s.boss.phase===2?0:2):1;h.panelRoute=h.variantId==='double-swap'?[first,next,first===1?1:2-first]:[first,next];}
-    const current=h.panels[h.panelRoute[index]],next=h.panels[h.panelRoute[index+1]]||null;h.safeIndex=current.index;h.nextSafeIndex=next?.index??null;h.safeRadius=135;h.safeRadiusY=81;
+    const current=h.panels[h.panelRoute[index]],next=h.panels[h.panelRoute[index+1]]||null;h.safeIndex=current.index;h.nextSafeIndex=next?.index??null;h.safeRadius=128;h.safeRadiusY=77;
     if(warning&&next){h.safeRegions=[current,next,safeRect((current.x+next.x)/2,480,Math.abs(current.x-next.x)+110,120)];h.nextSafeRegions=[next];h.safeX=next.x;h.safeY=480;h.phaseDuration=2;h.lethalActive=true;h.phaseName='배역 교대 예고';h.instruction=`이제 ${['①','②','③'][next.index]} ${['원형','마름모','삼각형'][next.index]} 발판으로! 연결된 길을 따라가세요!`;}
     else {h.safeRegions=[current];h.safeX=current.x;h.safeY=current.y;h.phaseDuration=index===h.phaseCount-1?2.8:2;h.phaseName=`진짜 가면 ${current.label}번`;h.instruction=`${['①','②','③'][current.index]} ${['원형','마름모','삼각형'][current.index]} 발판 안으로 이동하세요!`;if(next)h.nextSafeRegions=[next];}
   }else if(h.domainType==='lens-corridors'){
-    const lanes=h.variantId==='reverse-frames'?[safeRect(640,530,1400,70),safeRect(940,480,160,700),safeRect(640,430,1400,64),safeRect(340,480,144,700)]:[safeRect(640,480,1400,70),safeRect(600,480,160,700),safeRect(640,405,1400,64),safeRect(940,480,144,700)],r=lanes[index];h.safeRegions=[r];h.safeX=r.width>1000?clamp(s.player.x,160,1120):r.x;h.safeY=r.width>1000?r.y:clamp(s.player.y,380,590);h.safeRadius=60;h.safeRadiusY=40;
+    const lanes=h.variantId==='reverse-frames'?[safeRect(640,530,1400,58),safeRect(940,480,140,700),safeRect(640,430,1400,52),safeRect(340,480,128,700)]:[safeRect(640,480,1400,58),safeRect(600,480,140,700),safeRect(640,405,1400,52),safeRect(940,480,128,700)],r=lanes[index];h.safeRegions=[r];h.safeX=r.width>1000?clamp(s.player.x,160,1120):r.x;h.safeY=r.width>1000?r.y:clamp(s.player.y,380,590);h.safeRadius=60;h.safeRadiusY=40;
     if(r.width>1000){const top=r.y-r.height/2,bottom=r.y+r.height/2;h.dangerRegions=[safeRect(640,top/2,1400,top),safeRect(640,(bottom+720)/2,1400,720-bottom)];}
     else{const left=r.x-r.width/2,right=r.x+r.width/2;h.dangerRegions=[safeRect(left/2,480,left,700),safeRect((right+1280)/2,480,1280-right,700)];}
     const dx=Math.max(0,Math.abs(s.player.x-r.x)-r.width/2),dy=Math.max(0,Math.abs(s.player.y-r.y)-r.height/2),walkSeconds=Math.hypot(dx/285,dy/(285*.72));
-    h.phaseDuration=warning?Math.max(1.65,walkSeconds+.65):1;if(warning&&h.phaseDuration>1.65){const extra=h.phaseDuration-1.65;h.life+=extra;h.totalLife+=extra;s.spotlight.locked=Math.max(0,s.spotlight.locked||0)+extra;}
+    h.phaseDuration=warning?Math.max(1.3,walkSeconds+.45):1.05;if(warning&&h.phaseDuration>1.3){const extra=h.phaseDuration-1.3;h.life+=extra;h.totalLife+=extra;s.spotlight.locked=Math.max(0,s.spotlight.locked||0)+extra;}
     if(!warning&&index<3)h.nextSafeRegions=[lanes[index+1]];h.phaseName=(index%2?'세로':'가로')+' 렌즈 통로';h.instruction=warning?'빔이 꺼진 지금, 다음 민트색 통로로 이동하세요.':(index%2?'세로':'가로')+' 민트색 통로 안에 머무르세요. 다음 방향을 준비하세요.';
   }else{
     if(warning||!h.aimOrigin){h.aimOrigin={x:s.boss.x,y:s.boss.y};h.aimPoint={x:s.player.x,y:s.player.y};h.aimAngle=Math.atan2(s.player.y-s.boss.y,s.player.x-s.boss.x);}
@@ -829,7 +842,7 @@ function updateDomain(s,h,dt){
   if(h.domainType==='chasing-slashes'){updatePursuit(s,h,dt);return;}
   h.elapsed+=dt;h.phaseElapsed+=dt;h.phaseRemaining=Math.max(0,h.phaseDuration-h.phaseElapsed);
   if(h.domainType==='moving-light'){
-    const direction=h.baseSafeX<640?1:-1,t=clamp(h.elapsed/4.8,0,1),back=h.variantId==='return-light';h.safeX=clamp(h.baseSafeX+direction*(back?Math.sin(t*Math.PI)*340:t*330),170,1110);h.safeY=h.baseSafeY+Math.sin(t*Math.PI*2)*(back?30:20);h.safeRegions=[safeEllipse(h.safeX,h.safeY,145,87)];h.travelDirection=direction*(back&&t>.5?-1:1);if(back){const ahead=clamp((h.elapsed+.65)/4.8,0,1);h.nextSafeRegions=[safeEllipse(clamp(h.baseSafeX+direction*Math.sin(ahead*Math.PI)*340,170,1110),h.baseSafeY+Math.sin(ahead*Math.PI*2)*30,145,87)];}
+    const direction=h.baseSafeX<640?1:-1,t=clamp(h.elapsed/4.8,0,1),back=h.variantId==='return-light';h.safeX=clamp(h.baseSafeX+direction*(back?Math.sin(t*Math.PI)*340:t*330),170,1110);h.safeY=h.baseSafeY+Math.sin(t*Math.PI*2)*(back?30:20);h.safeRegions=[safeEllipse(h.safeX,h.safeY,138,83)];h.travelDirection=direction*(back&&t>.5?-1:1);if(back){const ahead=clamp((h.elapsed+.65)/4.8,0,1);h.nextSafeRegions=[safeEllipse(clamp(h.baseSafeX+direction*Math.sin(ahead*Math.PI)*340,170,1110),h.baseSafeY+Math.sin(ahead*Math.PI*2)*30,138,83)];}
   }else if(h.phaseRemaining<=1e-9){
     if(h.domainType==='mask-panels'){if(!h.phaseWarning&&h.domainPhase<h.phaseCount-1)configureDomainPhase(s,h,h.domainPhase,true);else if(h.phaseWarning)configureDomainPhase(s,h,h.domainPhase+1,false);}
     else if(h.phaseWarning)configureDomainPhase(s,h,h.domainPhase,false);
@@ -879,7 +892,7 @@ function updateBoss(s,dt){
   const b=s.boss,p=s.player;recoil(s,b,dt);b.hitFlash=Math.max(0,b.hitFlash-dt);b.attackAnim=Math.max(0,b.attackAnim-dt);b.stun=Math.max(0,b.stun-dt);b.shield=Math.max(0,b.shield-dt);if(!b.active||b.hp<=0)return;b.facing=p.x>=b.x?1:-1;
   if(b.hp<=b.maxHp*((b.id==='ignis'||b.id==='mime')?.5:.65)&&b.phase===1){b.phase=2;words(s,'분위기 바뀌었다… 2페이즈!',640,270,b.color,1.7);event(s,'ring',b.x,b.y,{radius:200,color:b.color,life:.7,maxLife:.7});}
   if(b.counterRemaining>0){b.counterRemaining=Math.max(0,b.counterRemaining-dt);return;}
-  if(b.telegraph){b.telegraph.remaining-=dt;if(b.telegraph.remaining<=0){resolvePattern(s,b.telegraph);b.telegraph=null;b.patternCooldown=(b.id==='ignis'?(b.phase===2?1.5:1.8):b.id==='mime'?(b.phase===2?1.2:1.45):(b.phase===2?.765:1.08))*DIFFICULTIES[s.difficulty].attackSpeed*(b.id==='sukuna'?.85:1)*.90;}return;}
+  if(b.telegraph){b.telegraph.remaining-=dt;if(b.telegraph.remaining<=0){resolvePattern(s,b.telegraph);b.telegraph=null;b.patternCooldown=(b.id==='ignis'?(b.phase===2?1.5:1.8):b.id==='mime'?(b.phase===2?1.2:1.45):(b.phase===2?.765:1.08))*DIFFICULTIES[s.difficulty].attackSpeed*(b.id==='sukuna'?.85:1)*(b.id==='ignis'||b.id==='mime'?.90:.60);}return;}
   if(s.personality||s.maxPattern)return;
   // A fatal domain owns this attack window; don't fill its only safe area with
   // another boss attack before the domain ends.
@@ -917,7 +930,7 @@ function trackPurple(s,h,dt){
   const cast=s.boss.telegraph;if(cast?.attackId===h.attackId){cast.tracking=h.tracking;cast.locked=h.locked;cast.lockWindow=h.lockWindow;cast.angle=h.angle;if(h.tracking)cast.aim={x:s.player.x,y:s.player.y};}
 }
 function updateHazards(s,dt){
-  const p=s.player;for(const h of s.hazards){if(!h.active){if(h.kind==='purple')trackPurple(s,h,dt);if(h.kind==='follow-spot'||h.kind==='projectile-cue')trackConceptAim(s,h,dt);h.remaining-=dt;if(h.remaining<=0){h.active=true;if(h.extraPattern&&h.index===1)s.stats.extraActivations[h.patternBossId]=(s.stats.extraActivations[h.patternBossId]||0)+1;if(h.kind==='domain'){s.stats.takeoverActivations[h.domainType]=(s.stats.takeoverActivations[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantActivations[h.variantId]=(s.stats.takeoverVariantActivations[h.variantId]||0)+1;}if(h.kind==='projectile-cue')fireConceptProjectile(s,h);else if(h.conceptPattern&&!h.decoy)bossShotEvent(s,h,'launch');if(h.maxPattern)activateMaxHazard(s,h);if(h.personalityPattern)personalityEvent(s,h,h.kind==='moving-aftercut'?'followup':'launch');if(!h.decoy&&!h.warningOnly&&h.kind!=='rehearsal-light')event(s,h.type==='lane'?'beam':'burst',h.x,h.y,{radius:h.radius,width:h.width,height:h.height,angle:h.angle,color:h.color,life:.45,maxLife:.45});}else continue;}else{h.life-=dt;if(h.life<=0){if(h.kind==='domain'){s.boss.takeoversCompleted=(s.boss.takeoversCompleted||0)+1;s.stats.takeoverSurvived[h.domainType]=(s.stats.takeoverSurvived[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantSurvived[h.variantId]=(s.stats.takeoverVariantSurvived[h.variantId]||0)+1;openCounter(s,h.id,'무대 장악 생존');}if(h.kind==='rehearsal-light')finishRehearsalLight(s,h);else if(h.extraPattern&&h.index===h.total)completeExtraPattern(s,h.attackId,h.patternBossId,s.stats.damageTaken===h.startDamage);continue;}}
+  const p=s.player;for(const h of s.hazards){if(!h.active){if(h.kind==='purple'||h.kind==='fire-arrow')trackPurple(s,h,dt);if(h.kind==='cleave'&&!h.locked){if(h.remaining-dt>h.lockWindow){h.x=p.x;h.y=p.y;}else{h.locked=true;h.tracking=false;}}if(h.kind==='follow-spot'||h.kind==='projectile-cue')trackConceptAim(s,h,dt);h.remaining-=dt;if(h.remaining<=0){h.active=true;if(h.extraPattern&&h.index===1)s.stats.extraActivations[h.patternBossId]=(s.stats.extraActivations[h.patternBossId]||0)+1;if(h.kind==='domain'){s.stats.takeoverActivations[h.domainType]=(s.stats.takeoverActivations[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantActivations[h.variantId]=(s.stats.takeoverVariantActivations[h.variantId]||0)+1;}if(h.kind==='projectile-cue')fireConceptProjectile(s,h);else if(h.conceptPattern&&!h.decoy)bossShotEvent(s,h,'launch');if(h.maxPattern)activateMaxHazard(s,h);if(h.personalityPattern)personalityEvent(s,h,h.kind==='moving-aftercut'?'followup':'launch');if(!h.decoy&&!h.warningOnly&&h.kind!=='rehearsal-light')event(s,h.type==='lane'?'beam':'burst',h.x,h.y,{radius:h.radius,width:h.width,height:h.height,angle:h.angle,color:h.color,life:.45,maxLife:.45});}else continue;}else{h.life-=dt;if(h.life<=0){if(h.kind==='domain'){s.boss.takeoversCompleted=(s.boss.takeoversCompleted||0)+1;s.stats.takeoverSurvived[h.domainType]=(s.stats.takeoverSurvived[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantSurvived[h.variantId]=(s.stats.takeoverVariantSurvived[h.variantId]||0)+1;openCounter(s,h.id,'무대 장악 생존');}if(h.kind==='rehearsal-light')finishRehearsalLight(s,h);else if(h.extraPattern&&h.index===h.total)completeExtraPattern(s,h.attackId,h.patternBossId,s.stats.damageTaken===h.startDamage);continue;}}
     if(h.decoy||h.warningOnly)continue;
     if(h.kind==='rehearsal-light'){if(circleContains(p.x,p.y,h)){h.dwell=(h.dwell||0)+dt;if(h.dwell>=.15&&!h.visited){h.visited=true;event(s,'rehearsalResult',h.x,h.y,{success:true,index:h.index,total:3,life:.5,maxLife:.5});}}continue;}
     if(h.kind==='domain'){if(h.domainType)updateDomain(s,h,dt);if(checkActiveDomains(s))return;continue;}
@@ -938,9 +951,13 @@ function updateProjectiles(s,dt){
 
 function updateSpotlight(s,dt){const sp=s.spotlight;if(sp.locked>0){sp.locked-=dt;return;}sp.radius=105;sp.radiusY=62;sp.timer+=dt;if(sp.timer>8){sp.timer=0;sp.targetX=220+random(s)*830;sp.targetY=410+random(s)*150;}if(sp.targetX!==undefined){sp.x+=(sp.targetX-sp.x)*Math.min(1,dt*.8);sp.y+=(sp.targetY-sp.y)*Math.min(1,dt*.8);}sp.active=true;}
 
+function recordStageClear(s){
+  if(s.boss.clearRecorded)return;s.boss.clearRecorded=true;
+  s.lastClearTime=s.runTime;s.stageClearTimes.push(s.runTime);
+}
 function completeStage(s){
   if(s.boss.hp>0||s.status!=='playing')return false;if(s.transitionTimer>0)return true;
-  cancelPersonality(s);s.audition=null;s.rehearsal=null;s.stats.stagesCleared++;s.player.attackSequence=null;s.pendingUltimate=false;s.followups=[];s.hazards=[];s.projectiles=[];
+  recordStageClear(s);cancelPersonality(s);s.audition=null;s.rehearsal=null;s.stats.stagesCleared++;s.player.attackSequence=null;s.pendingUltimate=false;s.followups=[];s.hazards=[];s.projectiles=[];
   event(s,'comic',640,352,{text:s.boss.review,subtitle:s.boss.name+' · 심사 종료',bossId:s.boss.id,power:1,color:s.boss.color,life:.85,maxLife:.85});
   speak(s,'victory',3);
   if(s.mode==='practice'){s.status='victory';s.endReason='clear';}
@@ -953,10 +970,10 @@ function finishBooth(s){cancelPersonality(s);s.status='finished';s.cinematic=nul
 
 export function step(s,input={},dt=1/60){
   if(!Number.isFinite(dt)||dt<=0||s.status!=='playing')return s;dt=Math.min(dt,1/30);
-  s.runTime+=dt;if(s.mode==='booth'){s.timeLeft=Math.max(0,s.duration-s.runTime);if(s.timeLeft<1e-8){finishBooth(s);return s;}}
+  s.runTime+=dt;s.domainHitCooldown=Math.max(0,s.domainHitCooldown-dt);if(s.mode==='booth'){s.timeLeft=Math.max(0,s.duration-s.runTime);if(s.timeLeft<1e-8){finishBooth(s);return s;}}
   if(s.cinematic){
     s.inputBuffer={};s.player.actionQueue={};s.player.attackBuffer=0;s.player.queuedAttack=false;s.player.precisionQueued=false;s.cinematic.remaining=Math.max(0,s.cinematic.remaining-dt);
-    if(s.cinematic.remaining===0){const kind=s.cinematic.kind;s.cinematic=null;if(kind==='playerUltimate'&&s.pendingUltimate)resolveUltimate(s);}
+    if(s.cinematic.remaining===0){const kind=s.cinematic.kind;s.cinematic=null;if(kind==='playerUltimate'&&s.pendingUltimate){resolveUltimate(s);if(s.boss.hp<=0)completeStage(s);}}
     return s;
   }
   s._movementStart=null;s._bladeSweepReady=true;

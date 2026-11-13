@@ -1,7 +1,7 @@
 /** Local unlimited-challenge leaderboard. No network calls or cloud persistence. */
-export const RANKING_STORAGE_KEY = 'yesulin-ranking-v19';
-export const RANKING_RULES_VERSION = 'challenge-v19';
-export const RANKING_SEASON = 19;
+export const RANKING_STORAGE_KEY = 'yesulin-ranking-v20';
+export const RANKING_RULES_VERSION = 'challenge-v20';
+export const RANKING_SEASON = 20;
 const SCHEMA_VERSION = RANKING_SEASON;
 export const RANKING_STAGE_COUNT = 5;
 const MAX_ENTRIES = 500;
@@ -31,10 +31,10 @@ function number(value, label, {integer = false} = {}) {
 /** Returns one canonical entry; invalid game statistics throw TypeError. */
 export function createEntry({runId, name, crew, score, duration = 0,
   difficulty = 'standard', character = 'director', bosses = 0, maxCombo = 0,
-  runTime = 0, endReason = 'clear', createdAt = new Date().toISOString(),
+  runTime = 0, lastClearTime = null, stageClearTimes, endReason = 'clear', createdAt = new Date().toISOString(),
   version = SCHEMA_VERSION, mode = 'challenge', rulesVersion = RANKING_RULES_VERSION} = {}) {
   if (version !== SCHEMA_VERSION || mode !== 'challenge' || rulesVersion !== RANKING_RULES_VERSION) {
-    throw new TypeError('현재 무제한 도전 v19 규칙의 기록만 등록할 수 있습니다.');
+    throw new TypeError('현재 무제한 도전 v20 규칙의 기록만 등록할 수 있습니다.');
   }
   const id = plain(runId, 80);
   if (!id) throw new TypeError('runId가 필요합니다.');
@@ -47,6 +47,8 @@ export function createEntry({runId, name, crew, score, duration = 0,
   }
   const date = new Date(createdAt);
   if (!Number.isFinite(date.getTime())) throw new TypeError('기록 시간이 올바르지 않습니다.');
+  passedAuditions(bosses);number(runTime, '플레이 시간');
+  const clearTimes=validatedClearTimes(bosses,runTime,lastClearTime,stageClearTimes);
   return {
     version: SCHEMA_VERSION,
     mode: 'challenge',
@@ -59,10 +61,22 @@ export function createEntry({runId, name, crew, score, duration = 0,
     character,
     bosses: passedAuditions(bosses),
     maxCombo: number(maxCombo, '최대 콤보', {integer: true}),
-    runTime: number(runTime, '플레이 시간'),
+    runTime,
+    lastClearTime,
+    ...(clearTimes===undefined?{}:{stageClearTimes:clearTimes}),
     endReason: plain(endReason, 24) || 'clear',
     createdAt: date.toISOString(),
   };
+}
+
+function validatedClearTimes(bosses,runTime,lastClearTime,stageClearTimes){
+  if(bosses===0){if(lastClearTime!==null)throw new TypeError('통과한 관문이 없으면 통과 시간은 null이어야 합니다.');}
+  else{number(lastClearTime,'통과 시간');if(lastClearTime<=0||lastClearTime>runTime)throw new TypeError('통과 시간은 0보다 크고 플레이 시간 이하여야 합니다.');}
+  if(stageClearTimes===undefined)return undefined;
+  if(!Array.isArray(stageClearTimes)||stageClearTimes.length!==bosses)throw new TypeError('관문별 통과 시간 개수가 통과 관문 수와 일치해야 합니다.');
+  let previous=0;for(const time of stageClearTimes){number(time,'관문별 통과 시간');if(time<=previous||time>runTime)throw new TypeError('관문별 통과 시간은 양수이며 순서대로 증가해야 합니다.');previous=time;}
+  if(bosses>0&&stageClearTimes.at(-1)!==lastClearTime)throw new TypeError('마지막 관문 통과 시간이 일치해야 합니다.');
+  return [...stageClearTimes];
 }
 
 function passedAuditions(value) {
@@ -143,8 +157,8 @@ export class LocalRanking {
   }
 }
 
-function compareEntries(a, b) {
-  return b.bosses - a.bosses || b.score - a.score || b.maxCombo - a.maxCombo ||
+export function compareEntries(a, b) {
+  return b.bosses - a.bosses || (a.bosses>0&&b.bosses>0?a.lastClearTime-b.lastClearTime:0) || b.score - a.score || b.maxCombo - a.maxCombo ||
     a.createdAt.localeCompare(b.createdAt) || a.runId.localeCompare(b.runId);
 }
 
@@ -192,13 +206,16 @@ function csvCell(value) {
 
 /** UTF-8 BOM and CRLF keep Korean labels readable in common spreadsheet apps. */
 export function toCSV(entries) {
-  const headers = ['닉네임', '소속', '점수', '제한 시간', '난이도', '캐릭터', '통과 관문', '최대 콤보', '플레이 시간(초)', '종료 사유', '기록 시간', '회차 ID', '규칙 버전'];
+  const headers = ['닉네임', '소속', '점수', '제한 시간', '난이도', '캐릭터', '통과 관문', '최대 콤보', '플레이 시간(초)', '통과 시간(초)', '종료 사유', '기록 시간', '회차 ID', '규칙 버전'];
   const rows = [headers];
   if (Array.isArray(entries)) for (const value of entries) {
     const row = storedEntry(value);
     if (!row) continue;
     rows.push([row.name, row.crew, row.score, '무제한', row.difficulty, row.character,
-      row.bosses, row.maxCombo, row.runTime, row.endReason, row.createdAt, row.runId, row.rulesVersion]);
+      row.bosses, row.maxCombo, row.runTime, row.lastClearTime, row.endReason, row.createdAt, row.runId, row.rulesVersion]);
   }
   return '\ufeff' + rows.map(row => row.map(csvCell).join(',')).join('\r\n') + '\r\n';
 }
+
+/** Display elapsed clear time without confusing it with a countdown. */
+export function formatRunTime(seconds){if(typeof seconds!=='number'||!Number.isFinite(seconds)||seconds<0)return '--';const ticks=Math.round(seconds*100);return Math.floor(ticks/6000)+':'+String(Math.floor(ticks/100)%60).padStart(2,'0')+'.'+String(ticks%100).padStart(2,'0');}

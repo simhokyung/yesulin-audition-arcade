@@ -18,7 +18,7 @@ function run(s,{dt=1/60,policy='walk',reaction=.35,observe=()=>{}}={}){
 
 test('personal skills extend all previous pattern lists with distinct ordinary audition techniques',()=>{
  assert.deepEqual(LEGACY.map(b=>b.patterns.at(-1)),['빨뚜 통째로, 액션!','끝까지 캐스팅','자리해야지~','원테이크, 따라와']);
- assert.deepEqual(LEGACY.map(b=>b.patterns.length),[7,7,7,7]);assert.deepEqual(LEGACY.map(b=>[b.hp,b.damage]),[[4100,18],[5800,26],[8800,38],[10100,45]]);
+ assert.deepEqual(LEGACY.map(b=>b.patterns.length),[7,7,7,7]);assert.deepEqual(LEGACY.map(b=>[b.hp,b.damage]),[[4100,18],[5800,26],[8800,38],[10100,50]]);
  for(const c of Object.values(CHARACTERS))assert.equal(c.hp,260);
  for(const id of ids){assert.equal(rankedPatternAt(id,0),6);const seen=new Set(Array.from({length:11},(_,turn)=>rankedPatternAt(id,turn)));assert.deepEqual([...seen].sort(),[0,1,2,3,4,5,6]);assert.equal(patternTurnFor(id,3),['ignis','mime'].includes(id)?4:1);}
 });
@@ -26,13 +26,13 @@ test('personal skills extend all previous pattern lists with distinct ordinary a
 test('ignoring each personal attack takes ordinary damage at 30 and 60 Hz, never domain instant death',()=>{
  for(let stage=0;stage<4;stage++)for(const dt of [1/30,1/60])for(const phase of [1,2]){
   const s=fixture(stage,'director',dt);s.boss.phase=phase;const r=run(s,{dt,policy:'still'});
-  assert(r.completed);assert(r.damage>0&&r.damage<260,ids[stage]);assert.equal(s.endReason,null);assert.equal(s.stats.personalityCasts[ids[stage]],1);assert.equal(s.stats.personalityShots[ids[stage]],stage===1?2:stage===0?3:5);
+  assert(r.completed||s.status==='gameover');assert(r.damage>0&&r.damage<=260,ids[stage]);assert.equal(s.endReason,s.player.hp>0?null:'defeat');assert.equal(s.stats.personalityCasts[ids[stage]],1);if(r.completed)assert.equal(s.stats.personalityShots[ids[stage]],stage===1?2:stage===0?3:7);
  }
 });
 
-test('both roles can walk every personal attack after .35-second responses without dodge or combat-stat modification',()=>{
+test('both roles can walk every personal attack after .25-second responses without dodge or combat-stat modification',()=>{
  for(let stage=0;stage<4;stage++)for(const character of ['director','actor'])for(const dt of [1/30,1/60])for(const point of [[76,340],[640,482],[1204,624]]){
-  const s=fixture(stage,character,dt,...point),r=run(s,{dt,reaction:.35});
+  const s=fixture(stage,character,dt,...point),r=run(s,{dt,reaction:.25});
   assert(r.completed,JSON.stringify({stage,character,dt,point}));assert.equal(r.damage,0,JSON.stringify({stage,character,dt,point}));assert.equal(s.stats.dodges,0);assert.equal(s.stats.skills,0);assert.equal(s.player.hp,260);
  }
 });
@@ -40,7 +40,7 @@ test('both roles can walk every personal attack after .35-second responses witho
 test('each visible locked direction is immutable even when the player reverses',()=>{
  for(const stage of [0,1,3]){
   const s=fixture(stage),locked=new Map();run(s,{observe(state){for(const q of state.personality.shots){if(!q.locked)continue;const value=JSON.stringify({origin:q.origin,target:q.target,path:q.path,angle:q.angle});if(locked.has(q.id))assert.equal(value,locked.get(q.id));else{locked.set(q.id,value);assert(q.launchAt-(q.lockedAt??q.lockAt)>=.65-1/30);}}}});
-  assert.equal(locked.size,stage===1?2:stage===0?3:5);
+  assert.equal(locked.size,stage===1?2:stage===0?3:7);
  }
 });
 
@@ -66,16 +66,16 @@ test('a fast charge cannot tunnel through feet at either frame rate',()=>{
  }
 });
 
-test('Moving gives each aftercut a separate .78-second warning with an exact finite collider',()=>{
+test('Moving gives each aftercut a separate .62-second warning with an exact finite collider',()=>{
  const s=fixture(3),seen=new Set();run(s,{observe(state){for(const h of state.hazards.filter(h=>h.kind==='moving-aftercut')){
-  if(!seen.has(h.id)){assert.equal(h.duration,.78);assert(h.remaining>=.78-1/30);assert.equal(h.active,false);assert.equal(h.height,42);assert(h.width>0&&h.width<=760.01);seen.add(h.id);}
+  if(!seen.has(h.id)){assert.equal(h.duration,.62);assert(h.remaining>=.62-1/30);assert.equal(h.active,false);assert.equal(h.height,42);assert(h.width>0&&h.width<=760.01);seen.add(h.id);}
   assert.equal(h.personalityPattern,true);assert.equal(h.totalLife,.24);
- }}});assert.equal(seen.size,5);
+ }}});assert.equal(seen.size,7);
 });
 
-test('If reserves the current place five times and old reservations remain fixed until expiry',()=>{
- const s=fixture(2),places=new Map();run(s,{observe(state){for(const h of state.hazards){if(places.has(h.id))assert.deepEqual([h.x,h.y],places.get(h.id));else places.set(h.id,[h.x,h.y]);assert.equal(h.kind,'seat-reservation');assert.equal(h.radius,67);assert.equal(h.radiusY,43);assert.equal(h.totalLife,1.45);}}});
- assert.equal(places.size,5);assert(new Set([...places.values()].map(p=>p.join(','))).size>1,'later reservations follow actual new player positions');
+test('If reserves the current place seven times after an initial tracking cue and old reservations remain fixed until expiry',()=>{
+ const s=fixture(2),places=new Map();run(s,{observe(state){for(const h of state.hazards){if(!h.locked)continue;if(places.has(h.id))assert.deepEqual([h.x,h.y],places.get(h.id));else places.set(h.id,[h.x,h.y]);assert.equal(h.kind,'seat-reservation');assert.equal(h.radius,72);assert.equal(h.radiusY,46);assert.equal(h.totalLife,1.25);}}});
+ assert.equal(places.size,7);assert(new Set([...places.values()].map(p=>p.join(','))).size>1,'later reservations follow actual new player positions');
 });
 
 test('a double missed casting charge opens exactly one existing counter window',()=>{
