@@ -47,13 +47,27 @@ function clothLimb(c,a,j,b,wa,wj,wb,fill){
 }
 /** Two-bone inverse kinematics keeps the sole in place while the knee bends. */
 function kneeFor(hip,foot){const upper=39,lower=40,dx=foot.x-hip.x,dy=foot.y-hip.y,d=clamp(Math.hypot(dx,dy),1,upper+lower-.1),along=(upper*upper-lower*lower+d*d)/(2*d),bend=Math.sqrt(Math.max(0,upper*upper-along*along)),len=Math.hypot(dx,dy)||1;return{x:hip.x+dx/len*along+dy/len*bend,y:hip.y+dy/len*along-dx/len*bend}}
+/** Character-specific hand choreography, driven only by the engine's visible shot phase. */
+function personalityGesture(kind,o){
+ if(o.personalitySkill!==kind||!o.personalityPhase)return null;
+ const phase=o.personalityPhase,p=clamp(o.personalityProgress??0),n=o.personalityIndex||1;
+ const wind=phase==='tracking'?smooth(p*3):1,release=phase==='dashing'?smooth(p):phase==='recover'?1:0,
+  weight=phase==='recover'?1-smooth(p):wind;
+ const poses={
+  ignis:{ready:[.32,2.8,-.25,.4],release:[1.62,1.32,-.2,.3],lean:.075},
+  mime:{ready:[.5,2.6,-.65,.7],release:[1.25,1.0,-.8,.1],lean:.2},
+  gojo:{ready:[.8,2.5,-.4,.6],release:[1.05,.65,-.5,.4],lean:.06},
+  sukuna:{ready:n%2?[.3,2.5,-1.1,-.3]:[-.35,.5,.6,2.1],release:n%2?[1.8,1.4,-1.3,-.6]:[.2,-.7,-.8,-1.5],lean:.24}
+ }[kind];if(!poses)return null;
+ return{arms:poses.ready.map((v,i)=>lerp(v,poses.release[i],release)),weight,lean:o.reduced?0:poses.lean*release*weight};
+}
 export function samplePhotoFighterPose(kind,o={}){
- const t=o.reduced?0:o.time||0,walk=o.reduced?0:clamp(o.walkWeight??(o.walk?1:0)),phase=(o.walkPhase??t*6.8)*1.7,
+ const gesture=personalityGesture(kind,o),t=o.reduced?0:o.time||0,walk=o.reduced?0:clamp(o.walkWeight??(o.walk?1:0)),phase=(o.walkPhase??t*6.8)*1.7,
   p=clamp(o.attackProgress??.5),active=o.attack>0,strike=active?Math.sin(smooth(p)*Math.PI):0,
   hurt=clamp((o.hitReaction||o.hitStun||0)/.3),wind=o.windup?smooth((o.windupProgress??1)*5):active?1-smooth((p-.2)/.8):0,domain=o.domain?(o.windup?wind:1):0,
   breath=o.reduced?0:Math.sin(t*2.4)*.45,
   hipY=-83.2+(o.reduced?0:walk*(4.5+Math.cos(phase*2)*1.1))+clamp((o.landingTimer||0)/.22)*2.8,
-  lean=o.reduced?0:Math.sin(phase)*walk*.025+strike*.09+hurt*(o.hitDir||1)*(o.facing||1)*.12;
+  lean=o.reduced?0:Math.sin(phase)*walk*.025+strike*.09+hurt*(o.hitDir||1)*(o.facing||1)*.12+(gesture?.lean||0);
  const legs=[-1,1].map(side=>{const q=phase+(side<0?Math.PI:0),hip={x:side*8,y:hipY},foot={x:side*8+Math.sin(q)*walk*22+strike*(side>0?8:-3),y:-5-Math.max(0,Math.cos(q))*walk*10-((o.launchZ||0)>2?7:0)},knee=kneeFor(hip,foot);return{side,hip,knee,foot}});
  const gait=Math.sin(phase)*walk;
  let upper=.2-gait*.35,lower=.32+gait*.25,backUpper=-.16+gait*.4,backLower=.23-gait*.25;
@@ -65,6 +79,7 @@ export function samplePhotoFighterPose(kind,o={}){
   const hands={ignis:[1.35,2.85,-.35,.65],mime:[.95,3.35,-1.5,-1.8],gojo:[1.3,2.5,-1.05,-2.55],sukuna:[2.1,1.65,-.9,-.55]}[kind];
   if(hands){upper=lerp(upper,hands[0],domain);lower=lerp(lower,hands[1],domain);backUpper=lerp(backUpper,hands[2],domain);backLower=lerp(backLower,hands[3],domain);}
  }
+ if(gesture){const [a,b,d,e]=gesture.arms;upper=lerp(upper,a,gesture.weight);lower=lerp(lower,b,gesture.weight);backUpper=lerp(backUpper,d,gesture.weight);backLower=lerp(backLower,e,gesture.weight);}
  upper-=hurt*.5;lower-=hurt*.4;
  const shoulder={x:17,y:-130+breath},backShoulder={x:-17,y:-130+breath},elbow=bone(shoulder,28,upper),wrist=bone(elbow,26,lower),backElbow=bone(backShoulder,28,backUpper),backWrist=bone(backElbow,25,backLower);
  return{hipY,lean,breath,walk,gait,strike,hurt,wind,domain,legs,shoulder,elbow,wrist,backShoulder,backElbow,backWrist,upper,lower,headTilt:o.reduced?0:-lean*.55+Math.sin(t*1.8)*.012};
@@ -124,6 +139,7 @@ export function drawPhotoFighter2D(c,kind,x,y,scale=1,o={}){
  drawTorso(c,kind,m,w,p.skin);
  sleeve(m.shoulder,m.elbow,m.wrist);line(c,[[m.elbow.x-4,m.elbow.y-2],[m.elbow.x+2,m.elbow.y+1]],w.seam,.7);
  drawHand(c,m.wrist,p.skin,kind==='ignis'&&(m.wind||m.domain)?'thumb':m.domain||m.wind&&kind==='gojo'?'cast':'relaxed',-.12*m.lower);
+ if(kind==='ignis'&&o.personalitySkill==='ignis'&&['tracking','locked'].includes(o.personalityPhase)){c.save();c.translate(m.wrist.x+2,m.wrist.y-3);c.rotate(-.4);oval(c,0,0,6,3.5,'#a8122d','#ffb7a3',.8);oval(c,0,-1,4.7,2.5,'#e2494b');for(let i=-3;i<=3;i+=2)line(c,[[i,0],[i,2.5]],'#ffb09a',.5);c.restore();}
  if(kind==='mime')drawCup(c,{x:m.wrist.x+1,y:m.wrist.y},-.12*m.lower);
  drawPhotoFace(c,kind,{y:-139,tilt:m.headTilt,facing});
  c.restore();c.restore();return true;

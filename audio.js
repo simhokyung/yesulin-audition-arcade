@@ -25,6 +25,7 @@ export class GameAudio {
     this.waveCueKeys = new Set();
     this.pursuitCueKeys = new Set();
     this.normalCueKeys = new Set();
+    this.personalityCueKeys = new Set();
   }
 
   setDomainTracks(tracks) {
@@ -37,7 +38,7 @@ export class GameAudio {
 
   reset() {
     this._clearSources(); this.lastCue.clear(); this.lastEffectId = 0;
-    this.practiceEpoch=null;this.waveCueKeys.clear();this.pursuitCueKeys.clear();this.normalCueKeys.clear();
+    this.practiceEpoch=null;this.waveCueKeys.clear();this.pursuitCueKeys.clear();this.normalCueKeys.clear();this.personalityCueKeys.clear();
     this._volume(this.enabled && !this.paused ? .43 : 0);
     this.domainMusic.reset(); this.lastState = null; this.snapshot = null;
     this.cinematicActive = false; this.duckUntil = 0; this._musicVolume();
@@ -301,6 +302,45 @@ export class GameAudio {
       if(cross)note(130.81,.012,.17,.032,'triangle',65.41);
     } else if (name === 'pursuit-pass') {
       noise(t,.095,.039,3900,'highpass');note(1174.66,0,.07,.014,'sine',587.33);
+    } else if (name === 'cap-track') {
+      // Fingernail on a ridged metal cap: small, bright preparation, never a hit cue.
+      noise(t,.028,.026,4100,'highpass');note(988,0,.11,.026,'sine',740);
+    } else if (name === 'cap-lock') {
+      note(1320,0,.065,.037,'sine',988);noise(t,.02,.027,5200,'highpass');
+    } else if (name === 'cap-release') {
+      const i=Math.max(1,Math.min(3,Number(meta.index)||1));
+      noise(t,.034,.065,3900+i*230,'highpass');note(1260+i*115,0,.13,.049,'sine',510+i*90);
+      note(238+i*28,.007,.09,.045,'triangle',110);noise(t+.025,.105,.025,2600,'bandpass');
+    } else if (name === 'casting-track') {
+      note(196,0,.19,.035,'triangle',294);note(440,.06,.11,.025,'sine',523);
+    } else if (name === 'casting-lock') {
+      noise(t,.024,.05,1700);note(587,0,.075,.035,'triangle',440);
+    } else if (name === 'casting-dash') {
+      // Two shoe beats followed by a short air rush locate the moving body.
+      [0,.065].forEach((o,i)=>{noise(t+o,.045,.045,540+i*190,'lowpass');note(95+i*24,o,.07,.045,'sine',48);});
+      noise(t,.18,.04,2100,'highpass');note(294,0,.15,.024,'triangle',147);
+    } else if (name === 'casting-stop') {
+      noise(t,.19,.033,1400,'bandpass');note(110,0,.12,.032,'sine',73);
+    } else if (name === 'seat-track') {
+      note(783.99,0,.16,.035,'sine');note(587.33,.055,.17,.029,'sine');
+    } else if (name === 'seat-lock') {
+      note(1174.66,0,.09,.034,'sine',880);noise(t,.025,.026,3200);
+    } else if (name === 'seat-close') {
+      noise(t,.036,.067,1900);note(196,0,.15,.052,'triangle',98);
+      note(784,.02,.11,.024,'sine',587.33);noise(t+.05,.1,.025,780,'lowpass');
+    } else if (name === 'moving-track') {
+      swell(164.81,0,.23,.027,'triangle',246.94);noise(t,.09,.018,3600,'highpass');
+    } else if (name === 'moving-lock') {
+      note(1318.5,0,.055,.035,'sine',988);noise(t,.022,.04,4400,'highpass');
+    } else if (name === 'moving-dash') {
+      const i=Math.max(1,Math.min(3,Number(meta.index)||1));
+      noise(t,.14,.064,3200+i*260,'highpass');note(784+i*85,0,.13,.032,'sine',220);
+      note(110,.008,.12,.032,'triangle',55);
+    } else if (name === 'moving-followup') {
+      noise(t,.043,.073,4700,'highpass');note(1568,0,.085,.035,'sine',784);
+      noise(t+.028,.12,.027,2300);note(146.83,0,.09,.035,'sine',65.41);
+    } else if (name === 'moving-stop') {
+      noise(t,.11,.026,1500,'bandpass');note(98,0,.12,.032,'triangle',65.41);
     } else if (name === 'counter-open') {
       // A bright opening answers the dark takeover score; no false hit transient.
       [329.63,493.88,659.25].forEach((f,i)=>note(f,i*.045,.24,.044,'triangle'));
@@ -519,6 +559,20 @@ export class GameAudio {
           this.normalCueKeys.add(key);if(this.normalCueKeys.size>256)this.normalCueKeys.delete(this.normalCueKeys.values().next().value);
           const name=e.kind==='tracking'?(e.bossId==='mime'?'feint':'pursuit-track'):e.kind==='lock'?'pursuit-lock':e.bossId==='ignis'?'light-sweep':e.bossId==='mime'?'mask':'pursuit-release';
           this.cue(name,{...e,eventId:e.id,pan:Math.max(-.6,Math.min(.6,((Number(e.originX)||640)-640)/1000)),audioDelay:Math.min(.06,i*.008)});
+        }
+        // Personality attacks report real milestones. A release, footstep or frame snap
+        // never manufactures a player-hit sound, and consumed cues never replay on unmute.
+        const personalNames={ignis:{tracking:'cap-track',lock:'cap-lock',launch:'cap-release'},
+          mime:{tracking:'casting-track',lock:'casting-lock',launch:'casting-dash',finish:'casting-stop'},
+          gojo:{tracking:'seat-track',lock:'seat-lock',launch:'seat-close'},
+          sukuna:{tracking:'moving-track',lock:'moving-lock',launch:'moving-dash',followup:'moving-followup',finish:'moving-stop'}};
+        for(const [i,e] of incoming.filter(e=>e.type==='personalityShot').slice(0,12).entries()){
+          const name=personalNames[e.bossId]?.[e.kind];if(!name)continue;
+          const group=e.bossId==='ignis'&&e.kind==='tracking'?`attack:${e.attackId}`:`shot:${e.shotId??e.index??e.id}`;
+          const key=`${state.stage}:${e.attackId}:${e.kind}:${group}`;if(this.personalityCueKeys.has(key))continue;
+          this.personalityCueKeys.add(key);if(this.personalityCueKeys.size>256)this.personalityCueKeys.delete(this.personalityCueKeys.values().next().value);
+          const origin=Number.isFinite(e.originX)?e.originX:Number.isFinite(e.x)?e.x:640;
+          this.cue(name,{...e,eventId:e.id,pan:Math.max(-.62,Math.min(.62,(origin-640)/800)),audioDelay:Math.min(.06,i*.008)});
         }
         for(const e of incoming.filter(e=>['counterOpen','patternCue','rehearsalResult','auditionHit'].includes(e.type)).slice(0,6)){
           const name=e.type==='counterOpen'?'counter-open':e.type==='rehearsalResult'?'trial-light':

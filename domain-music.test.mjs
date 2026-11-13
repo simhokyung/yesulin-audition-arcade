@@ -618,3 +618,45 @@ for (const [stage,bossId,count] of [[0,'ignis',2],[1,'mime',3],[2,'gojo',3],[3,'
     assert(audio.sources.size<=96);audio.destroy();assert.equal(audio.sources.size,0);
   });
 }
+
+for(const [bossId,names] of Object.entries({
+ ignis:['cap-track','cap-lock','cap-release'],
+ mime:['casting-track','casting-lock','casting-dash'],
+ gojo:['seat-track','seat-lock','seat-close'],
+ sukuna:['moving-track','moving-lock','moving-dash'],
+})){
+ test(`personality ${bossId} preparation, lock and release are distinct, directional and deduplicated`,async t=>{
+  const {audio,starts,panners}=audioHarness(t);await audio.setEnabled(true);
+  const s={...state(bossId),cinematic:null,hazards:[],effects:[],player:{character:'actor'},stats:{}};
+  audio.update(s,1/60);const heard=[],cue=audio.cue.bind(audio);audio.cue=(name,meta={})=>{heard.push({name,meta});cue(name,meta);};
+  let id=19000;
+  for(const kind of ['tracking','lock','launch']){
+   s.effects=[{id:++id,type:'personalityShot',kind,bossId,attackId:18,shotId:21,index:1,total:3,originX:250,originY:450}];audio.context.currentTime+=.2;audio.update(s,.2);
+   // A duplicate event object with a new event ID cannot double a physical milestone.
+   s.effects=[{...s.effects[0],id:++id}];audio.update(s,1/60);audio.update(s,1/60);
+  }
+  assert.deepEqual(heard.map(e=>e.name),names);assert(heard.every(e=>e.meta.pan<0));
+  assert(!heard.some(e=>['hit','impact','fatal'].includes(e.name)));
+  assert(starts.length>=6);assert(panners.every(p=>Math.abs(p.pan.value)<=.75));
+  s.effects=[{id:++id,type:'personalityShot',kind:'hit',bossId,attackId:18,shotId:21,index:1,damage:20}];audio.update(s,1/60);
+  assert.equal(heard.length,3,'physical hit effects are never replayed as releases or fake impact events');
+  await audio.setEnabled(false);const mutedStarts=starts.length;
+  s.effects=[{id:++id,type:'personalityShot',kind:'launch',bossId,attackId:18,shotId:22,index:2,originX:1000}];audio.update(s,.2);assert.equal(starts.length,mutedStarts);
+  await audio.setEnabled(true);const count=heard.length;audio.update(s,1/60);assert.equal(heard.length,count,'unmute never repeats the consumed launch');
+  audio.reset();assert.equal(audio.personalityCueKeys.size,0);
+ });
+}
+test('personality cap preparation coalesces while individual throws and moving follow-ups stay distinct',async t=>{
+ const {audio,starts}=audioHarness(t,{holdSources:true});await audio.setEnabled(true);
+ const s={...state('ignis'),cinematic:null,hazards:[],effects:[],player:{character:'actor'},stats:{}};audio.update(s,1/60);
+ const heard=[],cue=audio.cue.bind(audio);audio.cue=(name,meta={})=>{heard.push({name,meta});cue(name,meta);};let id=20000;
+ for(const kind of ['tracking','lock','launch'])for(let index=1;index<=3;index++){
+  s.effects=[{id:++id,type:'personalityShot',kind,bossId:'ignis',attackId:8,shotId:80+index,index,total:3,originX:400}];audio.context.currentTime+=.14;audio.update(s,.14);
+ }
+ assert.equal(heard.filter(e=>e.name==='cap-track').length,1);assert.equal(heard.filter(e=>e.name==='cap-lock').length,3);assert.equal(heard.filter(e=>e.name==='cap-release').length,3);
+ for(let index=1;index<=3;index++)for(const kind of ['launch','followup']){
+  s.effects=[{id:++id,type:'personalityShot',kind,bossId:'sukuna',attackId:9,shotId:90+index,index,total:3,originX:index%2?200:1050}];audio.context.currentTime+=.2;audio.update(s,.2);
+ }
+ assert.equal(heard.filter(e=>e.name==='moving-dash').length,3);assert.equal(heard.filter(e=>e.name==='moving-followup').length,3);assert(starts.length>30);assert(audio.sources.size<=96);
+ audio.pause(true);assert.equal(audio.sources.size,0);assert.equal(audio.sourceNodes.size,0);
+});

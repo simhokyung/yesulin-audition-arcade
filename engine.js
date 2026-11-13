@@ -12,8 +12,8 @@
  */
 
 export const CHARACTERS = {
-  director: {id:'director',name:'감독',title:'현장을 지배하는 자',color:'#dfff70',hp:280,speed:285,attack:25,attackCooldown:.34,range:125,skillCost:0,skillCooldown:4.8,skillName:'레디, 액션!',roleName:'현장 통제 — 전 스태프 대기!'},
-  actor: {id:'actor',name:'배우',title:'장르를 넘나드는 자',color:'#b7acff',hp:280,speed:300,attack:24,attackCooldown:.30,range:125,skillCost:0,skillCooldown:4.8,skillName:'궁수 연기 — 애드리브',roleName:'메소드 몰입'},
+  director: {id:'director',name:'감독',title:'현장을 지배하는 자',color:'#dfff70',hp:260,speed:285,attack:25,attackCooldown:.34,range:125,skillCost:0,skillCooldown:4.8,skillName:'레디, 액션!',roleName:'현장 통제 — 전 스태프 대기!'},
+  actor: {id:'actor',name:'배우',title:'장르를 넘나드는 자',color:'#b7acff',hp:260,speed:300,attack:24,attackCooldown:.30,range:125,skillCost:0,skillCooldown:4.8,skillName:'궁수 연기 — 애드리브',roleName:'메소드 몰입'},
 };
 export const SKILL_KITS = {
   director:{
@@ -39,21 +39,21 @@ export const DIFFICULTIES = {
   hard:{id:'hard',name:'감독판',hp:1.17,damage:1.22,warning:.91,attackSpeed:.88},
 };
 export const BOSSES = [
-  {id:'ignis',name:'피노',title:'조명감독',subtitle:'첫 무대의 긴장을 넘어서',location:'점화 스테이지',color:'#ffb465',hp:3800,damage:18,quote:'조명 켰다. 긴장해도 좋아. 네 장면을 시작해.',tip:'빛나는 바닥에서 벗어나세요. 골든 아워에는 계속 이동하는 민트색 조명을 따라가야 합니다.',review:'첫 장면, 좋았어. 다음 조명으로 가.',patterns:['풋라이트 점화','앰버 스윕','스파크 앙코르','무대 장악 · 골든 아워','조명 리허설','팔로 스폿']},
-  {id:'mime',name:'대길',title:'가면연출가',subtitle:'나만의 배역을 찾아서',location:'가면 소극장',color:'#dfb0fa',hp:5400,damage:26,quote:'가면은 수없이 많지. 너는 어떤 장면을 보여줄 거야?',tip:'점선 FAKE는 가짜, 진한 HIT만 실제 타격입니다. 무대 장악에서는 진짜 번호·모양을 찾고 연결 통로가 열리면 다음 패널로 옮기세요.',review:'네 장면을 찾았군. 다음 무대로.',patterns:['리본 피어스','거짓 커튼','더블 캐스팅','무대 장악 · 페르소나 극장','대역 오디션','가면 동선']},
-  {id:'gojo',name:'이프',title:'경계심사관',subtitle:'달라진 흐름에 응답하기',location:'프레임 스튜디오',color:'#a7c9ff',hp:8200,damage:38,quote:'아까 통했던 동선이, 이번에도 통할까?',tip:'프레임 관통은 마지막 0.5초에 고정됩니다. 무대 장악은 가로·세로 안전 통로가 바뀌므로 빔이 꺼진 예고 때 이동하세요.',review:'흐름이 달라도 네 장면은 살아 있어.',patterns:['초점 견인','경계 반발','프레임 관통','무대 장악 · 무한 시사회','리플레이','선행 프레임']},
-  {id:'sukuna',name:'무빙',title:'종막집행관',subtitle:'마지막까지 집중을 지키기',location:'종막 심사장',color:'#ff8491',hp:9400,damage:45,quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',tip:'박자 절단의 연속 예고선을 피하세요. 종막 집행은 방향이 바뀌는 칼날 벽입니다. 이동하는 틈에 맞춰 통과하고, 마지막 두 대각선에서는 방향을 꺾으세요.',review:'끝까지 지켰군. 이 무대는 네 것이다.',patterns:['박자 절단','단두 큐','종막 투창','무대 장악 · 종막 집행','앙코르 참격','엇박자 연사']},
+  {id:'ignis',name:'피노',title:'조명감독',subtitle:'첫 무대의 긴장을 넘어서',location:'점화 스테이지',color:'#ffb465',hp:4100,damage:18,quote:'조명 켰다. 긴장해도 좋아. 네 장면을 시작해.',tip:'빛나는 바닥에서 벗어나세요. 골든 아워에는 계속 이동하는 민트색 조명을 따라가야 합니다.',review:'첫 장면, 좋았어. 다음 조명으로 가.',patterns:['풋라이트 점화','앰버 스윕','스파크 앙코르','무대 장악 · 골든 아워','조명 리허설','팔로 스폿','빨뚜, 액션!']},
+  {id:'mime',name:'대길',title:'가면연출가',subtitle:'나만의 배역을 찾아서',location:'가면 소극장',color:'#dfb0fa',hp:5800,damage:26,quote:'가면은 수없이 많지. 너는 어떤 장면을 보여줄 거야?',tip:'점선 FAKE는 가짜, 진한 HIT만 실제 타격입니다. 무대 장악에서는 진짜 번호·모양을 찾고 연결 통로가 열리면 다음 패널로 옮기세요.',review:'네 장면을 찾았군. 다음 무대로.',patterns:['리본 피어스','거짓 커튼','더블 캐스팅','무대 장악 · 페르소나 극장','대역 오디션','가면 동선','끝까지 캐스팅']},
+  {id:'gojo',name:'이프',title:'경계심사관',subtitle:'달라진 흐름에 응답하기',location:'프레임 스튜디오',color:'#a7c9ff',hp:8800,damage:38,quote:'아까 통했던 동선이, 이번에도 통할까?',tip:'프레임 관통은 마지막 0.5초에 고정됩니다. 무대 장악은 가로·세로 안전 통로가 바뀌므로 빔이 꺼진 예고 때 이동하세요.',review:'흐름이 달라도 네 장면은 살아 있어.',patterns:['초점 견인','경계 반발','프레임 관통','무대 장악 · 무한 시사회','리플레이','선행 프레임','자리해야지~']},
+  {id:'sukuna',name:'무빙',title:'종막집행관',subtitle:'마지막까지 집중을 지키기',location:'종막 심사장',color:'#ff8491',hp:10100,damage:45,quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',tip:'박자 절단의 연속 예고선을 피하세요. 종막 집행은 방향이 바뀌는 칼날 벽입니다. 이동하는 틈에 맞춰 통과하고, 마지막 두 대각선에서는 방향을 꺾으세요.',review:'끝까지 지켰군. 이 무대는 네 것이다.',patterns:['박자 절단','단두 큐','종막 투창','무대 장악 · 종막 집행','앙코르 참격','엇박자 연사','원테이크, 따라와']},
 ];
 
-// Five casts per rotation preserve the established takeover cadence. The first
-// ordinary slot alternates the new concept attack and the original opener.
-export const BOSS_PATTERN_ROTATIONS={ignis:[0,4,1,2,3],mime:[0,1,4,2,3],gojo:[0,3,1,4,2],sukuna:[0,3,1,4,2]};
+// Keep the established five-cast takeover cadence. Each cycle opener rotates
+// personal / concept / original, so all seven skills remain reachable in eleven casts.
+export const BOSS_PATTERN_ROTATIONS={ignis:[6,4,1,2,3],mime:[6,1,4,2,3],gojo:[6,3,1,4,2],sukuna:[6,3,1,4,2]};
 export function rankedPatternAt(bossId,turn){
- const rotation=BOSS_PATTERN_ROTATIONS[bossId];if(!rotation)throw new RangeError('Unknown boss');turn=Math.max(0,Math.floor(turn));const slot=turn%rotation.length,cycle=Math.floor(turn/rotation.length);return slot===0?(cycle%2===0?5:0):rotation[slot];
+ const rotation=BOSS_PATTERN_ROTATIONS[bossId];if(!rotation)throw new RangeError('Unknown boss');turn=Math.max(0,Math.floor(turn));const slot=turn%rotation.length,cycle=Math.floor(turn/rotation.length);return slot===0?[6,5,0][cycle%3]:rotation[slot];
 }
 export function patternTurnFor(bossId,pattern,{occurrence=0}={}){
- if(!Number.isInteger(pattern)||pattern<0||pattern>5||!Number.isInteger(occurrence)||occurrence<0)throw new RangeError('Invalid pattern or occurrence');let seen=0;
- for(let turn=0;turn<(occurrence+1)*10;turn++)if(rankedPatternAt(bossId,turn)===pattern){if(seen===occurrence)return turn;seen++;}throw new RangeError('Pattern is not scheduled');
+ if(!Number.isInteger(pattern)||pattern<0||pattern>6||!Number.isInteger(occurrence)||occurrence<0)throw new RangeError('Invalid pattern or occurrence');let seen=0;
+ for(let turn=0;turn<(occurrence+1)*15;turn++)if(rankedPatternAt(bossId,turn)===pattern){if(seen===occurrence)return turn;seen++;}throw new RangeError('Pattern is not scheduled');
 }
 
 const BOUNDS={left:76,right:1204,top:340,bottom:624};
@@ -155,22 +155,22 @@ export function getDomainGuide(s,h){
 export function createGame({character='director',difficulty='standard',seed=42,stage=0,skipIntro=false,mode='story',duration=90}={}){
   if(!CHARACTERS[character])character='director';if(!DIFFICULTIES[difficulty])difficulty='standard';
   mode=mode==='challenge'?'challenge':mode==='booth'?'booth':'story';if(isRankedRun({mode})){seed=424242;difficulty='standard';stage=0;skipIntro=true;}duration=[60,90,120].includes(duration)?duration:90;
-  const s={version:17,runCharacter:character,dialogue:null,dialogueCooldown:0,dialogueHistory:{},lastDamage:null,followups:[],rehearsal:null,audition:null,playerHistory:[],introducedBosses:[],cinematic:null,pendingUltimate:false,mode,duration:mode==='booth'?duration:0,timeLeft:mode==='challenge'?null:mode==='booth'?duration:0,runTime:0,round:0,transitionTimer:0,endReason:null,domainDeath:null,inputBuffer:{},scoreExact:0,multiplier:1,fever:0,lastJustAttack:0,rng:seed>>>0,seed:seed>>>0,uid:0,status:'playing',difficulty,stage:0,time:0,stageTime:0,score:0,combo:0,maxCombo:0,comboTimer:0,
-    player:{...recoilDefaults(),x:270,y:500,hp:280,maxHp:280,energy:100,maxEnergy:100,hype:0,character,role:'sword',facing:1,invuln:0,attackAnim:0,attackKind:'',dodgeTimer:0,dodgeElapsed:0,dodgeId:0,lastJustDodge:-1,dodgeX:0,dodgeY:0,attackCooldown:0,attackId:0,comboIndex:0,chainTimer:0,precisionWindow:false,precisionQueued:false,precisionAttempted:false,queuedAttack:false,timingGrade:'',timingTimer:0,swapCooldown:0,hitFlash:0,slow:0,buff:false,combo:0,cooldowns:{skill:0,buff:0,dodge:0,role:0,ultimate:0}},
+  const s={version:18,runCharacter:character,dialogue:null,dialogueCooldown:0,dialogueHistory:{},lastDamage:null,followups:[],personality:null,rehearsal:null,audition:null,playerHistory:[],introducedBosses:[],cinematic:null,pendingUltimate:false,mode,duration:mode==='booth'?duration:0,timeLeft:mode==='challenge'?null:mode==='booth'?duration:0,runTime:0,round:0,transitionTimer:0,endReason:null,domainDeath:null,inputBuffer:{},scoreExact:0,multiplier:1,fever:0,lastJustAttack:0,rng:seed>>>0,seed:seed>>>0,uid:0,status:'playing',difficulty,stage:0,time:0,stageTime:0,score:0,combo:0,maxCombo:0,comboTimer:0,
+    player:{...recoilDefaults(),x:270,y:500,hp:260,maxHp:260,energy:100,maxEnergy:100,hype:0,character,role:'sword',facing:1,invuln:0,attackAnim:0,attackKind:'',dodgeTimer:0,dodgeElapsed:0,dodgeId:0,lastJustDodge:-1,dodgeX:0,dodgeY:0,attackCooldown:0,attackId:0,comboIndex:0,chainTimer:0,precisionWindow:false,precisionQueued:false,precisionAttempted:false,queuedAttack:false,timingGrade:'',timingTimer:0,swapCooldown:0,hitFlash:0,slow:0,buff:false,combo:0,cooldowns:{skill:0,buff:0,dodge:0,role:0,ultimate:0}},
     boss:null,enemies:[],hazards:[],projectiles:[],effects:[],spotlight:{x:480,y:490,radius:105,radiusY:62,active:true,timer:0},
-    stats:{takeoverVariantCasts:{},takeoverVariantActivations:{},takeoverVariantSurvived:{},conceptCasts:{},conceptShots:{},extraActivations:{},extraCompletions:{},extraSuccesses:{},counterWindows:0,counterDamage:0,rehearsals:0,auditionSuccesses:0,auditionMistakes:0,patternCasts:{},takeoverCasts:{},takeoverActivations:{},takeoverSurvived:{},damageDealt:0,damageTaken:0,hits:0,dodges:0,perfectDodges:0,justDodges:0,justHits:0,finishers:0,maxMultiplier:1,bossKills:0,skills:0,buffs:0,adlibs:0,methodFinishers:0,cueDetonations:0,crewBursts:0,blocks:0,swaps:0,ultimates:0,kills:0,stagesCleared:0,spotlightSeconds:0},
+    stats:{personalityCasts:{},personalityShots:{},personalityHits:{},personalityCompletions:{},personalityAvoided:{},takeoverVariantCasts:{},takeoverVariantActivations:{},takeoverVariantSurvived:{},conceptCasts:{},conceptShots:{},extraActivations:{},extraCompletions:{},extraSuccesses:{},counterWindows:0,counterDamage:0,rehearsals:0,auditionSuccesses:0,auditionMistakes:0,patternCasts:{},takeoverCasts:{},takeoverActivations:{},takeoverSurvived:{},damageDealt:0,damageTaken:0,hits:0,dodges:0,perfectDodges:0,justDodges:0,justHits:0,finishers:0,maxMultiplier:1,bossKills:0,skills:0,buffs:0,adlibs:0,methodFinishers:0,cueDetonations:0,crewBursts:0,blocks:0,swaps:0,ultimates:0,kills:0,stagesCleared:0,spotlightSeconds:0},
     announcedPhase:false,shake:0,hitStop:0,skipIntro};
   startStage(s,clamp(stage|0,0,BOSSES.length-1),{retry:true,entrance:mode==='challenge'});return s;
 }
 
 export function startStage(s,index,{retry=false,entrance=false}={}){
   index=clamp(index|0,0,BOSSES.length-1);const d=DIFFICULTIES[s.difficulty],config=BOSSES[index],p=s.player,ranked=isRankedRun(s),ultimateRemaining=retry?0:p.cooldowns.ultimate;
-  s.stage=index;s.stageTime=0;s.status='playing';s.cinematic=null;s.pendingUltimate=false;s.endReason=null;s.domainDeath=null;s.transitionTimer=0;s.hazards=[];s.projectiles=[];s.followups=[];s.rehearsal=null;s.audition=null;s.playerHistory=[];s.effects=[];s.lastDamage=null;s.combo=0;s.comboTimer=0;s.announcedPhase=false;s.hitStop=0;s.shake=0;multiplier(s);
+  s.stage=index;s.stageTime=0;s.status='playing';s.cinematic=null;s.pendingUltimate=false;s.endReason=null;s.domainDeath=null;s.transitionTimer=0;s.hazards=[];s.projectiles=[];s.followups=[];s.rehearsal=null;s.audition=null;s.personality=null;s.playerHistory=[];s.effects=[];s.lastDamage=null;s.combo=0;s.comboTimer=0;s.announcedPhase=false;s.hitStop=0;s.shake=0;multiplier(s);
   p.x=ranked?430:270;p.y=500;p.facing=1;p.hp=retry?p.maxHp:Math.min(p.maxHp,p.hp+(ranked?65:100));p.energy=retry?100:Math.min(100,p.energy+45);p.hype=retry?0:Math.min(100,p.hype+20);
   p.character=s.runCharacter;p.role='sword';p.castRole='sword';p.castTimer=0;p.buffTimer=0;p.buffName='';p.shieldCharges=0;p.invuln=1;p.attackAnim=0;p.dodgeTimer=0;p.attackCooldown=0;p.swapCooldown=0;p.hitFlash=0;p.slow=0;p.buff=false;p.combo=0;p.cooldowns={skill:0,buff:0,dodge:0,role:0,ultimate:ultimateRemaining};p.attackSequence=null;p.adlibReady=false;p.nextFinisherReady=false;p.methodRewardSpent=false;p.crewReady=false;p.retreatTimer=0;p.retreatDirection=0;
   Object.assign(p,recoilDefaults(),{comboIndex:0,chainTimer:0,precisionWindow:false,precisionQueued:false,precisionAttempted:false,queuedAttack:false,attackBuffer:0,actionQueue:{},attackDuration:0,attackProgress:1,timingGrade:'',timingTimer:0});
   const hp=Math.round(config.hp*d.hp*(ranked?.55*(s.mode==='booth'?Math.pow(1.15,Math.floor(s.round/BOSSES.length)):1):1));
-  s.boss={...config,...recoilDefaults(),x:ranked?800:1000,y:480,hp,maxHp:hp,active:!!s.skipIntro,phase:1,telegraph:null,attackAnim:0,attackKind:'',stun:0,hitFlash:0,facing:-1,patternCooldown:ranked?1.2:2,patternIndex:ranked?0:Math.floor(random(s)*2),attacks:0,takeoverCount:0,counterRemaining:0,counterDuration:0,counterReason:"",lastCounterSource:null,lastExtraCompleteId:null,shield:0,cueMarks:0,lastCueAttack:0};
+  s.boss={...config,...recoilDefaults(),x:ranked?800:1000,y:480,hp,maxHp:hp,active:!!s.skipIntro,phase:1,telegraph:null,attackAnim:0,attackKind:'',stun:0,hitFlash:0,facing:-1,patternCooldown:ranked?1.2:2,patternIndex:ranked?0:Math.floor(random(s)*2),attacks:0,takeoverCount:0,takeoversCompleted:0,counterRemaining:0,counterDuration:0,counterReason:"",lastCounterSource:null,lastExtraCompleteId:null,shield:0,cueMarks:0,lastCueAttack:0};
   s.enemies=s.skipIntro?[]:[0,1].map((n)=>({...recoilDefaults(),id:`extra-${n}`,name:n?'NG 엑스트라':'야근의 망령',kind:'extra',x:650+n*240,y:420+n*145,hp:110+index*15,maxHp:110+index*15,facing:-1,attackCooldown:1.5+n,attackAnim:0,hitFlash:0,stun:0,telegraph:0,speed:105+index*5}));
   s.spotlight={x:490,y:480,radius:105,radiusY:62,active:true,timer:0};
   words(s,retry?'오늘도 무사히 크랭크인!':ranked?`STAGE ${s.stage+1} · 체력 +65`:'한 씬 더! 체력 +100',640,282,'#dfff70',1.3);
@@ -214,17 +214,17 @@ function hurtPlayer(s,amount,source={}){
   if(p.invuln>0){if(p.dodgeTimer>0&&!source.dodgeNotified){source.dodgeNotified=true;if(p.dodgeElapsed<=.115&&p.lastJustDodge!==p.dodgeId){p.lastJustDodge=p.dodgeId;s.stats.perfectDodges++;s.stats.justDodges++;addScore(s,150);p.hype=Math.min(100,p.hype+12);grade(s,'JUST DODGE');speak(s,'dodge');if(p.character==='actor'&&p.buffTimer>0&&!p.methodRewardSpent){p.methodRewardSpent=true;p.nextFinisherReady=true;signature(s,'method-ready','동선 완벽 · 다음 Q 강마무리');}event(s,'comic',p.x,p.y,{text:'JUST DODGE!',subtitle:'종이 한 장 차이 +150',power:1.3,color:'#c9ff8f',life:.85,maxLife:.85});}}return false;}
   if(p.shieldCharges>0&&p.buffTimer>0){p.shieldCharges--;p.invuln=.24;s.stats.blocks++;event(s,'comic',p.x,p.y,{text:'감독의 보호!',subtitle:'일반 피격 1회 방어',character:'director',color:'#dfff70',power:1.2,life:.7,maxLife:.7});return false;}
   const damage=Math.min(p.hp,Math.max(1,Math.round(amount*DIFFICULTIES[s.difficulty].damage)));p.hp-=damage;p.invuln=.72;p.hitFlash=.2;p.hitStun=.16;p.hitDir=Math.sign(p.x-(source.x??s.boss.x))||-p.facing;p.knockX=p.hitDir*300;p.knockY=clamp((p.y-(source.y??s.boss.y))/60,-1,1)*65;p.launchV=160;p.launchZ=1;p.attackSequence=null;p.hitKind='hurt';p.hitPower=1.4;p.hitReaction=.32;p.landingTimer=0;p.chainTimer=0;p.comboIndex=0;p.precisionQueued=false;p.queuedAttack=false;p.attackBuffer=0;s.stats.damageTaken+=damage;s.combo=0;s.comboTimer=0;s.shake=10;s.hitStop=Math.max(s.hitStop,.045);multiplier(s);
-  s.lastDamage={x:p.x,y:p.y,damage,sourceId:source.id,hazard:source.type?JSON.parse(JSON.stringify(source)):null};speak(s,'hurt');
+  s.lastDamage={x:p.x,y:p.y,damage,sourceId:source.id,hazard:(source.type||source.personalityPattern)?JSON.parse(JSON.stringify(source)):null};speak(s,'hurt');
   p.hype=Math.min(100,p.hype+6);words(s,`−${damage}`,p.x,p.y-90,'#ff9494',.7);
   if(source.kind==='seed'){p.energy=Math.max(0,p.energy-12);p.slow=1.1;words(s,'대본이 기억 안 나…',p.x,p.y-125,'#b9d58b',.9);}
-  if(p.hp<=0){s.status='gameover';s.endReason='defeat';speak(s,'defeat',3);s.followups=[];s.hazards=[];s.projectiles=[];words(s,'컷! 이건 NG야!',640,300,'#ff9c84',4);}return true;
+  if(p.hp<=0){cancelPersonality(s);s.status='gameover';s.endReason='defeat';speak(s,'defeat',3);s.followups=[];s.hazards=[];s.projectiles=[];words(s,'컷! 이건 NG야!',640,300,'#ff9c84',4);}return true;
 }
 function checkActiveDomains(s){
   if(s.status!=='playing'||s.player.hp<=0)return false;
   const h=s.hazards.find(h=>h.kind==='domain'&&h.active&&h.life>0&&(h.domainType==='blade-waves'?(s._movementStart&&!s._bladeSweepReady?projectedBladeHit(s,h):h.sweptHit||isInsideHazard(s.player.x,s.player.y,h)):h.domainType==='chasing-slashes'?(s._movementStart&&!s._bladeSweepReady?projectedPursuitHit(s,h):h.sweptHit||isInsideHazard(s.player.x,s.player.y,h)):isInsideHazard(s.player.x,s.player.y,h)));
   if(!h)return false;
   const p=s.player;s.stats.damageTaken+=p.hp;p.hp=0;p.invuln=0;p.hitFlash=.45;p.hitStun=1;s.status='gameover';s.endReason='domain';s.combo=0;s.comboTimer=0;s.shake=24;
-  s.domainDeath={bossId:s.boss.id,name:h.name,x:p.x,y:p.y,instruction:getDomainGuide(s,h).instruction,tip:getDomainGuide(s,h).instruction,domainType:h.domainType,phase:h.domainPhase,hazard:JSON.parse(JSON.stringify(h))};speak(s,'defeat',3);s.followups=[];s.hazards=[];s.projectiles=[];s.inputBuffer={};
+  cancelPersonality(s);s.domainDeath={bossId:s.boss.id,name:h.name,x:p.x,y:p.y,instruction:getDomainGuide(s,h).instruction,tip:getDomainGuide(s,h).instruction,domainType:h.domainType,phase:h.domainPhase,hazard:JSON.parse(JSON.stringify(h))};speak(s,'defeat',3);s.followups=[];s.hazards=[];s.projectiles=[];s.inputBuffer={};
   event(s,'domaincut',p.x,p.y,{fatal:true,bossId:s.boss.id,text:'무대에 압도당했다',subtitle:h.name+' · 즉사',color:s.boss.color,power:4,life:2.5,maxLife:2.5});
   words(s,'무대 장악 · 즉사',640,300,'#ff8f9e',3);return true;
 }
@@ -263,7 +263,7 @@ function updateAttackSequence(s,dt){
 function preciseDirectorCut(s){
   const p=s.player,b=s.boss;
   if(!b.active||groundDistance(p,b)>=430||!b.telegraph||b.telegraph.remaining>.3)return false;
-  const attackId=b.telegraph.attackId;if(s.audition?.attackId===attackId&&!s.audition.active)s.audition=null;s.hazards=s.hazards.filter(h=>h.attackId!==attackId||h.active);b.telegraph=null;b.stun=.65;b.patternCooldown=1.1;
+  const attackId=b.telegraph.attackId;if(s.personality?.attackId===attackId)cancelPersonality(s);if(s.audition?.attackId===attackId&&!s.audition.active)s.audition=null;s.hazards=s.hazards.filter(h=>h.attackId!==attackId||h.active);b.telegraph=null;b.stun=.65;b.patternCooldown=1.1;
   p.hype=Math.min(100,p.hype+15);speak(s,'interrupt',2);grade(s,'CUT!');event(s,'comic',b.x,b.y,{text:'컷 타이밍!',subtitle:'레디 액션 · 완벽한 연출',character:'director',power:1.5,color:'#dfff70',life:.8,maxLife:.8});return true;
 }
 function useSkill(s){
@@ -290,7 +290,7 @@ function useUltimate(s){
   const p=s.player,kit=SKILL_KITS[p.character];if(p.hype<100||p.cooldowns.ultimate>0||s.pendingUltimate||p.attackSequence?.kind==='ultimate')return;
   p.hype=0;p.cooldowns.ultimate=kit.r.cooldown;s.stats.ultimates++;speak(s,'ultimate',2);p.retreatTimer=0;p.attackSequence=null;p.attackKind='ultimate';p.attackAnim=0;p.attackProgress=0;s.pendingUltimate=true;
   // Only uncommitted attacks are cancelled. A live takeover remains lethal after the cut.
-  s.hazards=s.hazards.filter(h=>h.kind==='domain'&&h.active);s.rehearsal=null;if(s.audition&&!s.audition.active)s.audition=null;s.boss.telegraph=null;s.boss.patternCooldown=Math.max(1.4,s.boss.patternCooldown);
+  cancelPersonality(s);s.hazards=s.hazards.filter(h=>h.kind==='domain'&&h.active);s.rehearsal=null;if(s.audition&&!s.audition.active)s.audition=null;s.boss.telegraph=null;s.boss.patternCooldown=Math.max(1.4,s.boss.patternCooldown);
   startCinematic(s,'playerUltimate',p.character,kit.r.name,1.6,p.x,p.y);
 }
 function resolveUltimate(s){
@@ -318,6 +318,7 @@ function recordPlayerPath(s){
 /** Shared presentation-only guide for new ordinary mechanics and real counter windows. */
 export function getPatternGuide(s){
  const b=s.boss,p=s.player;if(b.counterRemaining>0)return {kind:'counter',title:'반격 기회!',instruction:'보스가 멈췄습니다. 지금 공격하면 피해 +20%!',remaining:b.counterRemaining,duration:b.counterDuration,target:{x:b.x+(p.x<b.x?-65:65),y:b.y},targetReached:groundDistance(p,b)<130,timerLabel:'반격 시간'};
+ const personal=getPersonalityGuide(s);if(personal)return personal;
  const a=s.audition;if(a&&!a.selected){const real=a.figures.find(f=>f.real);return{kind:'audition',title:'대역 오디션 · ★ 진짜를 찾아라',instruction:a.active?'★ 진짜 실루엣만 공격하세요. ○ 대역은 피하세요!':'★ 표식을 확인하고 진짜 실루엣 쪽으로 이동하세요.',remaining:a.active?a.remaining:a.warning,duration:a.active?a.duration:a.warningDuration,target:{x:real.x+(p.x<real.x?-65:65),y:real.y},targetReached:groundDistance(p,real)<110,timerLabel:a.active?'선택 시간':'시작까지',figureId:real.id};}
  const lights=s.hazards.filter(h=>h.kind==='rehearsal-light'&&!h.visited).sort((a,b)=>a.index-b.index),h=lights[0];if(h)return{kind:'rehearsal',title:`조명 리허설 ${h.index}/3`,instruction:`${h.index}번 조명 안으로 이동해 잠깐 머무르세요!`,remaining:h.active?h.life:h.remaining,duration:h.active?h.totalLife:h.duration,target:{x:h.x,y:h.y},targetReached:circleContains(p.x,p.y,h),timerLabel:h.active?'조명 유지':'켜질 때까지',index:h.index,total:3};
  const concepts=s.hazards.filter(h=>h.conceptPattern&&!h.decoy),concept=concepts.find(h=>!h.active)||concepts.at(-1);
@@ -392,8 +393,130 @@ export function sweptProjectileCollision(from,to,q){
  const ax=(from.x-(q.previousX??q.x))/q.radius,ay=(from.y-(q.previousY??q.y))/q.radiusY,bx=(to.x-q.x)/q.radius,by=(to.y-q.y)/q.radiusY,dx=bx-ax,dy=by-ay,d2=dx*dx+dy*dy,t=d2?clamp(-(ax*dx+ay*dy)/d2,0,1):0;return (ax+dx*t)**2+(ay+dy*t)**2<=1;
 }
 
-function beginPattern(s){
-  const b=s.boss,p=s.player,d=DIFFICULTIES[s.difficulty],intro=b.id==='ignis'||b.id==='mime',turn=b.patternIndex++,i=isRankedRun(s)?rankedPatternAt(b.id,turn):turn%b.patterns.length;b.attacks++;
+/** Personal audition skills: sequential visible warnings, actual bodies, and no hidden damage lanes. */
+const PERSONALITY_KINDS={ignis:'red-cap',mime:'casting-chase',gojo:'seat-reservation',sukuna:'moving-dash'};
+export const PERSONALITY_LINES={ignis:'긴장 풀어. 빨뚜 간다!',mime:'거기 서! 아직 캐스팅 안 끝났어!',gojo:'자리해야지~ 그 자리는 내가 쓸게.',sukuna:'컷 없어. 끝까지 따라와!'};
+function personalityEvent(s,shot,kind){
+ const bossId=shot.patternBossId||s.personality?.bossId||s.boss.id,origin=shot.origin||{x:shot.x??s.boss.x,y:shot.y??s.boss.y},target=shot.target||{x:shot.x,y:shot.y};
+ event(s,'personalityShot',origin.x,origin.y,{kind,patternIndex:6,bossId,attackId:shot.attackId,shotId:shot.id,index:shot.index,total:shot.total,originX:origin.x,originY:origin.y,targetX:target.x,targetY:target.y,angle:shot.angle||0,text:kind==='tracking'&&shot.index===1?PERSONALITY_LINES[bossId]:undefined,time:s.time,life:kind==='tracking'?1.5:.55,maxLife:kind==='tracking'?1.5:.55});
+}
+function cancelPersonality(s){
+ const a=s.personality;if(!a)return;
+ s.hazards=s.hazards.filter(h=>h.attackId!==a.attackId);
+ s.projectiles=s.projectiles.filter(q=>q.attackId!==a.attackId);
+ s.personality=null;if(s.boss){s.boss.personalityMotion=null;s.boss.personalReturn=true;}
+}
+function personalRay(origin,target,extension=70,maxDistance=720){
+ const angle=Math.atan2(target.y-origin.y,target.x-origin.x),dx=Math.cos(angle),dy=Math.sin(angle);
+ let distance=Math.min(maxDistance,Math.max(100,Math.hypot(target.x-origin.x,target.y-origin.y)+extension));
+ if(dx>0)distance=Math.min(distance,(BOUNDS.right-origin.x)/dx);if(dx<0)distance=Math.min(distance,(BOUNDS.left-origin.x)/dx);
+ if(dy>0)distance=Math.min(distance,(BOUNDS.bottom-origin.y)/dy);if(dy<0)distance=Math.min(distance,(BOUNDS.top-origin.y)/dy);
+ distance=Math.max(0,distance);return {angle,end:{x:origin.x+dx*distance,y:origin.y+dy*distance}};
+}
+function personalLane(shot){const a=shot.path?.[0],b=shot.path?.[1];return a&&b?{type:'lane',x:(a.x+b.x)/2,y:(a.y+b.y)/2,width:Math.hypot(b.x-a.x,b.y-a.y),height:shot.width||48,angle:shot.angle}:null;}
+function personalHazard(s,a,shot,kind,type,warning,life,geometry){
+ const h={id:++s.uid,attackId:a.attackId,name:a.name,type,kind,personalityPattern:true,patternBossId:a.bossId,index:shot.index,total:a.total,remaining:warning,duration:warning,life,totalLife:life,active:false,color:s.boss.color,damage:s.boss.damage*(kind==='seat-reservation'?.75:.65),blocksBoss:true,...geometry};s.hazards.push(h);return h;
+}
+function beginPersonalityPattern(s,b,name,warning){
+ const total=b.id==='mime'?2:3,id=b.telegraph.attackId,interval=b.id==='ignis'?.42:b.id==='mime'?2.16:b.id==='gojo'?1.1:1.92;
+ const a=s.personality={attackId:id,bossId:b.id,name,kind:PERSONALITY_KINDS[b.id],elapsed:0,index:1,total,hitCount:0,shots:[],startDamage:s.stats.damageTaken};
+ s.stats.personalityCasts[b.id]=(s.stats.personalityCasts[b.id]||0)+1;
+ for(let n=0;n<total;n++){
+  const startAt=b.id==='ignis'?0:n*interval,localWarning=b.id==='ignis'?warning+n*interval:n===0?warning:b.id==='mime'?1.35:b.id==='gojo'?1.2:1.2;
+  a.shots.push({id:++s.uid,attackId:id,patternBossId:b.id,index:n+1,total,kind:a.kind,phase:'waiting',startAt,lockAt:startAt+Math.max(0,localWarning-(b.id==='mime'?.75:b.id==='sukuna'?.70:b.id==='ignis'?.85:localWarning)),launchAt:startAt+localWarning,duration:localWarning,warningOnly:true,width:b.id==='ignis'?42:b.id==='mime'?50:46,radius:b.id==='mime'?25:23,radiusY:b.id==='mime'?18:17,phaseRemaining:localWarning,tracking:false,locked:false});
+ }
+}
+function setupPersonalShot(s,a,shot){
+ const b=s.boss,p=s.player;shot.phase='tracking';shot.tracking=true;shot.origin={x:b.x,y:b.y};shot.target={x:p.x,y:p.y};
+ if(a.bossId==='gojo'){
+  shot.phase='locked';shot.locked=true;shot.tracking=false;shot.lockAt=a.elapsed;shot.launchAt=a.elapsed+shot.duration;
+  const h=personalHazard(s,a,shot,'seat-reservation','circle',shot.duration,1.65,{x:p.x,y:p.y,radius:67,radiusY:43});shot.hazardId=h.id;shot.path=[{x:p.x,y:p.y},{x:p.x,y:p.y}];
+ }else{
+  const ray=personalRay(shot.origin,shot.target,a.bossId==='sukuna'?150:85,a.bossId==='ignis'?1300:760);
+  shot.angle=ray.angle+(a.bossId==='ignis'?[0,-.24,.24][shot.index-1]:0);
+  if(a.bossId==='ignis'){const end=personalRay(shot.origin,{x:shot.origin.x+Math.cos(shot.angle)*1400,y:shot.origin.y+Math.sin(shot.angle)*1400},0,1400).end;shot.path=[{...shot.origin},end];shot.target={...end};}
+  else shot.path=[{...shot.origin},ray.end];
+ }
+ personalityEvent(s,shot,'tracking');if(shot.locked)personalityEvent(s,shot,'lock');
+}
+function launchPersonalShot(s,a,shot){
+ const b=s.boss;shot.phase='active';shot.tracking=false;shot.locked=true;shot.launchedAt=a.elapsed;
+ s.stats.personalityShots[b.id]=(s.stats.personalityShots[b.id]||0)+1;b.attackAnim=.5;
+ if(a.bossId==='ignis'){
+  projectile(s,'enemy','red-cap',shot.origin.x,shot.origin.y,Math.cos(shot.angle)*440,Math.sin(shot.angle)*440,{radius:21,radiusY:15,damage:b.damage*.9,life:3.2,color:'#ff4d50',attackId:a.attackId,shotId:shot.id,bossId:b.id,index:shot.index,total:a.total,personalityPattern:true,originX:shot.origin.x,originY:shot.origin.y,angle:shot.angle,locked:true,tracking:false});shot.projectileId=s.projectiles.at(-1).id;
+ }else if(a.bossId==='mime'||a.bossId==='sukuna'){
+  shot.dashDuration=a.bossId==='mime'?.44:.34;shot.dashElapsed=0;shot.body={x:shot.origin.x,y:shot.origin.y,previousX:shot.origin.x,previousY:shot.origin.y,radius:shot.radius,radiusY:shot.radiusY};b.knockX=b.knockY=0;
+  if(a.bossId==='sukuna'){
+   const lane=personalLane(shot),h=personalHazard(s,a,shot,'moving-aftercut','lane',.78,.24,{...lane,height:42,origin:{...shot.origin},target:{...shot.path[1]},angle:shot.angle});shot.followupId=h.id;
+  }
+ }
+ personalityEvent(s,shot,'launch');
+}
+function updatePersonality(s,dt){
+ const a=s.personality,b=s.boss;if(!a)return;if(s.status!=='playing'||b.hp<=0||b.id!==a.bossId){cancelPersonality(s);return;}
+ a.elapsed+=dt;b.personalityMotion=null;
+ for(const shot of a.shots){
+  if(shot.phase==='waiting'&&a.elapsed+1e-9>=shot.startAt)setupPersonalShot(s,a,shot);
+  if(shot.phase==='waiting'||shot.phase==='done')continue;
+  a.index=shot.index;
+  if(shot.phase==='tracking'){
+   if(a.bossId!=='ignis'){
+    // Small visible flank steps establish diagonal approaches; the final locked path never retargets.
+    if(a.bossId==='sukuna'){
+     const side=shot.index%2===1?1:-1,desired=clamp(s.player.y+side*100,365,599),delta=clamp(desired-b.y,-130*dt,130*dt);b.y+=delta;
+    }
+    shot.origin={x:b.x,y:b.y};shot.target={x:s.player.x,y:s.player.y};const ray=personalRay(shot.origin,shot.target,a.bossId==='sukuna'?150:85,760);shot.angle=ray.angle;shot.path=[{...shot.origin},ray.end];
+   }
+   if(a.elapsed+1e-9>=shot.lockAt){shot.phase='locked';shot.tracking=false;shot.locked=true;shot.lockedAt=a.elapsed;personalityEvent(s,shot,'lock');}
+  }
+  if(shot.phase==='locked'){
+   if(a.bossId==='mime'||a.bossId==='sukuna'){b.x=shot.origin.x;b.y=shot.origin.y;b.knockX=b.knockY=0;}
+   shot.phaseRemaining=Math.max(0,shot.launchAt-a.elapsed);
+   if(a.elapsed+1e-9>=shot.launchAt){
+    if(a.bossId==='gojo'){shot.phase='active';shot.launchedAt=a.elapsed;s.stats.personalityShots[b.id]=(s.stats.personalityShots[b.id]||0)+1;}
+    else launchPersonalShot(s,a,shot);
+   }
+  }
+  if(shot.phase==='active'){
+   if(a.bossId==='ignis'){
+    const q=s.projectiles.find(q=>q.id===shot.projectileId&&q.life>0);if(!q)shot.phase='done';else{shot.body={x:q.x,y:q.y,previousX:q.previousX??q.x,previousY:q.previousY??q.y,radius:q.radius,radiusY:q.radiusY};shot.phaseRemaining=q.life;}
+   }else if(a.bossId==='gojo'){
+    const h=s.hazards.find(h=>h.id===shot.hazardId&&h.life>0);if(!h)shot.phase='done';else shot.phaseRemaining=h.active?h.life:h.remaining;
+   }else if(shot.dashElapsed<shot.dashDuration){
+    const body=shot.body;body.previousX=body.x;body.previousY=body.y;shot.dashElapsed=Math.min(shot.dashDuration,shot.dashElapsed+dt);const progress=shot.dashElapsed/shot.dashDuration,end=shot.path[1];
+    body.x=shot.origin.x+(end.x-shot.origin.x)*progress;body.y=shot.origin.y+(end.y-shot.origin.y)*progress;b.x=body.x;b.y=body.y;b.knockX=b.knockY=0;b.facing=Math.cos(shot.angle)>=0?1:-1;
+    if(!shot.hit&&sweptProjectileCollision(s._movementStart||s.player,s.player,body)){
+     const hit=hurtPlayer(s,b.damage*(a.bossId==='mime'?.85:.8),{...body,id:shot.id,kind:a.kind,personalityPattern:true});
+     if(hit){shot.hit=true;a.hitCount++;s.stats.personalityHits[b.id]=(s.stats.personalityHits[b.id]||0)+1;personalityEvent(s,shot,'hit');}
+     if(s.personality!==a)return;
+    }
+    shot.phaseRemaining=Math.max(0,shot.dashDuration-shot.dashElapsed);
+   }else if(!shot.followupId||!s.hazards.some(h=>h.id===shot.followupId&&h.life>0))shot.phase='done';
+  }
+  if((a.bossId==='mime'||a.bossId==='sukuna')&&shot.phase!=='done')b.personalityMotion={kind:a.kind,index:shot.index,phase:shot.phase,progress:shot.phase==='active'?Math.min(1,(shot.dashElapsed||0)/(shot.dashDuration||1)):Math.max(0,1-(shot.launchAt-a.elapsed)/shot.duration),from:shot.origin,to:shot.path?.[1],angle:shot.angle};
+ }
+ if(a.shots.every(shot=>shot.phase==='done')&&!s.hazards.some(h=>h.attackId===a.attackId)&&!s.projectiles.some(q=>q.attackId===a.attackId)){
+  s.stats.personalityCompletions[b.id]=(s.stats.personalityCompletions[b.id]||0)+1;if(!a.hitCount)s.stats.personalityAvoided[b.id]=(s.stats.personalityAvoided[b.id]||0)+1;
+  personalityEvent(s,{...a.shots.at(-1),index:a.total},'finish');s.personality=null;b.personalityMotion=null;b.personalReturn=true;
+  if(a.bossId==='mime'&&!a.hitCount)openCounter(s,a.attackId,'끝까지 캐스팅 회피');
+ }
+}
+export function getPersonalityGuide(s){
+ const a=s.personality;if(!a)return null;
+ const hazards=s.hazards.filter(h=>h.personalityPattern&&h.attackId===a.attackId),regions=hazards.map(h=>h.type==='circle'?{type:'ellipse',x:h.x,y:h.y,radius:h.radius,radiusY:h.radiusY}:h);
+ // Hazards update after the sequence; use their live phase for the exact activation frame without mutating simulation state.
+ const visible=a.shots.filter(q=>q.phase!=='waiting'&&q.phase!=='done').map(q=>{const h=q.hazardId?hazards.find(h=>h.id===q.hazardId):null;return h?.active?{...q,phase:'active',phaseRemaining:h.life,tracking:false,locked:true}:q;}),shot=visible.find(q=>q.phase==='tracking'||q.phase==='locked')||visible.at(-1)||a.shots.find(q=>q.phase==='waiting')||a.shots.at(-1);
+ for(const q of visible)if(q.path&&a.bossId!=='gojo'){const lane=personalLane(q);if(lane)regions.push(lane);}
+ const p=s.player,unsafe=regions.some(r=>regionContains(p.x,p.y,r,24)),target=unsafe?laneEscape(p,regions):{x:p.x,y:p.y};
+ const followup=shot.followupId?hazards.find(h=>h.id===shot.followupId):null,projectile=shot.projectileId?s.projectiles.find(q=>q.id===shot.projectileId):null,afterDash=shot.phase==='active'&&shot.dashElapsed>=shot.dashDuration;
+ const tracking=shot.phase==='tracking',waiting=shot.phase==='waiting',active=shot.phase==='active',locked=shot.phase==='locked',remaining=Math.max(0,waiting?shot.startAt-a.elapsed:active?(afterDash&&followup?(followup.active?followup.life:followup.remaining):projectile?projectile.life:shot.phaseRemaining??0):shot.launchAt-a.elapsed),duration=active?(afterDash&&followup?(followup.active?followup.totalLife:followup.duration):projectile?3.2:shot.dashDuration||1.65):waiting?Math.max(.1,shot.startAt-(a.shots[shot.index-2]?.launchAt||0)):shot.duration;
+ const title={ignis:'빨간 뚜껑 사이로 피하세요!',mime:tracking?'추격 중 · 방향을 보고 준비!':'돌진 방향 고정! 옆으로 피하세요!',gojo:'예약된 자리에서 벗어나세요!',sukuna:tracking?'다음 돌진선을 확인하세요!':'돌진선 밖으로! 지난 궤적도 조심!'}[a.bossId];
+ const instruction={ignis:'회전하는 빨간 뚜껑 3개 · 예고선 사이의 빈틈으로!',mime:'직진으로 도망치기보다 옆으로 꺾으세요 · 두 번 피하면 반격!',gojo:'표시가 닫히기 전에 이동! 이전 예약 자리도 잠시 위험합니다.',sukuna:'세 번 연속 돌진! 지나간 선에서도 한 박자 늦게 참격이 옵니다.'}[a.bossId];
+ return {kind:a.kind,personalityPattern:true,name:a.name,title,instruction,tip:instruction,color:s.boss.color,bossId:a.bossId,attackId:a.attackId,index:shot.index,total:a.total,phase:shot.phase,tracking,locked,remaining,duration,timerLabel:waiting?'다음 예고':tracking?'조준 중':locked?'공격까지':a.bossId==='gojo'?'자리 봉쇄':a.bossId==='sukuna'&&shot.dashElapsed>=shot.dashDuration?'후속 참격':'공격 통과',target,targetReached:!unsafe,shots:visible,hazards,dangerRegions:regions,elapsed:a.elapsed,body:shot.body||null};
+}
+
+function beginPattern(s,forcedIndex=null){
+  const b=s.boss,p=s.player,d=DIFFICULTIES[s.difficulty],intro=b.id==='ignis'||b.id==='mime',turn=b.patternIndex,i=forcedIndex??(isRankedRun(s)?rankedPatternAt(b.id,turn):turn%b.patterns.length);if(forcedIndex===null)b.patternIndex++;b.attacks++;
   s.stats.patternCasts[b.id+':'+i]=(s.stats.patternCasts[b.id+':'+i]||0)+1;
   // Opening acts teach their three normal patterns first; later ranked acts retain their established order.
   let warning=([1.15,1.1,1.7,1.8][i])*d.warning*(b.phase===2?.94:1);
@@ -404,6 +527,7 @@ function beginPattern(s){
   if(i===3)warning=Math.max(1.65,warning);
   if(i===4)warning=({ignis:1.1,mime:1.1,gojo:1.0,sukuna:.85}[b.id])*d.warning;
   if(i===5)warning=({ignis:1.5,mime:1.45,gojo:1.45,sukuna:1.35}[b.id])*d.warning;
+  if(i===6)warning=({ignis:1.4,mime:1.5,gojo:1.2,sukuna:1.4}[b.id])*d.warning;
   const name=b.patterns[i],angle=Math.atan2(p.y-b.y,p.x-b.x),aim={x:p.x,y:p.y};
   b.telegraph={name,type:'cast',x:p.x,y:p.y,radius:90,width:600,height:60,remaining:warning,duration:warning,dir:p.x>b.x?1:-1,color:b.color,index:i,attackId:++s.uid,angle,aim};b.attackKind=name;
   if(i===3||i===2&&b.id==='gojo')event(s,'domaincut',b.x,b.y,{bossId:b.id,text:name,subtitle:i===3?'안전 조명 밖 = 즉사 · 무적 무효':'위험 예고 · 지금 방향을 정하세요',color:b.color,power:i===3?3:2,life:.75,maxLife:.75});
@@ -430,6 +554,7 @@ function beginPattern(s){
   }
   if(i===4)beginExtraPattern(s,b,name,warning);
   if(i===5)beginConceptPattern(s,b,name,warning);
+  if(i===6)beginPersonalityPattern(s,b,name,warning);
   if(i===3)startCinematic(s,'domain',b.id,b.telegraph.name,b.id==='ignis'?.65:b.id==='mime'?.7:.8,b.x,b.y);
 }
 function domain(s,b,name,warning,life,mult,customRadius){
@@ -742,7 +867,8 @@ function updateBoss(s,dt){
   const b=s.boss,p=s.player;recoil(s,b,dt);b.hitFlash=Math.max(0,b.hitFlash-dt);b.attackAnim=Math.max(0,b.attackAnim-dt);b.stun=Math.max(0,b.stun-dt);b.shield=Math.max(0,b.shield-dt);if(!b.active||b.hp<=0)return;b.facing=p.x>=b.x?1:-1;
   if(b.hp<=b.maxHp*((b.id==='ignis'||b.id==='mime')?.5:.65)&&b.phase===1){b.phase=2;words(s,'분위기 바뀌었다… 2페이즈!',640,270,b.color,1.7);event(s,'ring',b.x,b.y,{radius:200,color:b.color,life:.7,maxLife:.7});}
   if(b.counterRemaining>0){b.counterRemaining=Math.max(0,b.counterRemaining-dt);return;}
-  if(b.telegraph){b.telegraph.remaining-=dt;if(b.telegraph.remaining<=0){resolvePattern(s,b.telegraph);b.telegraph=null;b.patternCooldown=(b.id==='ignis'?(b.phase===2?1.5:1.8):b.id==='mime'?(b.phase===2?1.2:1.45):(b.phase===2?.765:1.08))*DIFFICULTIES[s.difficulty].attackSpeed*(b.id==='sukuna'?.85:1)*.94;}return;}
+  if(b.telegraph){b.telegraph.remaining-=dt;if(b.telegraph.remaining<=0){resolvePattern(s,b.telegraph);b.telegraph=null;b.patternCooldown=(b.id==='ignis'?(b.phase===2?1.5:1.8):b.id==='mime'?(b.phase===2?1.2:1.45):(b.phase===2?.765:1.08))*DIFFICULTIES[s.difficulty].attackSpeed*(b.id==='sukuna'?.85:1)*.90;}return;}
+  if(s.personality)return;
   // A fatal domain owns this attack window; don't fill its only safe area with
   // another boss attack before the domain ends.
   if(s.audition&&!s.audition.selected||s.hazards.some(h=>h.blocksBoss&&h.life>0)||s.projectiles.some(q=>q.owner==='enemy'&&q.bossId===b.id))return;
@@ -758,8 +884,15 @@ function updateBoss(s,dt){
     const dx=targetX-b.x,dy=targetY-b.y,distance=Math.hypot(dx,dy),travel=Math.min((b.id==='ignis'?52:b.id==='mime'?64:72)*dt,distance);
     if(distance>0){b.x+=dx/distance*travel;b.y+=dy/distance*travel;}
   }
-  b.x=clamp(b.x,155,1125);b.y=clamp(b.y,375,585);
-  if(b.patternCooldown<=0){if(b.id==='gojo')b.shield=.8;beginPattern(s);}
+  b.x=clamp(b.x,b.personalReturn?BOUNDS.left:155,b.personalReturn?BOUNDS.right:1125);b.y=clamp(b.y,b.personalReturn?BOUNDS.top:375,b.personalReturn?BOUNDS.bottom:585);if(b.x>=155&&b.x<=1125&&b.y>=375&&b.y<=585)b.personalReturn=false;
+  if(b.patternCooldown<=0){
+    // Preserve the final examiner's second form in shorter fights. Finish all live
+    // attacks and the earned counter first; the displaced normal turn is not consumed.
+    const secondTakeover=b.id==='sukuna'&&b.takeoverCount===1&&b.takeoversCompleted>=1&&b.hp<=b.maxHp*.45;
+    if(secondTakeover&&(s.hazards.some(h=>h.life>0)||s.projectiles.some(q=>q.owner==='enemy'&&q.life>0)))return;
+    const scheduled=isRankedRun(s)?rankedPatternAt(b.id,b.patternIndex):b.patternIndex%b.patterns.length;
+    if(b.id==='gojo')b.shield=.8;beginPattern(s,secondTakeover&&scheduled!==3?3:null);
+  }
 }
 function trackPurple(s,h,dt){
   // This same lane is both the visible warning and the eventual collider.
@@ -772,18 +905,18 @@ function trackPurple(s,h,dt){
   const cast=s.boss.telegraph;if(cast?.attackId===h.attackId){cast.tracking=h.tracking;cast.locked=h.locked;cast.lockWindow=h.lockWindow;cast.angle=h.angle;if(h.tracking)cast.aim={x:s.player.x,y:s.player.y};}
 }
 function updateHazards(s,dt){
-  const p=s.player;for(const h of s.hazards){if(!h.active){if(h.kind==='purple')trackPurple(s,h,dt);if(h.kind==='follow-spot'||h.kind==='projectile-cue')trackConceptAim(s,h,dt);h.remaining-=dt;if(h.remaining<=0){h.active=true;if(h.extraPattern&&h.index===1)s.stats.extraActivations[h.patternBossId]=(s.stats.extraActivations[h.patternBossId]||0)+1;if(h.kind==='domain'){s.stats.takeoverActivations[h.domainType]=(s.stats.takeoverActivations[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantActivations[h.variantId]=(s.stats.takeoverVariantActivations[h.variantId]||0)+1;}if(h.kind==='projectile-cue')fireConceptProjectile(s,h);else if(h.conceptPattern&&!h.decoy)bossShotEvent(s,h,'launch');if(!h.decoy&&!h.warningOnly&&h.kind!=='rehearsal-light')event(s,h.type==='lane'?'beam':'burst',h.x,h.y,{radius:h.radius,width:h.width,height:h.height,angle:h.angle,color:h.color,life:.45,maxLife:.45});}else continue;}else{h.life-=dt;if(h.life<=0){if(h.kind==='domain'){s.stats.takeoverSurvived[h.domainType]=(s.stats.takeoverSurvived[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantSurvived[h.variantId]=(s.stats.takeoverVariantSurvived[h.variantId]||0)+1;openCounter(s,h.id,'무대 장악 생존');}if(h.kind==='rehearsal-light')finishRehearsalLight(s,h);else if(h.extraPattern&&h.index===h.total)completeExtraPattern(s,h.attackId,h.patternBossId,s.stats.damageTaken===h.startDamage);continue;}}
+  const p=s.player;for(const h of s.hazards){if(!h.active){if(h.kind==='purple')trackPurple(s,h,dt);if(h.kind==='follow-spot'||h.kind==='projectile-cue')trackConceptAim(s,h,dt);h.remaining-=dt;if(h.remaining<=0){h.active=true;if(h.extraPattern&&h.index===1)s.stats.extraActivations[h.patternBossId]=(s.stats.extraActivations[h.patternBossId]||0)+1;if(h.kind==='domain'){s.stats.takeoverActivations[h.domainType]=(s.stats.takeoverActivations[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantActivations[h.variantId]=(s.stats.takeoverVariantActivations[h.variantId]||0)+1;}if(h.kind==='projectile-cue')fireConceptProjectile(s,h);else if(h.conceptPattern&&!h.decoy)bossShotEvent(s,h,'launch');if(h.personalityPattern)personalityEvent(s,h,h.kind==='moving-aftercut'?'followup':'launch');if(!h.decoy&&!h.warningOnly&&h.kind!=='rehearsal-light')event(s,h.type==='lane'?'beam':'burst',h.x,h.y,{radius:h.radius,width:h.width,height:h.height,angle:h.angle,color:h.color,life:.45,maxLife:.45});}else continue;}else{h.life-=dt;if(h.life<=0){if(h.kind==='domain'){s.boss.takeoversCompleted=(s.boss.takeoversCompleted||0)+1;s.stats.takeoverSurvived[h.domainType]=(s.stats.takeoverSurvived[h.domainType]||0)+1;if(h.variantId)s.stats.takeoverVariantSurvived[h.variantId]=(s.stats.takeoverVariantSurvived[h.variantId]||0)+1;openCounter(s,h.id,'무대 장악 생존');}if(h.kind==='rehearsal-light')finishRehearsalLight(s,h);else if(h.extraPattern&&h.index===h.total)completeExtraPattern(s,h.attackId,h.patternBossId,s.stats.damageTaken===h.startDamage);continue;}}
     if(h.decoy||h.warningOnly)continue;
     if(h.kind==='rehearsal-light'){if(circleContains(p.x,p.y,h)){h.dwell=(h.dwell||0)+dt;if(h.dwell>=.15&&!h.visited){h.visited=true;event(s,'rehearsalResult',h.x,h.y,{success:true,index:h.index,total:3,life:.5,maxLife:.5});}}continue;}
     if(h.kind==='domain'){if(h.domainType)updateDomain(s,h,dt);if(checkActiveDomains(s))return;continue;}
     if(h.kind==='blue'&&groundDistance(p,h)<240&&p.dodgeTimer<=0){const a=Math.atan2(h.y-p.y,h.x-p.x);p.x+=Math.cos(a)*85*dt;p.y+=Math.sin(a)*65*dt;}
-    if(isInsideHazard(p.x,p.y,h,-7)){const hit=hurtPlayer(s,h.damage,h);if(hit&&h.kind==='red')p.x=clamp(p.x+Math.sign(p.x-h.x||1)*75,BOUNDS.left,BOUNDS.right);}
+    if(isInsideHazard(p.x,p.y,h,-7)){const hit=hurtPlayer(s,h.damage,h);if(hit&&h.personalityPattern){s.stats.personalityHits[h.patternBossId]=(s.stats.personalityHits[h.patternBossId]||0)+1;if(s.personality?.attackId===h.attackId)s.personality.hitCount++;personalityEvent(s,h,'hit');}if(hit&&h.kind==='red')p.x=clamp(p.x+Math.sign(p.x-h.x||1)*75,BOUNDS.left,BOUNDS.right);}
   }s.hazards=s.hazards.filter(h=>h.life>0);checkActiveDomains(s);
 }
 function updateProjectiles(s,dt){
   for(const q of s.projectiles){q.previousX=q.x;q.previousY=q.y;const alive=q.life>0;q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;
     if(q.owner==='enemy'){
-      if(alive&&sweptProjectileCollision(s._movementStart||s.player,s.player,q)){const hp=s.player.hp,hit=hurtPlayer(s,q.damage,q);q.life=0;if(hit)event(s,'bossShot',q.x,q.y,{kind:'hit',shotId:q.shotId,projectileId:q.id,attackId:q.attackId,patternIndex:5,bossId:q.bossId,index:q.index,total:q.total,damage:hp-s.player.hp,time:s.time,life:.25,maxLife:.25});}
+      if(alive&&sweptProjectileCollision(s._movementStart||s.player,s.player,q)){const hp=s.player.hp,hit=hurtPlayer(s,q.damage,q);q.life=0;if(hit){if(q.personalityPattern){s.stats.personalityHits[q.bossId]=(s.stats.personalityHits[q.bossId]||0)+1;if(s.personality?.attackId===q.attackId)s.personality.hitCount++;}event(s,q.personalityPattern?'personalityShot':'bossShot',q.x,q.y,{kind:'hit',shotId:q.shotId,projectileId:q.id,attackId:q.attackId,patternIndex:q.personalityPattern?6:5,bossId:q.bossId,index:q.index,total:q.total,damage:hp-s.player.hp,time:s.time,life:.25,maxLife:.25});}}
       if(q.x<20||q.x>1260||q.y<300||q.y>670)q.life=0;continue;
     }
     if(q.x<20||q.x>1260||q.y<300||q.y>670)q.life=0;if(q.life<=0)continue;
@@ -795,7 +928,7 @@ function updateSpotlight(s,dt){const sp=s.spotlight;if(sp.locked>0){sp.locked-=d
 
 function completeStage(s){
   if(s.boss.hp>0||s.status!=='playing')return false;if(s.transitionTimer>0)return true;
-  s.audition=null;s.rehearsal=null;s.stats.stagesCleared++;s.player.attackSequence=null;s.pendingUltimate=false;s.followups=[];s.hazards=[];s.projectiles=[];
+  cancelPersonality(s);s.audition=null;s.rehearsal=null;s.stats.stagesCleared++;s.player.attackSequence=null;s.pendingUltimate=false;s.followups=[];s.hazards=[];s.projectiles=[];
   event(s,'comic',640,352,{text:s.boss.review,subtitle:s.boss.name+' · 심사 종료',bossId:s.boss.id,power:1,color:s.boss.color,life:.85,maxLife:.85});
   speak(s,'victory',3);
   if(s.mode==='practice'){s.status='victory';s.endReason='clear';}
@@ -804,7 +937,7 @@ function completeStage(s){
   else{s.status=s.stage===BOSSES.length-1?'victory':'stageclear';words(s,s.stage===BOSSES.length-1?'오케이! 전원 퇴근!':'좋았어! 다음 씬으로!',640,280,'#e7ff89',5);}return true;
 }
 
-function finishBooth(s){s.status='finished';s.cinematic=null;s.pendingUltimate=false;s.endReason='timeout';s.runTime=s.duration;s.timeLeft=0;s.hazards=[];s.projectiles=[];s.inputBuffer={};event(s,'confetti',640,400,{color:'#e9ff7b',power:3,text:'촬영 종료!',life:2,maxLife:2});}
+function finishBooth(s){cancelPersonality(s);s.status='finished';s.cinematic=null;s.pendingUltimate=false;s.endReason='timeout';s.runTime=s.duration;s.timeLeft=0;s.hazards=[];s.projectiles=[];s.inputBuffer={};event(s,'confetti',640,400,{color:'#e9ff7b',power:3,text:'촬영 종료!',life:2,maxLife:2});}
 
 export function step(s,input={},dt=1/60){
   if(!Number.isFinite(dt)||dt<=0||s.status!=='playing')return s;dt=Math.min(dt,1/30);
@@ -821,6 +954,6 @@ export function step(s,input={},dt=1/60){
   if(s.inputBuffer.dodge&&s.player.cooldowns.dodge<=0)s.hitStop=0;
   if(s.hitStop>0){const stopped=Math.min(dt,s.hitStop);s.hitStop=Math.max(0,s.hitStop-stopped);dt-=stopped;if(dt<1e-8)return s;}
   input={...input,...s.inputBuffer};s.inputBuffer={};s.time+=dt;s.stageTime+=dt;s.fever=Math.max(0,s.fever-dt);s.comboTimer=Math.max(0,s.comboTimer-dt);if(s.comboTimer===0)s.combo=0;multiplier(s);s.shake=Math.max(0,s.shake-dt*32);decayEffects(s,dt);s.dialogueCooldown=Math.max(0,s.dialogueCooldown-dt);if(s.dialogue){s.dialogue.remaining=Math.max(0,s.dialogue.remaining-dt);if(!s.dialogue.remaining)s.dialogue=null;}
-  updateSpotlight(s,dt);s._movementStart={x:s.player.x,y:s.player.y};s._bladeStepDt=dt;s._bladeSweepReady=false;updateTrials(s,dt);updatePlayer(s,input,dt);recordPlayerPath(s);if(s.cinematic)return s;if(checkActiveDomains(s)||completeStage(s))return s;updateFollowups(s,dt);if(completeStage(s))return s;updateEnemies(s,dt);if(s.status!=='playing')return s;updateBoss(s,dt);if(s.cinematic)return s;updateHazards(s,dt);if(s.status!=='playing')return s;updateProjectiles(s,dt);if(!checkActiveDomains(s))completeStage(s);
+  updateSpotlight(s,dt);s._movementStart={x:s.player.x,y:s.player.y};s._bladeStepDt=dt;s._bladeSweepReady=false;updateTrials(s,dt);updatePlayer(s,input,dt);recordPlayerPath(s);if(s.cinematic)return s;if(checkActiveDomains(s)||completeStage(s))return s;updateFollowups(s,dt);if(completeStage(s))return s;updateEnemies(s,dt);if(s.status!=='playing')return s;updateBoss(s,dt);if(s.cinematic)return s;updatePersonality(s,dt);if(s.status!=='playing')return s;updateHazards(s,dt);if(s.status!=='playing')return s;updateProjectiles(s,dt);if(!checkActiveDomains(s))completeStage(s);
   return s;
 }

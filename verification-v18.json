@@ -1,0 +1,356 @@
+{
+  "version": "18.0.0",
+  "generatedAt": "2026-11-13T02:48:40.096575+00:00",
+  "baseCommit": "194c3620746202864b9238002a34b70c01a30235",
+  "engineSha256": "9e5d7e4aa3c0861d69c05cf8e3d355d53c638eb77304605e318ceb65f074f724",
+  "unitTests": {
+    "passed": 292,
+    "failed": 0,
+    "personalPatternTests": 22
+  },
+  "health": {
+    "player": {
+      "before": 280,
+      "after": 260
+    },
+    "challengeBosses": {
+      "before": [
+        2090,
+        2970,
+        4510,
+        5170
+      ],
+      "after": [
+        2255,
+        3190,
+        4840,
+        5555
+      ]
+    },
+    "postcastRecoveryFactor": {
+      "before": 0.94,
+      "after": 0.9
+    },
+    "unchanged": [
+      "player QWER damage and cooldowns",
+      "stage heal65",
+      "existing boss base damage and six skills",
+      "takeover instant death and collision geometry"
+    ]
+  },
+  "attackRotation": "Original five-cast cadence, openers cycle6/5/0; all7 skills reachable within11 casts. Moving prioritizes second takeover after first completed and HP<=45%, only after current hazards/counter end; normal turn retained.",
+  "personalityChecks": {
+    "cases": 1920,
+    "follow": {
+      "ignis": {
+        "name": "피노",
+        "skill": "빨뚜, 액션!",
+        "cases": 240,
+        "completed": 240,
+        "survived": 240,
+        "clean": 240,
+        "averageDamage": 0,
+        "maxDamage": 0
+      },
+      "mime": {
+        "name": "대길",
+        "skill": "끝까지 캐스팅",
+        "cases": 240,
+        "completed": 240,
+        "survived": 240,
+        "clean": 240,
+        "averageDamage": 0,
+        "maxDamage": 0
+      },
+      "gojo": {
+        "name": "이프",
+        "skill": "자리해야지~",
+        "cases": 240,
+        "completed": 240,
+        "survived": 240,
+        "clean": 240,
+        "averageDamage": 0,
+        "maxDamage": 0
+      },
+      "sukuna": {
+        "name": "무빙",
+        "skill": "원테이크, 따라와",
+        "cases": 240,
+        "completed": 240,
+        "survived": 240,
+        "clean": 240,
+        "averageDamage": 0,
+        "maxDamage": 0
+      }
+    },
+    "stationary": {
+      "ignis": {
+        "name": "피노",
+        "skill": "빨뚜, 액션!",
+        "cases": 240,
+        "completed": 240,
+        "survived": 240,
+        "clean": 0,
+        "averageDamage": 16,
+        "maxDamage": 16
+      },
+      "mime": {
+        "name": "대길",
+        "skill": "끝까지 캐스팅",
+        "cases": 240,
+        "completed": 240,
+        "survived": 240,
+        "clean": 0,
+        "averageDamage": 35.2,
+        "maxDamage": 44
+      },
+      "gojo": {
+        "name": "이프",
+        "skill": "자리해야지~",
+        "cases": 240,
+        "completed": 240,
+        "survived": 240,
+        "clean": 0,
+        "averageDamage": 139.2,
+        "maxDamage": 174
+      },
+      "sukuna": {
+        "name": "무빙",
+        "skill": "원테이크, 따라와",
+        "cases": 240,
+        "completed": 240,
+        "survived": 240,
+        "clean": 0,
+        "averageDamage": 79.03333,
+        "maxDamage": 166
+      }
+    },
+    "method": "One selected ordinary cast under ranked-equivalent standard resources. Initial player/boss placement is setup only. After spawning, the controller uses real directional inputs only; no attacks, E/R/Space, HP edits, teleports, cooldown edits or hazard/projectile deletion. It waits the listed reaction after each individual lock/visible fixed-warning cue before using the public escape target. Source geometry and actual hits are resolved at 30/60Hz."
+  },
+  "challenge": {
+    "totalRuns": 180,
+    "victories": 117,
+    "safetyStoppedRuns": 0,
+    "medianVictorySeconds": 122.55,
+    "takeoverExposure": {
+      "moving-light": {
+        "casts": 0,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "mask-panels": {
+        "casts": 3,
+        "activations": 0,
+        "completed": 0,
+        "runsWithActivation": 0,
+        "fatalContacts": 0
+      },
+      "lens-corridors": {
+        "casts": 184,
+        "activations": 180,
+        "completed": 144,
+        "runsWithActivation": 180,
+        "fatalContacts": 36
+      },
+      "blade-waves": {
+        "casts": 145,
+        "activations": 144,
+        "completed": 127,
+        "runsWithActivation": 143,
+        "fatalContacts": 17
+      },
+      "chasing-slashes": {
+        "casts": 127,
+        "activations": 51,
+        "completed": 40,
+        "runsWithActivation": 51,
+        "fatalContacts": 10
+      }
+    },
+    "personalityExposure": {
+      "ignis": {
+        "name": "피노",
+        "skill": "빨뚜, 액션!",
+        "casts": 180,
+        "shots": 302,
+        "hits": 0,
+        "completions": 33,
+        "avoided": 33
+      },
+      "mime": {
+        "name": "대길",
+        "skill": "끝까지 캐스팅",
+        "casts": 180,
+        "shots": 360,
+        "hits": 20,
+        "completions": 180,
+        "avoided": 160
+      },
+      "gojo": {
+        "name": "이프",
+        "skill": "자리해야지~",
+        "casts": 180,
+        "shots": 540,
+        "hits": 6,
+        "completions": 180,
+        "avoided": 174
+      },
+      "sukuna": {
+        "name": "무빙",
+        "skill": "원테이크, 따라와",
+        "casts": 144,
+        "shots": 432,
+        "hits": 20,
+        "completions": 144,
+        "avoided": 124
+      }
+    }
+  },
+  "pairedComparison": {
+    "baselineCommit": "194c3620746202864b9238002a34b70c01a30235",
+    "baselineEngineSha256": "2b1014558d4c9302aaffa2facc5a196684c88798ce32c9013ec9e9de34a5a08e",
+    "currentEngineSha256": "9e5d7e4aa3c0861d69c05cf8e3d355d53c638eb77304605e318ceb65f074f724",
+    "controllerSha256": "171ddc16d244cd1df6c99582cf009a52b01a2376dbb63e287ed1a18e6ab0c3f6",
+    "method": "Paired fixed engine seed424242 / standard challenge runs; three input policies, both roles, same thirty controller seeds. Both engine versions receive inputs from the identical current makeController implementation. No state edits after createGame. The shared controller uses the same current public visible-geometry helpers for both state schemas; old states have no personality attack so that branch stays inactive. Offline300s guard only.",
+    "limitations": [
+      "180 paired bot runs are a regression sample, not human win rates or a calibrated population estimate.",
+      "This compares the complete revision: new attacks, scheduling and resource/recovery adjustments together. It does not isolate individual causes.",
+      "Completed-run timing excludes deaths and should not alone be read as difficulty."
+    ],
+    "before": {
+      "runs": 180,
+      "wins": 136,
+      "meanDamage": 99.65,
+      "medianVictorySeconds": 125.333,
+      "safetyStopped": 0
+    },
+    "after": {
+      "runs": 180,
+      "wins": 117,
+      "meanDamage": 107.47,
+      "medianVictorySeconds": 122.55,
+      "safetyStopped": 0
+    }
+  },
+  "rendering": {
+    "totalFrames": 30398,
+    "existingRegression": {
+      "frames": 21234,
+      "finiteCanvasCalls": 22426823,
+      "maxFrameCalls": 1496,
+      "hudFits": 48054,
+      "lockChecks": 5784
+    },
+    "personalSkills": {
+      "frames": 9164,
+      "finiteCanvasCalls": 7843649,
+      "maxFrameCalls": 1899,
+      "hudFits": 9136,
+      "lockedChecks": 17168,
+      "bodyChecks": 932,
+      "capChecks": 2340,
+      "recoverChecks": 656
+    },
+    "method": "Actual engine states into source Canvas renderer; mock numerical validation plus offline native original-photo renders",
+    "browserInteractivePlaytest": false
+  },
+  "ui": {
+    "version": 18,
+    "roleResults": [
+      {
+        "role": "actor",
+        "finalTitle": "최종 오디션 합격!",
+        "message": "당신의 다음 배역을 만나보세요.",
+        "nonfinalAndFailedNeverClaimFinalWin": true,
+        "practiceUnranked": true
+      },
+      {
+        "role": "director",
+        "finalTitle": "마지막 장면, 완성!",
+        "message": "다음 무대의 배우를 만나보세요.",
+        "nonfinalAndFailedNeverClaimFinalWin": true,
+        "practiceUnranked": true
+      }
+    ],
+    "nicknamePlaceholderOnly": true,
+    "rankingSeason": 18,
+    "officialWordmarks": 2,
+    "roleCopy": "engine skill names + director/staff and actor/role labels; numeric cooldowns retained",
+    "dialogue": "no duplicate DOM dialogue block",
+    "patternGuide": "shared actual engine guidance connected to live text",
+    "home": "roles first; challenge and boss-card practice immediate",
+    "exit": "toolbar/fullscreen share confirmation; pause/ESC/prior pause/profile/no-save teardown passed",
+    "result": "3 essentials; practice 2; one failure tip; retry/home; no removed prose blocks",
+    "ranking": "actual LocalRanking/BoothUI: two clears at 100 outranks one clear at 90,000; live gap uses clears first",
+    "labels": "1차/2차/3차/최종 오디션",
+    "staticReadyDialogRemoved": true
+  },
+  "originalPhotosByteIdentical": [
+    {
+      "bossId": "ignis",
+      "name": "피노",
+      "file": "assets/photos/pino.png",
+      "bytes": 1034321,
+      "sha256": "f826c16e1c7e754335a30d728d8220dee5826acd588a2c7528db72b9ad5d3634"
+    },
+    {
+      "bossId": "mime",
+      "name": "대길",
+      "file": "assets/photos/daegil.png",
+      "bytes": 491600,
+      "sha256": "9779dd349c88ba60ca78d2d05020ebc27ea11f68bf994623283357ed563275e9"
+    },
+    {
+      "bossId": "gojo",
+      "name": "이프",
+      "file": "assets/photos/if.jpg",
+      "bytes": 477950,
+      "sha256": "f2fcb0a11346e6e0f7c680989edf7758005581e0c538f560d964f1bc74175daa"
+    },
+    {
+      "bossId": "sukuna",
+      "name": "무빙",
+      "file": "assets/photos/moving.png",
+      "bytes": 418199,
+      "sha256": "87486f30d97cc5e7406f866ae71ecd10e34c874240f0d2bb94594e9e2c1d854d"
+    }
+  ],
+  "rankingSeason": 18,
+  "oldRankingStorageRetained": true,
+  "build": {
+    "files": 46,
+    "newRuntimeModule": "personality-vfx.js"
+  },
+  "limitations": [
+    "Input-policy simulation results are not human win rates.",
+    "Native Canvas and DOM mocks do not replace an interactive browser/mobile playtest."
+  ],
+  "runtimeSourceHashes": {
+    "renderer.js": "d779c8a8efede3ecf847a7dcc63d8965d767efa7adad53ad1401cbb2c240da90",
+    "practice.js": "d65684a1639354912565ae91d7b754404d3180e3e5718ad264cf735467b19e95",
+    "blade-waves-vfx.js": "0d6ad096ad9cbde660b79bf959d6faf1c21395c0807189bdfdb5e041224a1838",
+    "booth-ui.js": "28a0a28df716d4b256505cd3c23265e9ed5c2b37daa2575af45e85192f4e1903",
+    "takeover-vfx.js": "9e200341bae41891d105f413a501cac3662e104464c728cd13dd618a26d17cdf",
+    "photo-fighter2d.js": "c1ff55451c12148e45379f4575c0065e111db5d0f7df64e391673d2e392be26e",
+    "main.js": "a33fa34e7a17aeb151f8e32e669b8d137fbd774bad9f141b0399a2e1818a1ae8",
+    "boss-visuals.js": "f9143d4b6f2a9efc003b3c7dcd34dba427bac69cb6750ab363845917b94c193a",
+    "personality-vfx.js": "4d6f6f85e3869c6b6bd55960664dff4c61f1d7b97fcb9877846d465f057ec6b6",
+    "domain-cinematic.js": "b0153515f6b1878b58594fdfbc9ae90d0b2fcbcf42fb23628b473169cf7f7f7f",
+    "audio.js": "3c6fc058e4748afdb74273b2a0086e19c2958039870cc93ec92695f6d5dcc8e9",
+    "domain-music.js": "14cbe8a65ba0b032c0e32674bf20d52f2fd4b5ffba23e87981e371e9f4297d4f",
+    "engine.js": "9e5d7e4aa3c0861d69c05cf8e3d355d53c638eb77304605e318ceb65f074f724",
+    "normal-pattern-vfx.js": "9b2a5d6c0c3a0fc48c4603d20f7f328d330d2c4a6ba76feb590700eff3fd05aa",
+    "ultimate-vfx.js": "7a598dc3f1a7f565d27107c23193f685a4a2893e2597d4c828adf824d426c1f4",
+    "pursuit-vfx.js": "7ee5334d6a60272fa3e066557e03c008de98b85d27f860de60b51c358bf8fd0d",
+    "skill-vfx.js": "3ef459fa601bff58ff119d20a574d160be7a7e0c293cf02e43d3415340ca2558",
+    "combat-cinematic.js": "7df06e8ad92caa0273a17dd6d1a168eb09384f380ead9881f024c36d3d2df71a",
+    "ranking.js": "6279daecf4874e9a52bf26a1048b191c11ca85b049b4f941108ccec8748dea0c",
+    "fighter2d.js": "45e533524f571ec73dc798f08d77cca1e085bde3f1ea6b7ed3293b40fb964bfa"
+  },
+  "sourceReports": {
+    "challenge": "challenge-balance-report.json",
+    "personality": "personality-balance-report.json"
+  }
+}

@@ -192,3 +192,13 @@ test('photo load failures keep each moving rig playable without reviving the old
   }finally{image.complete=true;}
  }
 });
+
+test('personality gestures retain original faces through every skill phase and dash direction',()=>{
+ for(const id of Object.keys(BOSS_PHOTOS))for(const facing of [-1,1])for(const phase of ['tracking','locked','dashing','recover'])for(const index of [1,2,3])for(const progress of [0,.3,.7,1]){
+  const o=freeze({facing,time:1,personalitySkill:id,personalityPhase:phase,personalityProgress:progress,personalityIndex:index,walkWeight:phase==='dashing'?1:0});
+  const c=context(),before=JSON.stringify(o);drawPhotoFighter2D(c,id,640,500,1,o);assert.equal(JSON.stringify(o),before);
+  const draw=c.calls.find(v=>v[0]==='drawImage');assert.equal(draw[1],getBossPhoto(id));
+  const [a,b,cc,d]=draw.matrix;assert(a*d-b*cc>0);assert(Math.abs(Math.hypot(a,b)-Math.hypot(cc,d))<1e-8);
+  assert.deepEqual(c.matrix,[1,0,0,1,0,0]);
+ }
+});
