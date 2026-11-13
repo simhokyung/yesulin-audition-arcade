@@ -76,7 +76,7 @@ npm run build              # 배포용 정적 파일 생성
 
 HTML·CSS·ES Modules·Canvas 2D·Web Audio로 구현했습니다. 캐릭터와 컷신은 생성한 오리지널 원화, 음악·효과음은 직접 합성한 음원입니다. 원본 Flash/SWF 게임이나 애니메이션의 이미지·OST를 포함하지 않습니다. [이미지 목록](assets/asset-manifest-v9.json)에 포함 파일을 기록했습니다.
 
-헤더·푸터·결과에는 [예술in 공식 사이트](https://yesulin.art/)의 로고 원본을 사용합니다. 원래 색상·투명 배경·비율을 그대로 유지합니다. 별도 바탕이나 테두리 없이 게임 배경에 바로 배치합니다. 출처와 파일 해시는 [로고 기록](assets/asset-manifest-v16.json)에 보관합니다.
+헤더·푸터·결과에는 [예술in 공식 사이트](https://yesulin.art/)의 로고 원본을 사용합니다. 투명 배경과 비율을 유지하고, CSS 색상 필터로 글자를 밝게 바꾸면서 청록·보라 계열의 심볼 색을 살렸습니다. 별도 바탕이나 테두리 없이 게임 배경에 바로 배치합니다. 출처와 파일 해시는 [로고 기록](assets/asset-manifest-v16.json)에 보관합니다.
 
 플레이 방향은 [후레쉬맨 참고 페이지](https://xn--o79am3sh5ijue0ou.kr/%ed%9b%84%eb%a0%88%ec%89%ac%eb%a7%a8/) 분석에서 출발했으며 자체 전투 엔진을 사용합니다. 결과의 작은 서비스 링크는 배우에게 [예술in 오디션 공고](https://yesulin.art/auditions), 감독에게 [제작사 서비스](https://yesulin.art/producer-service)를 안내합니다.
 

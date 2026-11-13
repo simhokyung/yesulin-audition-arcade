@@ -9,7 +9,7 @@
       "width": 707,
       "height": 320,
       "sha256": "53651b4f5b8895a4c4bf6620aac785f5ba70faa30654a4367dbd179ab58e4ec5",
-      "treatment": "Original PNG displayed with its original colors, alpha transparency and proportions. No color filter, badge background, padding or border (v16.0.2)."
+      "treatment": "Original PNG unchanged. CSS invert(1) hue-rotate(180deg) brightens the black wordmark while retaining cyan/violet color families for the dark game background. Transparency and proportions preserved; no badge background, padding or border (v16.0.3)."
     }
   ]
 }
