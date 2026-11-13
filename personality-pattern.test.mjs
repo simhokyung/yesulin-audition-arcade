@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGame,step,startStage,BOSSES,CHARACTERS,getPersonalityGuide,getPatternGuide,isInsideHazard,rankedPatternAt,patternTurnFor} from './engine.js';
 
-const ids=BOSSES.map(b=>b.id),walk=(s,p)=>p?{left:p.x<s.player.x-3,right:p.x>s.player.x+3,up:p.y<s.player.y-3,down:p.y>s.player.y+3}:{};
+const LEGACY=BOSSES.filter(b=>b.id!=='max'),ids=LEGACY.map(b=>b.id),walk=(s,p)=>p?{left:p.x<s.player.x-3,right:p.x>s.player.x+3,up:p.y<s.player.y-3,down:p.y>s.player.y+3}:{};
 function fixture(stage,character='director',dt=1/60,x=520,y=480){
- const s=createGame({stage,character,skipIntro:true});s.cinematic=null;Object.assign(s.player,{x,y,invuln:0});Object.assign(s.boss,{x:950,y:480,patternIndex:6,patternCooldown:0});step(s,{},dt);assert(s.personality);return s;
+ const s=createGame({stage:BOSSES.findIndex(b=>b.id===ids[stage]),character,skipIntro:true});s.cinematic=null;Object.assign(s.player,{x,y,invuln:0});Object.assign(s.boss,{x:950,y:480,patternIndex:6,patternCooldown:0});step(s,{},dt);assert(s.personality);return s;
 }
 function run(s,{dt=1/60,policy='walk',reaction=.35,observe=()=>{}}={}){
  const start=s.personality.attackId,noticed=new Map();let frames=0;
@@ -17,8 +17,8 @@ function run(s,{dt=1/60,policy='walk',reaction=.35,observe=()=>{}}={}){
 }
 
 test('personal skills extend all previous pattern lists with distinct ordinary audition techniques',()=>{
- assert.deepEqual(BOSSES.map(b=>b.patterns.at(-1)),['빨뚜, 액션!','끝까지 캐스팅','자리해야지~','원테이크, 따라와']);
- assert.deepEqual(BOSSES.map(b=>b.patterns.length),[7,7,7,7]);assert.deepEqual(BOSSES.map(b=>[b.hp,b.damage]),[[4100,18],[5800,26],[8800,38],[10100,45]]);
+ assert.deepEqual(LEGACY.map(b=>b.patterns.at(-1)),['빨뚜 통째로, 액션!','끝까지 캐스팅','자리해야지~','원테이크, 따라와']);
+ assert.deepEqual(LEGACY.map(b=>b.patterns.length),[7,7,7,7]);assert.deepEqual(LEGACY.map(b=>[b.hp,b.damage]),[[4100,18],[5800,26],[8800,38],[10100,45]]);
  for(const c of Object.values(CHARACTERS))assert.equal(c.hp,260);
  for(const id of ids){assert.equal(rankedPatternAt(id,0),6);const seen=new Set(Array.from({length:11},(_,turn)=>rankedPatternAt(id,turn)));assert.deepEqual([...seen].sort(),[0,1,2,3,4,5,6]);assert.equal(patternTurnFor(id,3),['ignis','mime'].includes(id)?4:1);}
 });
@@ -26,7 +26,7 @@ test('personal skills extend all previous pattern lists with distinct ordinary a
 test('ignoring each personal attack takes ordinary damage at 30 and 60 Hz, never domain instant death',()=>{
  for(let stage=0;stage<4;stage++)for(const dt of [1/30,1/60])for(const phase of [1,2]){
   const s=fixture(stage,'director',dt);s.boss.phase=phase;const r=run(s,{dt,policy:'still'});
-  assert(r.completed);assert(r.damage>0&&r.damage<260,ids[stage]);assert.equal(s.endReason,null);assert.equal(s.stats.personalityCasts[ids[stage]],1);assert.equal(s.stats.personalityShots[ids[stage]],stage===1?2:3);
+  assert(r.completed);assert(r.damage>0&&r.damage<260,ids[stage]);assert.equal(s.endReason,null);assert.equal(s.stats.personalityCasts[ids[stage]],1);assert.equal(s.stats.personalityShots[ids[stage]],stage===1?2:stage===0?3:5);
  }
 });
 
@@ -40,7 +40,7 @@ test('both roles can walk every personal attack after .35-second responses witho
 test('each visible locked direction is immutable even when the player reverses',()=>{
  for(const stage of [0,1,3]){
   const s=fixture(stage),locked=new Map();run(s,{observe(state){for(const q of state.personality.shots){if(!q.locked)continue;const value=JSON.stringify({origin:q.origin,target:q.target,path:q.path,angle:q.angle});if(locked.has(q.id))assert.equal(value,locked.get(q.id));else{locked.set(q.id,value);assert(q.launchAt-(q.lockedAt??q.lockAt)>=.65-1/30);}}}});
-  assert.equal(locked.size,stage===1?2:3);
+  assert.equal(locked.size,stage===1?2:stage===0?3:5);
  }
 });
 
@@ -70,12 +70,12 @@ test('Moving gives each aftercut a separate .78-second warning with an exact fin
  const s=fixture(3),seen=new Set();run(s,{observe(state){for(const h of state.hazards.filter(h=>h.kind==='moving-aftercut')){
   if(!seen.has(h.id)){assert.equal(h.duration,.78);assert(h.remaining>=.78-1/30);assert.equal(h.active,false);assert.equal(h.height,42);assert(h.width>0&&h.width<=760.01);seen.add(h.id);}
   assert.equal(h.personalityPattern,true);assert.equal(h.totalLife,.24);
- }}});assert.equal(seen.size,3);
+ }}});assert.equal(seen.size,5);
 });
 
-test('If reserves the current place three times and old reservations remain fixed until expiry',()=>{
- const s=fixture(2),places=new Map();run(s,{observe(state){for(const h of state.hazards){if(places.has(h.id))assert.deepEqual([h.x,h.y],places.get(h.id));else places.set(h.id,[h.x,h.y]);assert.equal(h.kind,'seat-reservation');assert.equal(h.radius,67);assert.equal(h.radiusY,43);assert.equal(h.totalLife,1.65);}}});
- assert.equal(places.size,3);assert(new Set([...places.values()].map(p=>p.join(','))).size>1,'later reservations follow actual new player positions');
+test('If reserves the current place five times and old reservations remain fixed until expiry',()=>{
+ const s=fixture(2),places=new Map();run(s,{observe(state){for(const h of state.hazards){if(places.has(h.id))assert.deepEqual([h.x,h.y],places.get(h.id));else places.set(h.id,[h.x,h.y]);assert.equal(h.kind,'seat-reservation');assert.equal(h.radius,67);assert.equal(h.radiusY,43);assert.equal(h.totalLife,1.45);}}});
+ assert.equal(places.size,5);assert(new Set([...places.values()].map(p=>p.join(','))).size>1,'later reservations follow actual new player positions');
 });
 
 test('a double missed casting charge opens exactly one existing counter window',()=>{
@@ -94,7 +94,7 @@ test('ultimate, precise director CUT, stage change and defeat clean up the compl
  for(let stage=0;stage<4;stage++){
   const ultimate=fixture(stage);ultimate.player.hype=100;step(ultimate,{ultimate:true});assert.equal(ultimate.personality,null);assert.equal(ultimate.boss.personalityMotion,null);assert.equal(ultimate.hazards.length,0);assert.equal(ultimate.projectiles.length,0);
   const cut=fixture(stage);while(cut.boss.telegraph.remaining>.25)step(cut,walk(cut,getPersonalityGuide(cut).target));cut.player.x=cut.boss.x-60;cut.player.y=cut.boss.y;step(cut,{skill:true});assert.equal(cut.personality,null);assert.equal(cut.boss.telegraph,null);assert.equal(cut.player.timingGrade,'CUT!');
-  const fresh=fixture(stage);startStage(fresh,stage,{retry:true});assert.equal(fresh.personality,null);assert.equal(fresh.hazards.length,0);assert.equal(fresh.projectiles.length,0);
+  const fresh=fixture(stage);startStage(fresh,BOSSES.findIndex(b=>b.id===ids[stage]),{retry:true});assert.equal(fresh.personality,null);assert.equal(fresh.hazards.length,0);assert.equal(fresh.projectiles.length,0);
   const dead=fixture(stage);dead.boss.hp=0;step(dead);assert.equal(dead.personality,null);assert.equal(dead.projectiles.length,0);assert.equal(dead.hazards.length,0);
  }
 });
@@ -120,7 +120,7 @@ test('personal damage retains its real source kind for a precise result-screen d
 });
 
 test('seat guide uses active hazard state on the exact activation frame',()=>{
- const s=fixture(2);let checked=0;run(s,{observe(state){const guide=getPersonalityGuide(state);for(const h of state.hazards.filter(h=>h.active&&h.kind==='seat-reservation')){const shot=guide.shots.find(q=>q.hazardId===h.id);assert.equal(shot.phase,'active');if(guide.index===shot.index){assert.equal(guide.timerLabel,'자리 봉쇄');assert.equal(guide.remaining,h.life);}checked++;}}});assert(checked>0);
+ const s=fixture(2);let checked=0;run(s,{observe(state){const guide=getPersonalityGuide(state);for(const h of state.hazards.filter(h=>h.active&&h.kind==='seat-reservation')){const shot=guide.shots.find(q=>q.hazardId===h.id);assert.equal(shot.phase,'active');if(guide.index===shot.index){assert.equal(guide.timerLabel,'자리 봉쇄');assert.equal(guide.remaining,h.life);assert.equal(guide.duration,h.totalLife);}checked++;}}});assert(checked>0);
 });
 
 test('cancelling a charge at an arena edge preserves a smooth return instead of snapping into the old boss box',()=>{
@@ -136,7 +136,7 @@ test('an actual fatal personal hit and a late ultimate remove every pending shot
 
 
 function finalPhase({hp=.45,completed=1,count=1,index=2,counter=0}={}){
- const s=createGame({mode:'challenge'});startStage(s,3,{retry:true});s.cinematic=null;Object.assign(s.boss,{hp:s.boss.maxHp*hp,takeoverCount:count,takeoversCompleted:completed,patternIndex:index,patternCooldown:0,counterRemaining:counter});return s;
+ const s=createGame({mode:'challenge'});startStage(s,BOSSES.findIndex(b=>b.id==='sukuna'),{retry:true});s.cinematic=null;Object.assign(s.boss,{hp:s.boss.maxHp*hp,takeoverCount:count,takeoversCompleted:completed,patternIndex:index,patternCooldown:0,counterRemaining:counter});return s;
 }
 
 test('Moving reserves the second takeover below 45 percent without consuming a pending normal skill',()=>{

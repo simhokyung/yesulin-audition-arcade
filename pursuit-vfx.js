@@ -43,7 +43,7 @@ function drawPreviews(c,h,v,t,reduced){
 }
 function burstDirection(h,g){if(g.navigationPhase==='prepare')return'중앙 높이로';if(h.domainPhase===0)return(g.navigationPhase==='reverse'?!h.burstMirror:h.burstMirror)?'아래로':'위로';return h.burstStartX<640?'오른쪽으로':'왼쪽으로';}
 function drawBurstDirection(c,s,h,g){
- const target=g.target;if(!target)return;const p=s.player,dx=target.x-p.x,dy=target.y-p.y,len=Math.hypot(dx,dy),color=g.navigationPhase==='reverse'?'#ffe3a4':MINT;
+ const target=g.target;if(!target)return;const p=s.player,dx=target.x-p.x,dy=target.y-p.y,len=Math.hypot(dx,dy),color=MINT;
  if(len>14)arrow(c,p.x+dx/len*15,p.y+dy/len*15,target.x,target.y);
  const caption=g.directionLabel||(g.navigationPhase==='prepare'?(g.targetReached?'중앙 준비 완료':'중앙 높이로'):String(g.instruction||'').startsWith('방향 반전 준비')?'반전 준비 · 잠깐 유지':g.navigationPhase==='reverse'?`반전! ${burstDirection(h,g)}`:`${burstDirection(h,g)} 계속`);
  const side=p.x<640?1:-1,x=clamp(p.x+side*100,95,1185),y=clamp(p.y-25,356,612);box(c,x-64,y-16,128,23,'#102a33e8',4);text(c,caption,x,y+1,13,color);
@@ -109,7 +109,7 @@ export function drawPursuitGuides(c,s,h,v,g,t,reduced=false){
   if(!reached){const dx=target.x-s.player.x,dy=target.y-s.player.y,l=Math.hypot(dx,dy)||1;arrow(c,s.player.x+dx/l*15,s.player.y+dy/l*15,target.x,target.y);}
   c.beginPath();c.ellipse(target.x,target.y,13,8,0,0,TAU);c.strokeStyle=MINT;c.lineWidth=2;c.stroke();
   // Small caption sits below feet; the high HUD owns the full instruction.
-  const xx=clamp(target.x,132,1148),yy=clamp(target.y+32,361,626);box(c,xx-67,yy-15,134,22,'#0b2831e8',4);text(c,reached?'선 밖 유지':'옆으로 이동',xx,yy+1,11,MINT);
+  const xx=clamp(target.x,132,1148),yy=clamp(target.y+32,361,626);box(c,xx-67,yy-18,134,26,'#0b2831e8',4);text(c,reached?'여기 · 선 밖 유지':'여기로! 옆으로!',xx,yy+1,14,MINT);
  }
  c.restore();
 }
@@ -117,8 +117,8 @@ export function pursuitInstruction(h,v,g){
  const state=pursuitState(h,v),phase=(v.phaseIndex??h.domainPhase??0)+1,count=v.phaseCount||h.phaseCount||1,reached=!!(g.targetReached??g.destinationReached),variant=v.pursuitVariant||h.pursuitVariant,section=v.section||h.section,
   variation=section==='single'?'단발 연사':section==='pincer'?'시간차 협공':section==='final'?'3방향 피날레':{rear:'뒤따르는 후속 칼날',flank:'측면에서 꺾이는 칼날',opposed:'양쪽에서 엇갈리는 칼날',cross:'시간차 교차 칼날'}[variant]||'연속 칼날',shots=(v.slashes||[]).length||1;
  if(section==='burst'){
-  const next=(v.slashes||[]).find(q=>!q.started&&!q.finished),nextText=next?`다음 ${next.index+1}발 · ${(g.nextShotIn??v.nextShotIn??next.warningRemaining??0).toFixed(1)}초`:'7발 발사 완료 · 남은 칼날 주의';
-  const instruction=String(g.instruction||'7연사! 민트 방향 안내를 따르세요.'),mark=instruction.indexOf('!'),title=mark>=0?instruction.slice(0,mark+1):instruction,detail=mark>=0?instruction.slice(mark+1).trim():'';return{title,tip:!h.active?detail:`${nextText} · ${detail}`,timerLabel:g.timerLabel,statusColor:g.navigationPhase==='reverse'?'#ffe3a4':MINT};
+  const next=(v.slashes||[]).find(q=>!q.started&&!q.finished),nextText=next?`${next.index+1} / 7발 준비`:'7발 발사 완료',turn=g.navigationCue==='turn',wait=g.navigationCue==='turn-wait';
+  return{title:!h.active?'중앙 높이로 이동':wait?'반전 준비 · 잠깐 대기':turn?`방향 반전! ${g.directionLabel}`:g.directionLabel||'민트 화살표 방향으로 계속 이동',tip:!h.active?'곧 좌우에서 연사 · 시작하면 위아래로 움직이세요':wait?'앞 칼날이 지나갈 때까지 대기 · 다음 신호에 반대로':`${nextText} · 멈추지 말고 화살표를 따라가세요`,timerLabel:!h.active?'이동 마감':next?'다음 발사':'칼날 통과',remaining:h.active&&next?Math.max(0,g.nextShotIn??v.nextShotIn??next.warningRemaining??0):g.remaining,duration:h.active&&next?(next.index===0?1:.2):v.phaseDuration,statusColor:MINT};
  }
  if(!h.active)return{title:'추격 난무 준비 · 계속 이동',tip:'곧 빨간 조준이 따라옵니다 · 흰색 고정 신호를 기다리세요',timerLabel:g.timerLabel||'공격까지',statusColor:RED};
  return{title:state==='tracking'?'조준 중 · 계속 이동':state==='locked'?'조준 고정! 옆으로!':reached?(phase===count?'마지막 칼날 · 선 밖 유지':'선 밖 유지 · 다음 조준 대비'):section==='final'?'3방향 피날레! 빈틈으로!':'후속 칼날! 방향 전환',

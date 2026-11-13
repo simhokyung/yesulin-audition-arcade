@@ -1,8 +1,9 @@
 /** Local unlimited-challenge leaderboard. No network calls or cloud persistence. */
-export const RANKING_STORAGE_KEY = 'yesulin-ranking-v18';
-export const RANKING_RULES_VERSION = 'challenge-v18';
-export const RANKING_SEASON = 18;
+export const RANKING_STORAGE_KEY = 'yesulin-ranking-v19';
+export const RANKING_RULES_VERSION = 'challenge-v19';
+export const RANKING_SEASON = 19;
 const SCHEMA_VERSION = RANKING_SEASON;
+export const RANKING_STAGE_COUNT = 5;
 const MAX_ENTRIES = 500;
 const DURATIONS = new Set([0]);
 const DIFFICULTIES = new Set(['rehearsal', 'standard', 'hard']);
@@ -33,7 +34,7 @@ export function createEntry({runId, name, crew, score, duration = 0,
   runTime = 0, endReason = 'clear', createdAt = new Date().toISOString(),
   version = SCHEMA_VERSION, mode = 'challenge', rulesVersion = RANKING_RULES_VERSION} = {}) {
   if (version !== SCHEMA_VERSION || mode !== 'challenge' || rulesVersion !== RANKING_RULES_VERSION) {
-    throw new TypeError('현재 무제한 도전 v18 규칙의 기록만 등록할 수 있습니다.');
+    throw new TypeError('현재 무제한 도전 v19 규칙의 기록만 등록할 수 있습니다.');
   }
   const id = plain(runId, 80);
   if (!id) throw new TypeError('runId가 필요합니다.');
@@ -65,8 +66,8 @@ export function createEntry({runId, name, crew, score, duration = 0,
 }
 
 function passedAuditions(value) {
-  number(value, '통과 오디션 수', {integer: true});
-  if (value > 4) throw new TypeError('통과 오디션 수는 0~4여야 합니다.');
+  number(value, '통과 관문 수', {integer: true});
+  if (value > RANKING_STAGE_COUNT) throw new TypeError('통과 관문 수는 0~5여야 합니다.');
   return value;
 }
 
@@ -191,7 +192,7 @@ function csvCell(value) {
 
 /** UTF-8 BOM and CRLF keep Korean labels readable in common spreadsheet apps. */
 export function toCSV(entries) {
-  const headers = ['닉네임', '소속', '점수', '제한 시간', '난이도', '캐릭터', '통과 오디션', '최대 콤보', '플레이 시간(초)', '종료 사유', '기록 시간', '회차 ID', '규칙 버전'];
+  const headers = ['닉네임', '소속', '점수', '제한 시간', '난이도', '캐릭터', '통과 관문', '최대 콤보', '플레이 시간(초)', '종료 사유', '기록 시간', '회차 ID', '규칙 버전'];
   const rows = [headers];
   if (Array.isArray(entries)) for (const value of entries) {
     const row = storedEntry(value);

@@ -3,6 +3,7 @@ export const DOMAIN_MUSIC_TRACKS = Object.freeze({
   ignis: Object.freeze({src: new URL('./assets/domain-caden-original.wav?v=8', import.meta.url).href, volume: .55, playbackRate: .94, filterType: 'lowpass', filterHz: 1250, loop: true}),
   mime: Object.freeze({src: new URL('./assets/domain-prism-original.wav?v=8', import.meta.url).href, volume: .60, playbackRate: .86, filterType: 'bandpass', filterHz: 680, loop: true}),
   gojo: Object.freeze({src: new URL('./assets/domain-prism-original.wav?v=8', import.meta.url).href, volume: .66, loop: true}),
+  max: Object.freeze({src: new URL('./assets/domain-max-original.wav?v=19', import.meta.url).href, volume: .62, loop: true}),
   sukuna: Object.freeze({src: new URL('./assets/domain-caden-original.wav?v=8', import.meta.url).href, volume: .72, loop: true}),
 });
 
@@ -31,7 +32,7 @@ export class DomainMusic {
     this.stop(); this.revision++;
     for (const controller of this.pending.values()) controller.abort();
     this.pending.clear(); this.buffers.clear(); this.errors.clear(); this.decoded.clear();
-    this.tracks = Object.fromEntries(['ignis','mime','gojo','sukuna'].map(id => [id, track(tracks[id])]));
+    this.tracks = Object.fromEntries(['ignis','mime','gojo','max','sukuna'].map(id => [id, track(tracks[id])]));
     return {...this.tracks};
   }
   attach(context, bus) { this.context = context; this.bus = bus; }

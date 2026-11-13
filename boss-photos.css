@@ -41,3 +41,15 @@
   .judge-art span{font-size:10px}
   .practice-art{aspect-ratio:4/3;min-height:120px}
 }
+
+/* Five judges: whole photographs, a clear name and one memorable crew line. */
+.judge-lineup{grid-template-columns:repeat(5,minmax(0,1fr));max-width:540px}
+.judge-art{height:170px}.judge-art.max{--judge:#edca8c;background-image:none}
+.judge-art img{height:calc(100% - 45px)}
+.judge-art span{flex:0 0 45px;display:flex;flex-direction:column;gap:3px;white-space:normal}
+.judge-art span b{font-size:13px;color:#f0f4e8}.judge-art span small{font-size:10px;line-height:1.2;word-break:keep-all}
+.practice-boss-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.practice-art.max{background-image:none}.practice-boss-grid .judge-feature{font-size:14px;font-weight:800;line-height:1.5;color:#dcf4b4}
+.boss-patterns{display:flex;flex-direction:column}.boss-patterns>.featured-technique{order:-1;border:1px solid #caed7b;background:#33462c;padding:17px;border-radius:8px;margin-bottom:14px}.featured-technique>span{color:#d7ff86!important;font-size:12px!important}.featured-technique>b{font-size:20px!important}
+@media(max-width:900px){.practice-boss-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.judge-art{height:150px}}
+@media(max-width:650px){.practice-boss-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.judge-art{height:145px}.judge-art span small{font-size:9px}.judge-art span b{font-size:12px}.judge-lineup{gap:4px}.entry-bosses{gap:5px}.entry-bosses span{font-size:10px}}

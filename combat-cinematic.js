@@ -1,4 +1,4 @@
-/** Original hero ultimates and four distinct judge introductions. Combat remains 2D. */
+/** Original hero ultimates and five distinct judge introductions. Combat remains 2D. */
 import { BOSS_VISUALS, drawBossPhotoPanel } from './boss-visuals.js';
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),ease=x=>1-Math.pow(1-clamp(x),3),TAU=Math.PI*2;
 const heroArt={};
@@ -57,14 +57,19 @@ export function drawCombatCinematic(c,s,t,reduced=false){
   drawBossPhotoPanel(c,id,{x:330,y:65,w:620,h:370,progress:p,reduced});
   if(id==='ignis')lampOpening(c,p,reduced);
   else if(id==='mime')ribbonOpening(c,p,reduced);
+  else if(id==='max'){
+   filmstrip(c,46,p,color,reduced);filmstrip(c,446,1-p,color,reduced);
+   for(const side of [-1,1]){const x=640+side*420;c.save();c.translate(x,250);c.rotate(side*(reduced?.08:.08+(1-opening)*.12));box(c,-73,-96,146,185,'#e7d6b424',3);corners(c,0,-8,125,134,'#efd9a9a0');line(c,[[-46,69],[46,69]],'#ddc59b7a',2);c.restore();}
+   text(c,'REC  ●  기억에 남는 한 장면',640,53,12,'#f2d7a6',800);
+  }
   else if(third){peripheralStreaks(c,p,color,reduced);for(let i=0;i<4;i++){const w=780+opening*(280-i*64),h=426+opening*(80-i*20);corners(c,640,250,w,h,i%2?'#d6c18a7a':'#a9dbe579');}if(!reduced){c.save();c.globalAlpha=(1-opening)*.9;box(c,0,0,640*(1-opening),720,'#0a1d2d');box(c,1280-640*(1-opening),0,640*(1-opening),720,'#0a1d2d');c.restore();}}
   else{const curtain=(1-opening)*653;for(const side of [0,1]){c.save();if(side){c.translate(1280,0);c.scale(-1,1)}c.beginPath();c.rect(0,0,curtain,720);c.clip();box(c,0,0,curtain,720,'#361c32');for(let i=0;i<15;i++)line(c,[[i*47,0],[i*47+8,720]],i%2?'#6e354d':'#1c1428',9);c.restore();}line(c,[[90,442],[1190,442]],'#d7c1c644',1);}
   const shade=c.createLinearGradient(0,400,0,720);shade.addColorStop(0,'#070f1b00');shade.addColorStop(.4,'#070f1bbd');shade.addColorStop(1,'#070f1bf5');box(c,0,400,1280,320,shade);
   box(c,0,0,1280,39,'#07101b');box(c,0,681,1280,39,'#07101b');
-  text(c,`오디션의 네 관문 · ${v.audition}`,640,477,13,color,900);
+  text(c,`오디션의 다섯 관문 · ${v.audition}`,640,477,13,color,900);
   text(c,`${v.role} ${v.name}`,640,547,54,'#fff4dd',900);text(c,v.title,640,586,21,color,800);
   const quoteLines=(v.quoteLines||[v.quote]).slice(0,2);
-  quoteLines.forEach((quote,i)=>text(c,quote,640,quoteLines.length===1?632:620+i*25,18,'#d8e3e4',600));corners(c,640,350,1186,588,color+'83');
+  quoteLines.forEach((quote,i)=>text(c,quote,640,quoteLines.length===1?632:620+i*28,i===0?22:18,i===0?color:'#d8e3e4',i===0?900:600));corners(c,640,350,1186,588,color+'83');
  }
  // Single soft reveal, never repeated screen-filling flashes.
  if(!reduced&&p>.92){c.globalAlpha=clamp((p-.92)/.08)*.22;box(c,0,0,1280,720,'#07101b');}

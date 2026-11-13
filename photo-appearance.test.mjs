@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 
 // Match the decoded, EXIF-oriented photo dimensions. The source pixels are not
 // regenerated: Canvas receives the same original files as the HTML cards.
 const photoSizes={
  'pino.png':[954,822], 'daegil.png':[512,512],
- 'if.jpg':[3265,4898], 'moving.png':[512,512],
+ 'if.jpg':[3265,4898], 'max.jpg':[1315,2176], 'moving.png':[512,512],
 };
 class ImageMock{
  constructor(){this.complete=true;this.naturalWidth=1672;this.naturalHeight=941;}
@@ -40,8 +41,8 @@ const {drawCombatCinematic}=await import('./combat-cinematic.js');
 const {drawDomainCutscene,getTakeoverArtwork,domainAssetStatus}=await import('./domain-cinematic.js');
 const {createGame,step,getDomainGuide}=await import('./engine.js');
 
-test('the four boss identities use their assigned original photo in all portrait loaders',async()=>{
- const mapping={ignis:['피노','pino.png'],mime:['대길','daegil.png'],gojo:['이프','if.jpg'],sukuna:['무빙','moving.png']};
+test('the five boss identities use their assigned original photo in all portrait loaders',async()=>{
+ const mapping={ignis:['피노','pino.png'],mime:['대길','daegil.png'],gojo:['이프','if.jpg'],max:['맥스','max.jpg'],sukuna:['무빙','moving.png']};
  for(const [id,[name,file]] of Object.entries(mapping)){
   assert.equal(BOSS_VISUALS[id].name,name);
   assert.equal(BOSS_PHOTOS[id].src,`./assets/photos/${file}`);
@@ -52,6 +53,11 @@ test('the four boss identities use their assigned original photo in all portrait
  }
  assert(Object.values(bossPhotoAssetStatus()).every(Boolean));
  assert.deepEqual(domainAssetStatus(),bossPhotoAssetStatus());
+});
+
+test('Max ships the byte-identical original photograph and the five audition names are unambiguous',async()=>{
+ const bytes=await readFile(new URL('./assets/photos/max.jpg',import.meta.url));assert.equal(createHash('sha256').update(bytes).digest('hex'),'352e49229085ef084c7e6e86ac2735c646b3650f3814be6abef6d09d38171368');
+ assert.deepEqual(Object.values(BOSS_VISUALS).map(v=>v.audition),['서류 심사','1차 오디션','2차 오디션','3차 오디션','최종 오디션']);assert.equal(BOSS_VISUALS.max.signature,'남는 건 추억이다~');
 });
 
 test('photo push-in contains every source edge without stretching at every cinematic progress',()=>{
@@ -81,10 +87,10 @@ test('a decoded portrait uses the entire source image; loading failure preserves
  }
 });
 
-test('all four photo entrances render without mutating combat state or intro duration',()=>{
- for(let stage=0;stage<4;stage++)for(const reduced of [false,true])for(const progress of [0,.12,.44,.77,.99]){
+test('all five photo entrances render without mutating combat state or intro duration',()=>{
+ for(let stage=0;stage<5;stage++)for(const reduced of [false,true])for(const progress of [0,.12,.44,.77,.99]){
   const s=createGame({stage,skipIntro:true});
-  s.cinematic={kind:'bossIntro',actorId:s.boss.id,duration:[3,3.2,3.4,3.8][stage],remaining:[3,3.2,3.4,3.8][stage]*(1-progress)};
+  s.cinematic={kind:'bossIntro',actorId:s.boss.id,duration:[3,3.2,3.4,3.6,3.8][stage],remaining:[3,3.2,3.4,3.6,3.8][stage]*(1-progress)};
   const before=JSON.stringify(s),c=context();freeze(s);
   assert.equal(drawCombatCinematic(c,s,1,reduced),true);
   assert.equal(JSON.stringify(s),before);
@@ -94,7 +100,7 @@ test('all four photo entrances render without mutating combat state or intro dur
 });
 
 test('every takeover variant retains its safety geometry and guide while showing the original photo',()=>{
- for(let stage=0;stage<4;stage++)for(const count of [0,1])for(const reduced of [false,true]){
+ for(let stage=0;stage<5;stage++)for(const count of [0,1])for(const reduced of [false,true]){
   const s=createGame({stage,skipIntro:true});s.cinematic=null;
   s.boss.patternIndex=3;s.boss.patternCooldown=0;s.boss.takeoverCount=count;
   step(s);const zone=s.hazards.find(h=>h.kind==='domain');assert(zone);

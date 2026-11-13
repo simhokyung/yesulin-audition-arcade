@@ -29,36 +29,36 @@ export class BoothUI {
   setLiveRun(run){
     const panel=$('visible-live-run');panel.classList.toggle('hidden',!run);
     if(!run)return;
-    const score=Math.max(0,Math.round(run.score||0)),passed=Math.max(0,Math.min(4,Math.floor(run.bosses||0)));
-    $('visible-live-score').textContent=passed+'/4 통과 · '+score.toLocaleString()+'점';
+    const score=Math.max(0,Math.round(run.score||0)),passed=Math.max(0,Math.min(5,Math.floor(run.bosses||0)));
+    $('visible-live-score').textContent=passed+'/5 통과 · '+score.toLocaleString()+'점';
     const own=getPersonalStanding(this.entries,{name:run.name},{duration:0,difficulty:'standard'}).best;
-    $('visible-live-gap').textContent=!own?'통과 오디션 수가 먼저 반영됩니다.':passed>own.bosses?'내 최고보다 더 많은 오디션 통과!':passed<own.bosses?'내 최고 '+own.bosses+'/4 통과 · 현재 '+passed+'/4 통과':score>own.score?'같은 통과 수 · 내 최고보다 +'+(score-own.score).toLocaleString()+'점':score===own.score?'내 최고 기록과 동점!':'같은 통과 수 · 내 최고까지 '+(own.score-score).toLocaleString()+'점';
+    $('visible-live-gap').textContent=!own?'통과 관문 수가 먼저 반영됩니다.':passed>own.bosses?'내 최고보다 더 많은 관문 통과!':passed<own.bosses?'내 최고 '+own.bosses+'/5 통과 · 현재 '+passed+'/5 통과':score>own.score?'같은 통과 수 · 내 최고보다 +'+(score-own.score).toLocaleString()+'점':score===own.score?'내 최고 기록과 동점!':'같은 통과 수 · 내 최고까지 '+(own.score-score).toLocaleString()+'점';
   }
   renderVisibleBoard(rows,identity,hasName){
     $('visible-rank-rows').replaceChildren(...rows.slice(0,5).map((r,i)=>{
       const me=hasName&&r.name===identity.name&&r.crew===identity.crew;
       const row=el('li','visible-rank-row'+(me?' is-me':'')),person=el('div','visible-rank-person'),name=el('strong','',r.name);
       if(me)name.append(el('span','you-tag','MY'));
-      person.append(name,el('small','',(r.character==='actor'?'배우':'감독')+' · '+r.bosses+'/4 오디션 통과'));
+      person.append(name,el('small','',(r.character==='actor'?'배우':'감독')+' · '+r.bosses+'/5 관문 통과'));
       const place=el('span','visible-rank-place',['🥇','🥈','🥉'][i]||String(i+1));place.setAttribute('aria-label',(i+1)+'위');
-      const score=el('div','visible-rank-score');score.append(el('b','',r.bosses+'/4 통과'),el('small','',Math.round(r.score).toLocaleString()+'점'));row.append(place,person,score);return row;
+      const score=el('div','visible-rank-score');score.append(el('b','',r.bosses+'/5 통과'),el('small','',Math.round(r.score).toLocaleString()+'점'));row.append(place,person,score);return row;
     }));
     $('visible-rank-empty').classList.toggle('hidden',rows.length>0);
     const own=getPersonalStanding(this.entries,identity,{duration:0,difficulty:'standard'});
-    $('visible-rank-me').replaceChildren(el('span','',hasName?identity.name+' · 내 최고 기록':'내 기록'),el('strong','',hasName&&own.best?own.rank+'위 · '+own.best.score.toLocaleString()+'점':hasName?'첫 기록에 도전!':'닉네임을 입력하세요'),el('small','',hasName&&own.best?own.best.bosses+'/4 오디션 통과 · 최대 '+own.best.maxCombo+' HIT':'통과 수·점수 기준 최고 기록'));
+    $('visible-rank-me').replaceChildren(el('span','',hasName?identity.name+' · 내 최고 기록':'내 기록'),el('strong','',hasName&&own.best?own.rank+'위 · '+own.best.score.toLocaleString()+'점':hasName?'첫 기록에 도전!':'닉네임을 입력하세요'),el('small','',hasName&&own.best?own.best.bosses+'/5 관문 통과 · 최대 '+own.best.maxCombo+' HIT':'통과 수·점수 기준 최고 기록'));
     $('visible-rank-note').textContent=this.storageError||'참여 '+rows.length+'명 · 통과 수 우선, 동률은 점수 · 이 브라우저에 저장';
   }
   render(){
     const identity=normalizeIdentity({name:$('player-name').value}),hasName=$('player-name').value.trim().length>=2;
     const opts={duration:this.boardDuration,difficulty:'standard'},individual=getIndividualBoard(this.entries,opts),rows=individual;
-    $('ranking-name-label').textContent='도전자';$('ranking-stat-label').textContent='통과 오디션';
-    $('ranking-rows').replaceChildren(...rows.slice(0,10).map((r,i)=>{const me=hasName&&r.name===identity.name&&r.crew===identity.crew;const li=el('li','rank-row'+(me?' is-me':'')),pos=el('span','rank-position',String(i+1).padStart(2,'0')),person=el('div','rank-person'),detail=el('span','rank-detail');person.append(el('strong','',r.name),el('span','',r.character==='actor'?'배우':'감독'));if(me)person.firstChild.append(el('span','you-tag','MY'));detail.append(el('b','',r.bosses+' / 4 통과'),document.createTextNode('최대 '+r.maxCombo+' HIT'));li.append(pos,person,el('strong','rank-score',Math.round(r.score).toLocaleString()),detail);return li}));
+    $('ranking-name-label').textContent='도전자';$('ranking-stat-label').textContent='통과 관문';
+    $('ranking-rows').replaceChildren(...rows.slice(0,10).map((r,i)=>{const me=hasName&&r.name===identity.name&&r.crew===identity.crew;const li=el('li','rank-row'+(me?' is-me':'')),pos=el('span','rank-position',String(i+1).padStart(2,'0')),person=el('div','rank-person'),detail=el('span','rank-detail');person.append(el('strong','',r.name),el('span','',r.character==='actor'?'배우':'감독'));if(me)person.firstChild.append(el('span','you-tag','MY'));detail.append(el('b','',r.bosses+' / 5 통과'),document.createTextNode('최대 '+r.maxCombo+' HIT'));li.append(pos,person,el('strong','rank-score',Math.round(r.score).toLocaleString()),detail);return li}));
     const standing=getPersonalStanding(this.entries,identity,opts),personal=$('personal-standing');
     personal.replaceChildren();const summary=el('div','',hasName?identity.name+' · 무제한 도전':'닉네임을 정하고 첫 기록에 도전하세요.');
-    summary.append(el('small','',hasName?(identity.crew||'개인 참가')+' · '+standing.total+'명 참여':'네 오디션에 도전하고 최고 기록을 남기세요.'));
+    summary.append(el('small','',hasName?(identity.crew||'개인 참가')+' · '+standing.total+'명 참여':'다섯 관문에 도전하고 최고 기록을 남기세요.'));
     personal.append(summary,el('strong','',hasName&&standing.best?standing.rank+'위 · '+standing.best.score.toLocaleString()+'점':'아직 기록 없음'));
     $('ranking-empty').classList.toggle('hidden',rows.length>0);
-    $('ranking-summary').textContent=this.storageError||'시즌 '+RANKING_SEASON+' · 통과 오디션 수 우선, 같으면 점수순'+' · '+individual.length+'명 참여 · 이 브라우저에 저장';
+    $('ranking-summary').textContent=this.storageError||'시즌 '+RANKING_SEASON+' · 통과 관문 수 우선, 같으면 점수순'+' · '+individual.length+'명 참여 · 이 브라우저에 저장';
     this.renderVisibleBoard(individual,identity,hasName);
   }
 }

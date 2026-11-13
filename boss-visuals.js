@@ -1,16 +1,18 @@
 import { getPatternGuide } from './engine.js';
 /** Original audition judges and their practical stage effects. Internal IDs preserve combat compatibility. */
 export const BOSS_VISUALS={
- ignis:{audition:'1차 오디션',name:'피노',title:'첫 무대의 긴장을 넘어서',role:'조명감독',stage:'앰버 조명실',asset:'ignis',color:'#ffc979',deep:'#261c28',wall:'#52464c',cloth:'#613d32',takeover:'골든 아워',quote:'조명 켰다. 긴장해도 좋아. 네 장면을 시작해.',quoteLines:['조명 켰다. 긴장해도 좋아.','네 장면을 시작해.']},
- mime:{audition:'2차 오디션',name:'대길',title:'나만의 배역을 찾아서',role:'가면연출가',stage:'가면 의상실',asset:'mime',color:'#8be9c6',deep:'#1e2030',wall:'#494253',cloth:'#503147',takeover:'페르소나 극장',quote:'가면은 수없이 많지. 너는 어떤 장면을 보여줄 거야?',quoteLines:['가면은 수없이 많지.','너는 어떤 장면을 보여줄 거야?']},
- gojo:{audition:'3차 오디션',name:'이프',title:'달라진 흐름에 응답하기',role:'경계심사관',stage:'프레임 심사실',asset:'prism',color:'#a5dce5',deep:'#152333',wall:'#344b60',cloth:'#253d59',takeover:'무한 시사회',quote:'아까 통했던 동선이, 이번에도 통할까?',quoteLines:['아까 통했던 동선이,','이번에도 통할까?']},
- sukuna:{audition:'최종 오디션',name:'무빙',title:'마지막까지 집중을 지키기',role:'종막집행관',stage:'종막 대극장',asset:'caden',color:'#efb3bf',deep:'#261d2c',wall:'#593e4c',cloth:'#5a2d3e',takeover:'종막 집행',quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',quoteLines:['마지막 장면이다.','끝까지 네 박자를 지켜라.']},
+ ignis:{audition:'서류 심사',name:'피노',title:'첫 무대의 긴장을 넘어서',role:'조명감독',stage:'앰버 조명실',asset:'ignis',color:'#ffc979',deep:'#261c28',wall:'#52464c',cloth:'#613d32',takeover:'골든 아워',quote:'조명 켰다. 긴장해도 좋아. 네 장면을 시작해.',quoteLines:['빨뚜는 못 참지. 조명 켰다!','긴장 풀고, 네 장면을 보여줘.'],feature:'빨뚜',signature:'빨뚜 통째로, 액션!',featureQuote:'빨뚜는 못 참지!'},
+ mime:{audition:'1차 오디션',name:'대길',title:'나만의 배역을 찾아서',role:'가면연출가',stage:'가면 의상실',asset:'mime',color:'#8be9c6',deep:'#1e2030',wall:'#494253',cloth:'#503147',takeover:'페르소나 극장',quote:'가면은 수없이 많지. 너는 어떤 장면을 보여줄 거야?',quoteLines:['추노 시작! 캐스팅할 때까지 쫓아간다.','너만의 장면을 보여줘.'],feature:'추노',signature:'끝까지 캐스팅',featureQuote:'거기 서! 추노 시작이다!'},
+ gojo:{audition:'2차 오디션',name:'이프',title:'달라진 흐름에 응답하기',role:'경계심사관',stage:'프레임 심사실',asset:'prism',color:'#a5dce5',deep:'#152333',wall:'#344b60',cloth:'#253d59',takeover:'무한 시사회',quote:'아까 통했던 동선이, 이번에도 통할까?',quoteLines:['자리해야지~ 그 자리는 내가 쓸게.','달라진 동선에서도 네 장면을 보여줘.'],feature:'자리해야지',signature:'자리해야지~',featureQuote:'자리해야지~ 그 자리는 내가 쓸게.'},
+ max:{audition:'3차 오디션',name:'맥스',title:'기억에 남는 한 장면',role:'기록심사관',stage:'추억 기록실',asset:'max',color:'#edc68c',deep:'#272125',wall:'#655347',cloth:'#574332',takeover:'추억 보관소',quote:'추억이 중요하다~ 자, 기억에 남을 장면 하나 보여줘.',quoteLines:['추억이 중요하다~','자, 기억에 남을 장면 하나 보여줘.'],feature:'추억',signature:'남는 건 추억이다~',featureQuote:'추억이 중요하다~'},
+ sukuna:{audition:'최종 오디션',name:'무빙',title:'마지막까지 집중을 지키기',role:'종막집행관',stage:'종막 대극장',asset:'caden',color:'#efb3bf',deep:'#261d2c',wall:'#593e4c',cloth:'#5a2d3e',takeover:'종막 집행',quote:'마지막 장면이다. 끝까지 네 박자를 지켜라.',quoteLines:['무빙 좀 보여줘. 아직 컷 안 했어!','마지막까지 네 박자를 지켜라.'],feature:'현란한 무빙',signature:'원테이크, 따라와',featureQuote:'무빙 좀 보여줘. 아직 컷 안 했어!'},
 };
 /** User-supplied originals. These images are shared by UI, portraits and photo-face rigs. */
 export const BOSS_PHOTOS={
  ignis:{src:'./assets/photos/pino.png'},
  mime:{src:'./assets/photos/daegil.png'},
  gojo:{src:'./assets/photos/if.jpg'},
+ max:{src:'./assets/photos/max.jpg'},
  sukuna:{src:'./assets/photos/moving.png'},
 };
 const bossPhotos={};
@@ -119,6 +121,10 @@ export function drawAuditionBackdrop(c,id){
   for(let i=0;i<6;i++){const size=270-i*29,x=668-i*5,y=245+i*4;frame(c,x,y,size*1.72,size*.65,i%2?'#8aaab244':'#c0ad804d',2);}
   for(const x of [264,1006]){lens(c,x,235,49,Math.PI/4,'#82a7b3');box(c,x-8,286,16,65,'#2b3c4c');}
   for(let i=0;i<5;i++)polygon(c,[[390+i*115,145],[440+i*115,153],[403+i*115,340],[353+i*115,340]],'#d9e5cc08','#adc7c31e',1);
+ }else if(id==='max'){
+  for(let i=0;i<7;i++){const x=166+i*160,y=218+(i%2)*38;c.save();c.translate(x,y);c.rotate((i%2?1:-1)*.075);box(c,-49,-65,98,128,'#dfd4b9',2);box(c,-40,-56,80,89,i%2?'#846e53':'#6d7773');frame(c,0,-10,70,70,'#c9b28c66',1);line(c,[[-28,43],[28,43]],'#9e8e72',2);c.restore();}
+  for(const x of [90,1186]){box(c,x-18,136,36,213,'#161e22');for(let j=0;j<9;j++)box(c,x-11,143+j*23,22,12,'#ae9770',2);}
+  box(c,494,292,294,54,'#352c29',3);label(c,'MEMORY ARCHIVE',640,324,19,'#cdb994',800);
  }else{
   for(const x of [210,1070]){box(c,x-35,135,70,215,'#332b3c');for(let i=0;i<5;i++)box(c,x-27+i*12,148,5,190,i%2?'#b7a39b':'#726471');}
   polygon(c,[[358,350],[410,160],[640,127],[870,160],[922,350]],'#301e30','#ae8086',3);
@@ -140,6 +146,7 @@ export function drawTakeoverSet(c,s,t,reduced){
  if(id==='ignis'){for(let i=0;i<13;i++){const x=100+i*88;box(c,x-13,195,26,28,'#353139',3);ellipse(c,x,218,10,8,'#ffdc9b');polygon(c,[[x-6,218],[x+6,218],[x+62,349],[x-62,349]],'#ffc58115')}label(c,'GOLDEN HOUR',640,286,28,'#ffdfa8',800);}
  else if(id==='mime'){mask(c,640,255,73,'#dcd7bf');for(const side of [-1,1]){c.beginPath();c.moveTo(640+side*100,195);c.bezierCurveTo(640+side*270,230,640+side*80,320,640+side*460,337);c.strokeStyle='#8fe8c393';c.lineWidth=14;c.stroke();c.strokeStyle='#c7ffe7';c.lineWidth=1.5;c.stroke()}}
  else if(id==='gojo'){for(let i=0;i<6;i++){c.save();c.translate(640,265);c.rotate((reduced?0:Math.sin(t*.3)*.025)*(i%2?-1:1));frame(c,0,0,155+i*108,62+i*30,i%2?'#e8ce9b':'#a8e7ef',i%2?1:2);c.restore()}lens(c,640,265,40,reduced?0:t*.12,'#badeda');}
+ else if(id==='max'){for(let i=0;i<9;i++){const xx=130+i*127;c.save();c.translate(xx,265);c.rotate((i%2?1:-1)*.06);box(c,-47,-52,94,102,'#edd7ab30',2);frame(c,0,-8,78,68,'#eed8ad',1.5);line(c,[[-28,37],[28,37]],'#e6d7b17a',2);c.restore();}label(c,'추억 보관소 · 감기 / 되감기 / 마지막 한 장',640,330,13,'#f5debb',800);}
  else{for(let i=0;i<5;i++)line(c,[[126,230+i*17],[1154,230+i*17]],'#e4c9ce4f',1);for(let i=0;i<14;i++){const x=126+i*79;line(c,[[x,225],[x,310]],'#c4b9c446',1)}baton(c,640,253,240,reduced?-.3:-.3+Math.sin(t*.7)*.06,'#f4e4dc');if(h.domainType==='chasing-slashes'){const a=reduced?.55:.55+Math.sin(t*.9)*.06;for(const sign of [-1,1]){c.save();c.translate(640,254);c.rotate(sign*a);c.beginPath();c.moveTo(-123,5);c.bezierCurveTo(-52,-20,55,-12,139,-34);c.bezierCurveTo(101,4,14,16,-123,5);c.closePath();c.fillStyle=sign<0?'#d1bbd48a':'#c7d7e28a';c.fill();c.strokeStyle='#f0dae9';c.lineWidth=1;c.stroke();c.restore();}ellipse(c,640,254,11,11,'#55364b','#efb4c7',2);label(c,'추격 난무 · 조준 / 고정 / 후속',640,321,12,'#efc1d0',800);}else if(h.domainType==='blade-waves'){const phase=(h.domainPhase||0)+1;for(let j=0;j<5;j++){const xx=570+j*35;ellipse(c,xx,321,7,7,j<phase?'#e8c4c6':'#482a3e','#d7a2b060',1);}label(c,`${phase} / 5  칼날 파도`,640,194,12,'#ead1d4',800);}for(const x of [280,1000]){polygon(c,[[x-52,194],[x+52,194],[x+43,340],[x-43,340]],'#722b43aa','#b87c8a',1);}}
  c.restore();
 }

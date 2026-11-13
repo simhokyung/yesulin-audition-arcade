@@ -1,6 +1,8 @@
 /** Personal audition techniques. Every dangerous body and floor shape comes from engine geometry. */
 import { getPersonalityGuide, PERSONALITY_LINES } from './engine.js';
 import { dialogueLayout, drawDialogueBox } from './skill-vfx.js';
+import { drawRedCapBottle } from './bottle-vfx.js';
+import { BOSS_VISUALS } from './boss-visuals.js';
 const TAU=Math.PI*2,INK='#102530',RED='#ff9b9e',LOCK='#ffe6a2',ACTIVE='#ff806a';
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const number=n=>['①','②','③'][(n||1)-1]||String(n||1);
@@ -58,7 +60,7 @@ export function drawPersonalityWarnings(c,s,t,reduced=false){
   const nx=-Math.sin(p.angle)*wide/2,ny=Math.cos(p.angle)*wide/2;
   line(c,[[p.from.x+nx,p.from.y+ny],[p.to.x+nx,p.to.y+ny]],col+'65',1);line(c,[[p.from.x-nx,p.from.y-ny],[p.to.x-nx,p.to.y-ny]],col+'65',1);c.restore();
   const aim=q.target||p.to;oval(c,aim.x,aim.y,locked?14:18,locked?9:12,null,col,1.5);
-  const label=run.bossId==='ignis'?`${number(q.index)} 빨뚜`:`${number(q.index)} ${locked?'방향 고정':'추적 중'}`;
+  const label=run.bossId==='ignis'?`${number(q.index)} 빨뚜 병`:`${number(q.index)} ${locked?'방향 고정':'추적 중'}`;
   text(c,label,clamp(p.to.x,100,1180),clamp(p.to.y+26,353,628),12,col);
  }
  for(const h of hazards){
@@ -70,14 +72,12 @@ export function drawPersonalityWarnings(c,s,t,reduced=false){
  for(const q of shots){if(q.phase!=='active'||!q.body||run?.bossId==='ignis'||q.dashElapsed>=q.dashDuration)continue;const b=q.body;oval(c,b.x,b.y,b.radius,b.radiusY,null,INK,5);oval(c,b.x,b.y,b.radius,b.radiusY,null,ACTIVE,2.1);}
  c.restore();
 }
-/** The cap's ridged rim is the exact axis-aligned collision ellipse. */
+/** The complete rotating bottle fits within its visible axis-aligned collision ellipse. */
 export function drawPersonalityProjectile(c,q,reduced=false){
  if(q.kind!=='red-cap')return false;const rx=Math.max(1,q.radius),ry=Math.max(1,q.radiusY),speed=Math.hypot(q.vx,q.vy)||1,ux=q.vx/speed,uy=q.vy/speed;
- c.save();if(!reduced)for(let i=1;i<=3;i++)line(c,[[q.x-ux*(rx+i*10),q.y-uy*(ry+i*10)],[q.x-ux*(rx+i*10+6),q.y-uy*(ry+i*10+6)]],'#dbb9b5'+['60','38','1b'][i-1],1.1);
- oval(c,q.x,q.y,rx,ry,'#9e223d','#ffc2ab',1.7);c.translate(q.x,q.y);c.scale(rx,ry);c.rotate(reduced?0:(q.age??q.elapsed??(4-(q.life||0)))*13);
- const g=c.createLinearGradient(-1,-1,1,1);g.addColorStop(0,'#ffb098');g.addColorStop(.28,'#f34751');g.addColorStop(.6,'#cb263e');g.addColorStop(1,'#781e32');oval(c,0,0,.9,.9,g,'#ffb99d',.055);
- for(let i=0;i<18;i++){const a=i*TAU/18;line(c,[[Math.cos(a)*.79,Math.sin(a)*.79],[Math.cos(a)*.99,Math.sin(a)*.99]],i%2?'#ffd5ac':'#65172d',.045);}
- oval(c,0,0,.66,.66,null,'#ffbf9b',.035);line(c,[[-.43,.13],[.37,-.22]],'#ffe8b6',.13);line(c,[[-.12,.4],[.23,.22]],'#ff8f80',.08);c.restore();return true;
+ c.save();if(!reduced)for(let i=1;i<=3;i++)line(c,[[q.x-ux*(rx+i*10),q.y-uy*(ry+i*10)],[q.x-ux*(rx+i*10+6),q.y-uy*(ry+i*10+6)]],'#b0efc6'+['60','38','1b'][i-1],1.2);
+ oval(c,q.x,q.y,rx,ry,'#16784a18','#bceec69c',1.1);c.translate(q.x,q.y);c.scale(rx/21,ry/21);
+ drawRedCapBottle(c,0,0,1,reduced?Math.PI/3:(q.age??q.elapsed??(4-(q.life||0)))*9);c.restore();return true;
 }
 export function drawPersonalityPresence(c,s,t,reduced=false,drawFighter=null){
  const m=s.boss?.personalityMotion,run=s.personality;if(!run||!m||!['active','dashing'].includes(m.phase)||m.progress>=1||reduced)return;
@@ -88,12 +88,22 @@ export function drawPersonalityPresence(c,s,t,reduced=false,drawFighter=null){
  c.globalAlpha=.55;const col=run.bossId==='sukuna'?'#ffc57d':'#d3d9b9';for(let i=0;i<5;i++){const spread=(i-2)*9,xx=b.x-ux*(25+i%2*13)-uy*spread,yy=b.y-70-uy*(25+i%2*13)+ux*spread;line(c,[[xx,yy],[xx-ux*28,yy-uy*28]],col+(i%2?'70':'aa'),i===2?2:1);}
  c.restore();
 }
+const FOLLOWUP_QUOTES={mime:['','잡았다! 너 내 배역 해라!'],gojo:['','거기도 내 자리인데~?','옆자리도 찜해야지~','자리가 좀 좁아졌지?','이제 자리 좀 잡았네~'],sukuna:['','무빙 좀 보여줘!','아직 안 끝났지!','한 번 더, 따라와!','마지막까지 집중!']};
+/** Stable, readable phrases follow actual sequence milestones, without combat pauses or writes. */
+export function bossFeatureSpeech(s){
+ if(s.cinematic||s.status!=='playing'||s.hazards.some(h=>h.kind==='domain'))return null;
+ if(s.boss.id==='max'){
+  const e=s.effects.filter(e=>e.type==='maxShot'&&e.text&&e.life>0).at(-1);return e?{...e,bossSpeech:true,speakerName:'맥스',color:'#efcd92'}:null;
+ }
+ const run=s.personality;if(!run||!QUOTES[run.bossId])return null;
+ let phrase=QUOTES[run.bossId],start=0,duration=2.6;
+ if(run.elapsed>=2.6){phrase=null;let cursor=2.6;for(const q of run.shots){const value=FOLLOWUP_QUOTES[run.bossId]?.[q.index-1];if(q.index<2||!value||q.startAt<=0||q.phase==='waiting')continue;const cueStart=Math.max(cursor,q.startAt);if(run.elapsed>=cueStart&&run.elapsed<cueStart+2.1){phrase=value;start=cueStart;duration=2.1;break;}cursor=cueStart+2.1;}}
+ if(!phrase)return null;
+ return {text:phrase,life:duration-(run.elapsed-start),maxLife:duration,bossSpeech:true,speakerName:BOSS_VISUALS[run.bossId]?.name||s.boss.name,color:run.bossId==='ignis'?'#ffb0a0':run.bossId==='mime'?'#a8e8c4':run.bossId==='gojo'?'#b6dfe7':'#ffd296'};
+}
 export function drawPersonalitySpeech(c,s){
- const run=s.personality;if(!run||s.cinematic||run.elapsed>1.4||!QUOTES[run.bossId])return false;
- const original=run.shots?.[0];if(original&&run.elapsed>=original.launchAt)return false;
- const remaining=1.4-run.elapsed,event={text:QUOTES[run.bossId],life:remaining,maxLife:1.4,color:run.bossId==='ignis'?'#ffb0a0':run.bossId==='mime'?'#a8e8c4':run.bossId==='gojo'?'#b6dfe7':'#ffd296'};
- const hazards=[...(s.hazards||[]),...visibleShots(s).filter(q=>['tracking','locked'].includes(q.phase)).map(shotLane).filter(Boolean)];
- // Reuse the same HUD/combatant/telegraph exclusion layout as player speech.
+ const event=bossFeatureSpeech(s);if(!event)return false;
+ const hazards=[...(s.hazards||[]),...[...visibleShots(s),...(s.maxPattern?.shots||[])].filter(q=>['tracking','locked'].includes(q.phase)).map(shotLane).filter(Boolean),...(s.projectiles||[]).filter(q=>q.owner==='enemy').map(q=>({type:'circle',x:q.x,y:q.y,radius:q.radius||12,radiusY:q.radiusY||12}))];
  const swapped={...s,player:{...s.boss,character:s.player.character},boss:s.player,hazards},layout=dialogueLayout(c,swapped,event);
  return layout?drawDialogueBox(c,event,{state:swapped,layout}):false;
 }

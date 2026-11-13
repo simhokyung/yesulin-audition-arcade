@@ -19,7 +19,7 @@ function context() {
     }};
 }
 function state(bossId = 'gojo') {
-  return {status: 'playing', stage: ['ignis','mime','gojo','sukuna'].indexOf(bossId), runTime: 10, boss: {id: bossId},
+  return {status: 'playing', stage: ['ignis','mime','gojo','max','sukuna'].indexOf(bossId), runTime: 10, boss: {id: bossId},
     cinematic: {id: 9, kind: 'domain', actorId: bossId, remaining: .8},
     hazards: [{id: 8, kind: 'domain', active: false, warning: 1.85, life: 2.6}]};
 }
@@ -48,7 +48,7 @@ test('default cues are local original WAV files and expose actual decode and pla
   assert.equal(DOMAIN_MUSIC_TRACKS.gojo.loop, true); assert.equal(DOMAIN_MUSIC_TRACKS.sukuna.loop, true);
   music.sync(s, {enabled: true}); await settle();
   assert.equal(music.status().playing, true); assert.equal(music.status().decoded, true);
-  assert.deepEqual(music.status().ready, {ignis:true,mime:true,gojo: true, sukuna: true});
+  assert.deepEqual(music.status().ready, {ignis:true,mime:true,gojo:true,max:true,sukuna:true});
   music.reset(); assert.equal(music.status().playing, false); assert.equal(music.status().bossId, null);
 });
 
@@ -124,7 +124,7 @@ for (const bossId of ['ignis','mime']) {
   test(`${bossId} music variation keeps its exact position through pause, mute and end`, async t => {
     const {music,c,requests}=setup(t,DOMAIN_MUSIC_TRACKS), s=state(bossId), config=DOMAIN_MUSIC_TRACKS[bossId];
     music.sync(s,{enabled:true});await settle();
-    assert.equal(requests.length,2,'four bosses share two decoded original recordings');
+    assert.equal(requests.length,3,'five bosses use three decoded original recordings');
     assert.equal(c.sources[0].playbackRate.value,config.playbackRate);
     assert.equal(c.filters[0].type,config.filterType);assert.equal(c.filters[0].frequency.value,config.filterHz);
     assert.equal(music.status().bossId,bossId);assert.equal(c.sources[0].loop,true);
@@ -217,15 +217,15 @@ test('muted combat is consumed without stale hits when sound is enabled', async 
   audio.update(s,1/60);assert.equal(heard.length,0);
 });
 
-test('all four boss introductions sound once on their first state and are independent of hits', async t => {
+test('all five boss introductions sound once on their first state and are independent of hits', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);const heard=[],cue=audio.cue.bind(audio);
   audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};
-  for(const bossId of ['ignis','mime','gojo','sukuna']){
+  for(const bossId of ['ignis','mime','gojo','max','sukuna']){
     const s={...state(bossId),hazards:[],effects:[],player:{character:'actor'},stats:{}};
     s.cinematic={id:50,kind:'bossIntro',actorId:bossId,duration:bossId==='gojo'?2.4:2.8,remaining:2};
     audio.update(s,1/60);audio.update(s,1/60);
   }
-  assert.equal(heard.length,4);assert(heard.every(e=>e.name==='cinematic'&&e.meta.kind==='bossIntro'));
+  assert.equal(heard.length,5);assert(heard.every(e=>e.name==='cinematic'&&e.meta.kind==='bossIntro'));
 });
 
 test('Ignis and Mime real duel introductions sound once, and leaving releases every scheduled voice', async t => {
@@ -437,7 +437,7 @@ test('wave cues use finite original envelopes with bounded voices and release al
 test('live Caden waves synchronize with emitted events and fatal sound requires a real collision', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
   for(const walk of [true,false]){
-    audio.reset();const s=createPractice({character:'actor',stage:3});s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;
+    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;
     audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);
     audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};let sawDomain=false;
     for(let i=0;i<3000&&s.status==='playing';i++){
@@ -531,7 +531,7 @@ test('late Caden decoding cannot revive a cancelled chasing takeover or an aband
 test('live chasing slashes play actual tracking, lock, seven-shot bursts and finale without phantom collisions', async t => {
   const {audio}=audioHarness(t);await audio.setEnabled(true);
   for(const walk of [true,false]){
-    audio.reset();const s=createPractice({character:'actor',stage:3});s.boss.takeoverCount=1;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;
+    audio.reset();const s=createPractice({character:'actor',stage:4});s.boss.takeoverCount=1;s.boss.patternIndex=patternTurnFor(s.boss.id,3);s.boss.patternCooldown=0;
     audio.update(s,1/60);const heard=[],events=new Map(),cue=audio.cue.bind(audio);let sawDomain=false;
     audio.cue=(name,meta)=>{heard.push({name,meta});cue(name,meta);};
     for(let i=0;i<2400&&s.status==='playing';i++){
@@ -593,7 +593,7 @@ test('seven rapid real release cues remain distinct and directional without fals
 });
 
 
-for (const [stage,bossId,count] of [[0,'ignis',2],[1,'mime',3],[2,'gojo',3],[3,'sukuna',7]]) {
+for (const [stage,bossId,count] of [[0,'ignis',2],[1,'mime',3],[2,'gojo',5],[4,'sukuna',7]]) {
   test(`v17 ${bossId} ordinary tracking/lock/launch audio follows actual attack events once`, async t => {
     const {audio}=audioHarness(t);await audio.setEnabled(true);
     const s=createPractice({character:'actor',stage});while(s.cinematic)stepPractice(s,{},1/60);
@@ -659,4 +659,30 @@ test('personality cap preparation coalesces while individual throws and moving f
  }
  assert.equal(heard.filter(e=>e.name==='moving-dash').length,3);assert.equal(heard.filter(e=>e.name==='moving-followup').length,3);assert(starts.length>30);assert(audio.sources.size<=96);
  audio.pause(true);assert.equal(audio.sources.size,0);assert.equal(audio.sourceNodes.size,0);
+});
+
+test('Max archive music is a local original PCM recording and keeps exact playback through pause and mute',async t=>{
+ const {readFile}=await import('node:fs/promises');const bytes=await readFile(new URL('./assets/domain-max-original.wav',import.meta.url));
+ assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WAVE');assert.equal(bytes.readUInt16LE(20),1);assert.equal(bytes.readUInt32LE(24),22050);assert(bytes.length>500000);
+ assert.match(DOMAIN_MUSIC_TRACKS.max.src,/domain-max-original\.wav\?v=19$/);assert.equal(DOMAIN_MUSIC_TRACKS.max.loop,true);
+ const {music,c}=setup(t,{max:DOMAIN_MUSIC_TRACKS.max}),s=state('max');music.sync(s,{enabled:true});await settle();assert.equal(music.status().bossId,'max');assert.equal(c.sources.length,1);
+ s.runTime+=2;music.sync(s,{enabled:true,paused:true});assert.equal(c.sources[0].stopped,1);music.sync(s,{enabled:true});await settle();assert.equal(c.sources[1].starts[0][1],2);
+ music.sync(s,{enabled:false});assert.equal(c.sources[1].stopped,1);s.hazards=[];s.cinematic=null;music.sync(s,{enabled:true});assert.equal(music.playing,false);
+});
+
+test('Max camera, return and each archive step sound once without phantom damage or replay after unmute',async t=>{
+ const {audio,starts}=audioHarness(t,{holdSources:true});await audio.setEnabled(true);const s={...state('max'),cinematic:null,hazards:[],effects:[],player:{character:'actor'},stats:{}};audio.update(s,1/60);
+ const heard=[],cue=audio.cue.bind(audio);audio.cue=(name,meta={})=>{heard.push({name,meta});cue(name,meta);};let id=24000;
+ for(const kind of ['tracking','lock','launch','return-warning','return','hit','finish']){s.effects=[{id:++id,type:'maxShot',bossId:'max',attackId:100,shotId:105,index:1,total:4,kind,x:300}];audio.context.currentTime+=.15;audio.update(s,.15);s.effects=[{...s.effects[0],id:++id}];audio.update(s,1/60);}
+ assert.deepEqual(heard.map(e=>e.name),['max-focus','max-lock','max-shutter','max-recall','max-return','max-finish']);assert(heard.every(e=>e.meta.pan<0));assert(!heard.some(e=>['hit','fatal','impact'].includes(e.name)));
+ for(let index=1;index<=5;index++){s.effects=[{id:++id,type:'maxShot',bossId:'max',attackId:110,shotId:112,index,total:6,kind:'archive-close',x:640}];audio.context.currentTime+=.2;audio.update(s,.2);}
+ assert.equal(heard.filter(e=>e.name==='max-archive-close').length,5,'same domain hazard has distinct indexed shutter steps');
+ await audio.setEnabled(false);const count=starts.length;s.effects=[{id:++id,type:'maxShot',bossId:'max',attackId:110,shotId:112,index:6,total:6,kind:'archive-flash'}];audio.update(s,.2);assert.equal(starts.length,count);const after=heard.length;await audio.setEnabled(true);audio.update(s,1/60);assert.equal(heard.length,after);assert(audio.sources.size<=96);audio.reset();assert.equal(audio.maxCueKeys.size,0);
+});
+
+test('real Max photo release and return events have matching camera sounds and no duplicate cues',async t=>{
+ const {audio}=audioHarness(t);await audio.setEnabled(true);const s=afterEntrance(createPractice({stage:3,character:'actor'}));s.player.hp=s.player.maxHp=10000;s.boss.patternIndex=patternTurnFor('max',6);s.boss.patternCooldown=0;
+ const heard=[],events=new Map(),cue=audio.cue.bind(audio);audio.cue=(name,meta={})=>{heard.push({name,meta});cue(name,meta);};audio.update(s,1/60);let began=false;
+ for(let i=0;i<700;i++){step(s,{down:s.player.y<610},1/60);for(const e of s.effects)if(e.type==='maxShot')events.set(e.id,e);audio.context.currentTime+=1/60;audio.update(s,1/60);const n=heard.length;audio.update(s,1/60);assert.equal(heard.length,n);if(s.maxPattern)began=true;if(s.boss.attacks)s.boss.patternCooldown=999;if(began&&!s.maxPattern)break;}
+ assert(began);assert.equal(heard.filter(e=>e.name==='max-shutter').length,6);assert(s.stats.maxReturns>0);assert.equal(heard.filter(e=>e.name==='max-return').length,s.stats.maxReturns);assert.equal(heard.filter(e=>e.name==='max-recall').length,[...events.values()].filter(e=>e.kind==='return-warning').length);
 });

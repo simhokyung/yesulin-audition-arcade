@@ -1,5 +1,6 @@
 /** Original-photo faces on continuous 2D rigs. This module only paints; it never writes combat state. */
 import { BOSS_PHOTOS, BOSS_VISUALS, getBossPhoto } from './boss-visuals.js';
+import { drawRedCapBottle } from './bottle-vfx.js';
 const TAU=Math.PI*2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t;
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v)};
 // Normalized points trace the original pixels at display time. No regenerated face,
@@ -17,6 +18,7 @@ export const PHOTO_FACE_PROFILES={
   [[.49,.174],[.473,.161],[.45,.146],[.432,.128],[.412,.112],[.393,.091],[.381,.07],[.382,.054],[.394,.045],[.409,.047],[.421,.06],[.429,.082],[.443,.086],[.444,.073],[.438,.06],[.44,.048],[.453,.049],[.465,.061],[.477,.082],[.487,.077],[.496,.084],[.508,.112],[.515,.135],[.534,.145],[.532,.166]],
   [[.65,.169],[.649,.151],[.665,.14],[.669,.116],[.666,.087],[.66,.062],[.663,.043],[.675,.032],[.689,.035],[.694,.046],[.693,.065],[.701,.074],[.712,.062],[.725,.054],[.738,.059],[.744,.073],[.739,.088],[.728,.1],[.741,.102],[.751,.094],[.763,.099],[.768,.112],[.761,.13],[.74,.145],[.724,.163],[.708,.17]]
  ]},
+ max:{center:[.463,.344],width:.322,displayWidth:50,skin:'#c89c77',outline:[[.323,.205],[.31,.184],[.301,.158],[.303,.132],[.317,.109],[.342,.092],[.372,.082],[.41,.076],[.448,.078],[.478,.082],[.511,.081],[.548,.087],[.579,.102],[.601,.127],[.609,.153],[.596,.172],[.579,.185],[.577,.217],[.57,.246],[.559,.277],[.543,.304],[.517,.326],[.49,.34],[.46,.347],[.429,.338],[.401,.32],[.378,.297],[.358,.267],[.344,.237],[.33,.231]]},
  sukuna:{center:[.5,.218],width:.135,displayWidth:44,skin:'#c7a181',outline:[
   [.439,.105],[.439,.081],[.445,.061],[.461,.04],[.484,.029],[.506,.027],[.53,.035],[.549,.054],[.56,.078],[.563,.101],[.559,.119],[.564,.127],[.564,.145],[.552,.157],[.549,.176],[.536,.198],[.516,.215],[.501,.222],[.483,.215],[.468,.199],[.458,.178],[.45,.163],[.445,.147],[.438,.133]
  ]}
@@ -25,6 +27,7 @@ const WARDROBE={
  ignis:{light:'#c9cccb',mid:'#a5acab',dark:'#697775',pants:'#35434a',seam:'#71817c',shoe:'#f3f0e6'},
  mime:{light:'#c5cccb',mid:'#a3b0b0',dark:'#657a7d',pants:'#7695ad',seam:'#8ca09f',shoe:'#eeeae1'},
  gojo:{light:'#353b3e',mid:'#1d252a',dark:'#10191e',pants:'#303a43',seam:'#48545c',shoe:'#29333c'},
+ max:{light:'#8c6749',mid:'#67472f',dark:'#3d2c25',pants:'#c9c2ac',seam:'#9a7755',shoe:'#302b28'},
  sukuna:{light:'#38404a',mid:'#242c37',dark:'#101923',pants:'#763547',seam:'#495768',shoe:'#202b34'}
 };
 function path(c,build,fill,stroke='#14232b',width=1){c.beginPath();build(c);if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.lineJoin='round';c.lineCap='round';c.stroke()}}
@@ -57,6 +60,7 @@ function personalityGesture(kind,o){
   ignis:{ready:[.32,2.8,-.25,.4],release:[1.62,1.32,-.2,.3],lean:.075},
   mime:{ready:[.5,2.6,-.65,.7],release:[1.25,1.0,-.8,.1],lean:.2},
   gojo:{ready:[.8,2.5,-.4,.6],release:[1.05,.65,-.5,.4],lean:.06},
+  max:{ready:[.25,2.85,-.3,.25],release:[.8,2.3,-.55,.75],lean:.035},
   sukuna:{ready:n%2?[.3,2.5,-1.1,-.3]:[-.35,.5,.6,2.1],release:n%2?[1.8,1.4,-1.3,-.6]:[.2,-.7,-.8,-1.5],lean:.24}
  }[kind];if(!poses)return null;
  return{arms:poses.ready.map((v,i)=>lerp(v,poses.release[i],release)),weight,lean:o.reduced?0:poses.lean*release*weight};
@@ -74,9 +78,10 @@ export function samplePhotoFighterPose(kind,o={}){
  if(kind==='ignis'){upper=lerp(upper,1.75,wind*.8+strike*.2);lower=lerp(lower,2.9,wind*.8+strike*.2);}
  if(kind==='mime'){upper=lerp(upper,1.1,.65);lower=lerp(lower,3.45,.78);backUpper+=strike*.7;backLower+=strike*.9;}
  if(kind==='gojo'){upper=lerp(upper,1.4,wind*.7+strike*.3);lower=lerp(lower,2.05,wind*.7+strike*.3);}
+ if(kind==='max'){upper=lerp(upper,.32,.88+wind*.12);lower=lerp(lower,2.95,.88+wind*.12);backUpper=lerp(backUpper,-.2,.6);backLower=lerp(backLower,.25,.6);}
  if(kind==='sukuna'){upper+=strike*1.75;lower+=strike*1.35;backUpper-=strike*.55;backLower+=strike*.4;}
  if(domain){
-  const hands={ignis:[1.35,2.85,-.35,.65],mime:[.95,3.35,-1.5,-1.8],gojo:[1.3,2.5,-1.05,-2.55],sukuna:[2.1,1.65,-.9,-.55]}[kind];
+  const hands={ignis:[1.35,2.85,-.35,.65],mime:[.95,3.35,-1.5,-1.8],gojo:[1.3,2.5,-1.05,-2.55],max:[.55,2.8,-.6,.7],sukuna:[2.1,1.65,-.9,-.55]}[kind];
   if(hands){upper=lerp(upper,hands[0],domain);lower=lerp(lower,hands[1],domain);backUpper=lerp(backUpper,hands[2],domain);backLower=lerp(backLower,hands[3],domain);}
  }
  if(gesture){const [a,b,d,e]=gesture.arms;upper=lerp(upper,a,gesture.weight);lower=lerp(lower,b,gesture.weight);backUpper=lerp(backUpper,d,gesture.weight);backLower=lerp(backLower,e,gesture.weight);}
@@ -87,6 +92,8 @@ export function samplePhotoFighterPose(kind,o={}){
 function shoe(c,p,color,angle=0){c.save();c.translate(p.x,p.y);c.rotate(angle);path(c,c=>{c.moveTo(-6,-5);c.quadraticCurveTo(-2,-8,5,-5);c.lineTo(9,-1);c.quadraticCurveTo(17,0,16,4);c.lineTo(-7,4);c.quadraticCurveTo(-9,0,-6,-5);c.closePath()},color,'#19262e',1);line(c,[[-7,3],[15,3]],'#a2aaa5',1.4);line(c,[[2,-3],[7,-2]],'#7d8b8d',1);c.restore()}
 function drawHand(c,p,skin,gesture='relaxed',angle=0){c.save();c.translate(p.x,p.y);c.rotate(angle);path(c,c=>{c.moveTo(-3,-3);c.quadraticCurveTo(-5,0,-3,5);c.quadraticCurveTo(0,8,3,5);c.lineTo(4,0);c.quadraticCurveTo(3,-3,1,-4);c.closePath()},skin,'#624c41',.65);if(gesture==='thumb'){path(c,c=>{c.moveTo(-2,1);c.lineTo(-3,-7);c.quadraticCurveTo(-1,-12,1,-8);c.lineTo(2,-1)},skin,'#624c41',.6)}else if(gesture==='cast'){for(let i=0;i<4;i++)line(c,[[i*1.6-2,1],[i*1.8-2,8+(i%2)*2]],skin,1.5)}else for(let i=0;i<3;i++)line(c,[[i*1.5-2,1],[i*1.5-2,4]],'#8f6c58',.45);c.restore()}
 function drawCup(c,p,angle){c.save();c.translate(p.x,p.y);c.rotate(angle);poly(c,[[-6,-15],[7,-15],[5,2],[-5,2]],'#eeeae8','#798a87',.7);poly(c,[[-5,-4],[6,-4],[5,2],[-5,2]],'#8a657f');oval(c,.5,-15,7.5,2,'#c2b9c1','#778e8d',.6);path(c,c=>{c.moveTo(-6,-15);c.quadraticCurveTo(-6,-25,1,-25);c.quadraticCurveTo(8,-25,7,-15)},'#bc96b088','#869492',.6);line(c,[[1,-18],[3,-33],[7,-37]],'#bb879e',1.5);c.restore()}
+function drawPhone(c,p,angle,flash=false){c.save();c.translate(p.x+2,p.y-5);c.rotate(angle);path(c,c=>c.roundRect(-6,-21,13,25,2.5),'#141c22','#788080',.7);path(c,c=>c.roundRect(-4.5,-19,8.7,9.4,2),'#273139','#0d141a',.5);for(const [x,y] of [[-2.5,-16.5],[1.8,-16.5],[-2.5,-12]]){oval(c,x,y,1.65,1.65,'#080d12','#7e8d95',.5);oval(c,x-.3,y-.3,.5,.5,'#52646c');}oval(c,2,-11.9,.7,.7,flash?'#ffeccb':'#9faaa3');line(c,[[7,-12],[7,-7]],'#879494',.7);c.restore();}
+function drawBottle(c,p){drawRedCapBottle(c,p.x+2,p.y-5,.8,-.35);}
 function drawTorso(c,kind,m,w,skin){
  path(c,c=>{c.moveTo(-8,-143);c.quadraticCurveTo(-19,-141,-23,-130);c.quadraticCurveTo(-23,-112,-17,-94);c.lineTo(-18,-81);c.quadraticCurveTo(0,-76,18,-81);c.lineTo(16,-95);c.quadraticCurveTo(23,-116,22,-132);c.quadraticCurveTo(17,-141,8,-143);c.closePath()},grad(c,-24,-128,21,-107,w.light,w.dark),'#15242b',1.1);
  // A narrow photographic neckline avoids a floating-head seam.
@@ -96,6 +103,10 @@ function drawTorso(c,kind,m,w,skin){
   poly(c,[[-8,-143],[-10,-131],[-3,-127],[0,-135],[5,-128],[11,-133],[8,-142],[0,-136]],'#f1efe4','#b7c2b8',.6);
   line(c,[[0,-134],[0,-121]],'#a6b6ad',.9);oval(c,1,-128,.7,.7,'#87958e');oval(c,1,-123,.7,.7,'#87958e');
   for(const side of [-1,1]){path(c,c=>{c.moveTo(side*11,-141);c.quadraticCurveTo(side*17,-124,side*12,-81)},null,'#d4d8cf',2.2);line(c,[[side*13,-137],[side*14,-98],[side*12,-84]],'#879793',.7);}
+ }else if(kind==='max'){
+  poly(c,[[-9,-141],[0,-136],[9,-141],[10,-124],[-9,-124]],'#191d1d','#282925',.6);
+  for(const side of [-1,1]){path(c,c=>{c.moveTo(side*9,-143);c.quadraticCurveTo(side*15,-137,side*9,-127);c.lineTo(side*3,-135);c.closePath()},w.dark,w.mid,.7);path(c,c=>{c.moveTo(side*7,-124);c.quadraticCurveTo(side*7,-103,side*9,-85)},null,w.seam,1);line(c,[[side*13,-112],[side*14,-95]],w.dark,1.7);line(c,[[side*16,-111],[side*17,-97]],w.light,.5);}
+  line(c,[[0,-132],[0,-82]],'#b69a6c',1.3);line(c,[[2,-131],[2,-82]],'#392c21',.8);oval(c,0,-126,1.5,2,'#b49b76');for(let i=-14;i<=14;i+=4)line(c,[[i,-83],[i,-79]],w.dark,.7);
  }else if(kind==='mime'||kind==='sukuna'){
   path(c,c=>{c.moveTo(-10,-145);c.quadraticCurveTo(-21,-147,-20,-134);c.quadraticCurveTo(-12,-124,0,-135);c.quadraticCurveTo(16,-126,21,-135);c.quadraticCurveTo(20,-148,9,-146);c.lineTo(8,-139);c.quadraticCurveTo(0,-132,-8,-140);c.closePath()},grad(c,-12,-145,12,-131,w.light,w.dark),'#26353b',.9);
   if(kind==='mime'){
@@ -139,7 +150,8 @@ export function drawPhotoFighter2D(c,kind,x,y,scale=1,o={}){
  drawTorso(c,kind,m,w,p.skin);
  sleeve(m.shoulder,m.elbow,m.wrist);line(c,[[m.elbow.x-4,m.elbow.y-2],[m.elbow.x+2,m.elbow.y+1]],w.seam,.7);
  drawHand(c,m.wrist,p.skin,kind==='ignis'&&(m.wind||m.domain)?'thumb':m.domain||m.wind&&kind==='gojo'?'cast':'relaxed',-.12*m.lower);
- if(kind==='ignis'&&o.personalitySkill==='ignis'&&['tracking','locked'].includes(o.personalityPhase)){c.save();c.translate(m.wrist.x+2,m.wrist.y-3);c.rotate(-.4);oval(c,0,0,6,3.5,'#a8122d','#ffb7a3',.8);oval(c,0,-1,4.7,2.5,'#e2494b');for(let i=-3;i<=3;i+=2)line(c,[[i,0],[i,2.5]],'#ffb09a',.5);c.restore();}
+ if(kind==='ignis'&&o.personalitySkill==='ignis'&&['tracking','locked'].includes(o.personalityPhase))drawBottle(c,m.wrist);
+ if(kind==='max')drawPhone(c,m.wrist,-.12*m.lower,m.strike>.85);
  if(kind==='mime')drawCup(c,{x:m.wrist.x+1,y:m.wrist.y},-.12*m.lower);
  drawPhotoFace(c,kind,{y:-139,tilt:m.headTilt,facing});
  c.restore();c.restore();return true;

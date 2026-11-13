@@ -45,12 +45,12 @@ export function drawBladeWavesGuides(c,s,h,v,g,t,reduced=false){
  active.slice(0,2).forEach((w,i)=>edgeBadge(c,w,(v.phaseIndex??0)===4?`5-${(w.waveIndex||0)+1}`:(v.phaseIndex??0)+1));
  const reached=!!(g.targetReached??g.destinationReached),target=g.target||v.guide;
  if(!reached&&target){const dx=target.x-s.player.x,dy=target.y-s.player.y,l=Math.hypot(dx,dy)||1;arrow(c,s.player.x+dx/l*14,s.player.y+dy/l*14,target.x,target.y,MINT,13,true);}
- if(target){c.beginPath();c.ellipse(target.x,target.y,15,9,0,0,TAU);c.strokeStyle=MINT;c.lineWidth=2;c.stroke();}
+ if(target){c.beginPath();c.ellipse(target.x,target.y,15,9,0,0,TAU);c.strokeStyle=MINT;c.lineWidth=2;c.stroke();const x=clamp(target.x,130,1150),y=clamp(target.y+29,364,624);box(c,x-67,y-17,134,25,'#092b30ef',4);text(c,reached?'빈틈 정렬 완료':'여기 · 빈틈 맞추기',x,y,14,MINT);}
  c.restore();
 }
 export function bladeWaveInstruction(h,v,g){
  const phase=(v.phaseIndex??h.domainPhase??0)+1,count=v.phaseCount||5,reached=!!(g.targetReached??g.destinationReached),focus=(v.waves||[])[v.bladeCheckpoint||0],direction=focus?directionName(focus):'',turn=phase===5&&(v.bladeCheckpoint||0)>0,cleared=!!focus?.cleared;
- const title=cleared?`${phase}/${count} 통과! 다음 칼날 방향을 확인하세요`:turn&&!reached?`${phase}/${count} 방향 전환! 두 번째 민트 빈틈으로`:reached?`${phase}/${count} 빈틈 정렬! 칼날이 지나갈 때까지 유지`:`${phase}/${count} 다가오는 칼날! 민트 빈틈으로 이동`;
- const arrival=Number.isFinite(g.arrivalSeconds)&&!cleared?` · 내 위치 도착 ${Math.max(0,g.arrivalSeconds).toFixed(1)}초`:'';
- return{title,tip:cleared?'지나간 자리로 이동 가능 · 다음 벽은 다른 방향에서 옵니다':`${direction}${arrival} · Space로 칼날을 뚫을 수 없어요`,timerLabel:g.timerLabel||(!h.active||h.phaseWarning?'출발까지':'통과까지'),targetReached:reached};
+ const title=cleared?'통과! 다음 칼날 준비':turn&&!reached?'방향 전환! 새 빈틈으로':reached?'빈틈에 맞춘 채 대기':'민트 빈틈에 몸을 맞추세요';
+ const arrival=Number.isFinite(g.arrivalSeconds)&&!cleared?` · 도착 ${Math.max(0,g.arrivalSeconds).toFixed(1)}초`:'';
+ return{title,tip:cleared?'다음 벽은 다른 방향 · 새 민트 표식을 확인하세요':`${direction}${arrival} · 칼날 접촉 즉사`,timerLabel:!h.active?'출발까지':g.warning?'다음 칼날':'통과까지',targetReached:reached};
 }

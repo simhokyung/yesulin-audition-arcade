@@ -26,6 +26,7 @@ export class GameAudio {
     this.pursuitCueKeys = new Set();
     this.normalCueKeys = new Set();
     this.personalityCueKeys = new Set();
+    this.maxCueKeys = new Set();
   }
 
   setDomainTracks(tracks) {
@@ -38,7 +39,7 @@ export class GameAudio {
 
   reset() {
     this._clearSources(); this.lastCue.clear(); this.lastEffectId = 0;
-    this.practiceEpoch=null;this.waveCueKeys.clear();this.pursuitCueKeys.clear();this.normalCueKeys.clear();this.personalityCueKeys.clear();
+    this.practiceEpoch=null;this.waveCueKeys.clear();this.pursuitCueKeys.clear();this.normalCueKeys.clear();this.personalityCueKeys.clear();this.maxCueKeys.clear();
     this._volume(this.enabled && !this.paused ? .43 : 0);
     this.domainMusic.reset(); this.lastState = null; this.snapshot = null;
     this.cinematicActive = false; this.duckUntil = 0; this._musicVolume();
@@ -196,6 +197,9 @@ export class GameAudio {
         // Three dry mask taps answer a detuned glass resonance.
         [0,.22,.47].forEach((offset,i)=>{note(466.16+i*58.27,.16+offset,.18,.032,'sine',415.3+i*52);noise(t+.16+offset,.045,.018,1800+i*450);});
         swell(349.23,.2,duration-.2,.024,'sine',369.99);swell(372,.3,duration-.3,.018,'sine',349.23);
+      }else if(boss==='max'){
+        [293.66,349.23,440].forEach((f,i)=>swell(f,.15+i*.18,duration-.45,.024,'sine',f*.995));
+        [0,.18,.4].forEach((d,i)=>{noise(t+.35+d,.028,.023,2100+i*450);note(1400-i*160,.36+d,.045,.018,'sine',900);});
       }else swell(440,.2,duration-.2,.025,'sine',560);
       this._duck(duration);
     } else if (name === 'cinematic' && meta.kind === 'playerUltimate') {
@@ -218,6 +222,27 @@ export class GameAudio {
       if (sukuna) [147,211,388].forEach((f,i)=>note(f,.07+i*.045,duration*.65,.04,'sine',f*.99));
       if (ignis) { note(130.81,.05,duration*.7,.035,'triangle',98); noise(t+.1,.3,.035,1400); }
       if (mime) [174.61,184.99].forEach((f,i)=>note(f,.06+i*.07,duration*.8,.035,'sine',f*1.03));
+      if(meta.actorId==='max'||meta.bossId==='max'){[146.83,155.56,440].forEach((f,i)=>swell(f,.08+i*.07,duration*.8,.025,'sine',f*1.025));noise(t+.1,.17,.025,1900);}
+    } else if(name==='max-focus'){
+      note(880,0,.055,.027,'sine',1046);note(1046,.085,.05,.024,'sine',1174);noise(t,.09,.014,1800);
+    } else if(name==='max-lock'){
+      noise(t,.023,.08,2700);note(1760,.012,.09,.035,'sine',1320);
+    } else if(name==='max-shutter'){
+      noise(t,.035,.105,2200);note(190,0,.085,.05,'triangle',125);noise(t+.055,.04,.052,3100);note(987,.04,.08,.022,'sine',830);
+    } else if(name==='max-recall'){
+      swell(380,0,.26,.036,'triangle',1200);noise(t+.09,.12,.025,2300);note(1320,.22,.085,.024,'sine',1174);
+    } else if(name==='max-return'){
+      noise(t,.11,.067,1700);note(1174,0,.12,.026,'triangle',587);noise(t+.065,.028,.032,3500);
+    } else if(name==='max-archive-warning'){
+      swell(meta.index>=4?880:440,0,.38,.04,'triangle',meta.index>=4?220:660);[0,.12,.24].forEach(d=>noise(t+d,.025,.028,1200));
+    } else if(name==='max-archive-close'){
+      noise(t,.075,.10,950,'lowpass');note(110,0,.16,.08,'triangle',55);noise(t+.055,.055,.045,2100);
+    } else if(name==='max-archive-lock'){
+      note(1318,0,.065,.052,'sine');note(1568,.085,.09,.04,'sine');noise(t,.018,.045,3000);
+    } else if(name==='max-archive-flash'){
+      [0,.045,.09].forEach((d,i)=>{noise(t+d,.035,.075-i*.014,2200+i*650);note(1568-i*196,d,.08,.03,'sine',988);});note(82,0,.3,.075,'triangle',49);
+    } else if(name==='max-finish'){
+      note(587,0,.18,.03,'sine');note(880,.09,.25,.023,'sine');
     } else if (name === 'director-skill') {
       noise(t,.035,.2,2400);noise(t+.018,.05,.13,1200);
       note(130,0,.3,.23,'sine',38);note(260,.035,.18,.08,'triangle',92);
@@ -573,6 +598,13 @@ export class GameAudio {
           this.personalityCueKeys.add(key);if(this.personalityCueKeys.size>256)this.personalityCueKeys.delete(this.personalityCueKeys.values().next().value);
           const origin=Number.isFinite(e.originX)?e.originX:Number.isFinite(e.x)?e.x:640;
           this.cue(name,{...e,eventId:e.id,pan:Math.max(-.62,Math.min(.62,(origin-640)/800)),audioDelay:Math.min(.06,i*.008)});
+        }
+        const maxNames={tracking:'max-focus',lock:'max-lock',launch:'max-shutter','return-warning':'max-recall',return:'max-return',finish:'max-finish','archive-warning':'max-archive-warning','archive-close':'max-archive-close','archive-lock':'max-archive-lock','archive-flash':'max-archive-flash'};
+        for(const [i,e] of incoming.filter(e=>e.type==='maxShot').slice(0,12).entries()){
+          const name=maxNames[e.kind];if(!name)continue;
+          const key=`${state.stage}:${e.attackId}:${e.shotId}:${e.index}:${e.kind}`;if(this.maxCueKeys.has(key))continue;
+          this.maxCueKeys.add(key);if(this.maxCueKeys.size>256)this.maxCueKeys.delete(this.maxCueKeys.values().next().value);
+          this.cue(name,{...e,eventId:e.id,pan:Math.max(-.6,Math.min(.6,((Number.isFinite(e.x)?e.x:640)-640)/850)),audioDelay:Math.min(.06,i*.009)});
         }
         for(const e of incoming.filter(e=>['counterOpen','patternCue','rehearsalResult','auditionHit'].includes(e.type)).slice(0,6)){
           const name=e.type==='counterOpen'?'counter-open':e.type==='rehearsalResult'?'trial-light':

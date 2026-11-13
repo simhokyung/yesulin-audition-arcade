@@ -1,6 +1,7 @@
 // Original-photo takeover teaching: every judge keeps their existing movement rule.
 import { drawTakeoverMap, mimePresentation } from './takeover-vfx.js';
 import { BOSS_VISUALS, getBossPhoto, bossPhotoAssetStatus, drawBossPhotoPanel } from './boss-visuals.js';
+import { drawMaxTakeoverMap } from './max-vfx.js';
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
 const ease=x=>1-Math.pow(1-clamp(x),3);
 export function getTakeoverArtwork(id){return getBossPhoto(id);}
@@ -17,6 +18,7 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   g.addColorStop(0,visual.wall);g.addColorStop(1,'#04060f');
   c.fillStyle=g;c.fillRect(0,0,w,h);
   drawBossPhotoPanel(c,id,{x:350,y:112,w:580,h:380,progress:p,reduced:reduceMotion});
+  if(id==='max'){for(const side of [-1,1]){const x=640+side*450;c.fillStyle='#121c23';c.fillRect(x-29,145,58,312);for(let i=0;i<12;i++){c.fillStyle='#d3b48188';c.fillRect(x-20,153+i*25,40,12);}c.strokeStyle='#e5c68f80';c.lineWidth=1;c.strokeRect(x-49,185,98,218);} }
   if(!reduceMotion){
     c.save();c.globalCompositeOperation='screen';
     // Peripheral motion keeps eyes and fingers free of glare.
@@ -38,22 +40,22 @@ export function drawDomainCutscene(c,s,t,reduceMotion=false){
   c.fillStyle='#ffffffbb';c.font='500 10px sans-serif';c.fillText('무대 장악',64,84);
   c.textAlign='center';
   const rise=reduceMotion?0:14*(1-ease(p*2));
-  const rules={ignis:['움직이는 조명','밝은 조명 안에서 빛을 따라가세요','조명이 계속 이동합니다 · 멈춰 있으면 위험'],mime:['진짜 가면 찾기','진짜 패널을 보고 다음 신호에 이동!','◇ ○ △ 표시 확인 · 금빛 다음 패널로 열린 통로 이동'],gojo:['교차 프레임','가로 → 세로 · 바뀌는 빈틈으로!','예고 동안 이동 · 밝은 통로 안에서 교차 공격 회피'],sukuna:['다가오는 다섯 차례 칼날 벽','방향을 보고 민트색 빈틈에 맞추세요!','좌우 · 상하 · 대각선에서 접근 · 칼날이 지나갈 때까지 빈틈 유지']};
+  const rules={ignis:['움직이는 조명','민트 조명 안에서 계속 따라가세요!','조명 밖은 즉사 · 화살표 끝 ‘여기’로'],mime:['발판 교대','민트 발판으로! 신호가 바뀌면 이동!','민트 = 지금 · 금색 = 다음 · 연결 통로를 따라가기'],gojo:['가로 ↔ 세로 전환','빔이 꺼지면 새 민트 통로로!','민트 = 지금 · 금색은 다음 통로라 아직 위험'],max:['필름 칸 이동 → 되감기 → 마지막 촬영','민트 칸으로! 되감기엔 반대로 이동!','닫히면 민트 칸 밖 즉사 · 마지막 촬영은 옆으로!'],sukuna:['날아오는 칼날 벽','민트 빈틈에 맞추고 통과할 때까지 대기!','칼날에 닿으면 즉사 · Space로 뚫을 수 없어요']};
   const takeoverTitle=zone?.name?.replace(/^무대 장악\s*[·:]\s*/, '')||visual.takeover;
-  let rule=chasing?['가로 7연사 → 세로 7연사 → 3방향 피날레','가로는 위아래, 세로는 좌우로 계속 이동!','첫 7연사는 중간 반전! · 마지막 뒤 황금 반격']:rules[id]||rules.ignis;if(id==='mime'&&zone){const m=mimePresentation(s,zone);rule=['목적지 발판 찾기',`${m.symbol} 밝은 민트 발판으로!`,'민트색 하나 = 지금 목적지 · 금색 점선 = 다음 발판'];}
-  if(zone?.variantId==='return-light')rule=['되돌아오는 조명','조명 안에서 따라가다 방향을 바꾸세요!','현재 조명 = 민트 · 금색 점선 = 곧 이동할 위치'];
+  let rule=chasing?['가로 7연사 → 세로 7연사 → 3방향','계속 이동! 반전 신호에 방향을 바꾸세요!','가로 칼날은 위아래 · 세로 칼날은 좌우 · 접촉 즉사']:rules[id]||rules.ignis;if(id==='mime'&&zone){const m=mimePresentation(s,zone);rule=['발판 교대',`${m.symbol} 민트 발판으로 이동!`,'금색 ‘다음’은 예고 · 이동 신호에 연결 통로 따라가기'];}
+  if(zone?.variantId==='return-light')rule=['중간에 방향이 바뀌는 조명','민트 조명을 따라가다 반대로 이동!','조명 밖은 즉사 · 금색 점선은 곧 이동할 위치'];
   if(zone?.variantId==='double-swap')rule=[`두 번의 배역 교대 · ${mimePresentation(s,zone).symbol}부터`,rule[1],'두 번 이동합니다 · 통로가 열리면 새 민트 발판으로'];
-  if(zone?.variantId==='reverse-frames')rule=['반전 프레임','위치가 바뀌어도 민트 통로를 찾으세요!','현재 통로 = 민트 · 다음 통로 = 금색 점선'];
+  if(zone?.variantId==='reverse-frames')rule=['위치가 반전되는 통로','빔이 꺼지면 새 민트 통로로!','민트 = 지금 · 금색은 다음 통로라 아직 위험'];
   c.fillStyle=color;c.font='700 12px "Noto Sans KR",sans-serif';c.fillText('무 대 장 악',640,529+rise);
   c.fillStyle='#ffffff';c.font='900 53px "Noto Sans KR","Apple SD Gothic Neo",sans-serif';
   c.fillText(takeoverTitle,640,586+rise);
   c.fillStyle='#f3f5e9';c.font='700 17px "Noto Sans KR",sans-serif';
-  c.fillText(rule[0]+' · 치명 공격에 대비하세요',565,616);
+  c.fillText(rule[0],565,616);
   c.fillStyle='#79ffe0';c.font='900 23px "Noto Sans KR",sans-serif';
   c.fillText(rule[1],565,649);
   c.fillStyle='#d7e7df';c.font='600 13px "Noto Sans KR",sans-serif';c.fillText(rule[2],565,674);
   if(chasing){c.save();const locked=p>.62,ink=locked?'#f4eddc':'#f27b91';c.strokeStyle=ink;c.lineWidth=2;for(const side of [-1,1]){const cx=640+side*514,cy=290;c.beginPath();c.arc(cx,cy,34,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(cx-46,cy);c.lineTo(cx+46,cy);c.moveTo(cx,cy-46);c.lineTo(cx,cy+46);c.stroke();}c.textAlign='center';c.fillStyle=ink;c.font='800 12px "Noto Sans KR",sans-serif';c.fillText(locked?'조준 고정 → 옆으로':'추적 중 → 계속 이동',640,100);c.restore();}
-  if(chasing&&zone?.section==='burst')drawBurstLesson(c,zone);else drawTakeoverMap(c,s,zone);
+  if(id==='max')drawMaxTakeoverMap(c,s,zone);else if(chasing&&zone?.section==='burst')drawBurstLesson(c,zone);else drawTakeoverMap(c,s,zone);
   c.restore();return true;
 }
 
